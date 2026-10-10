@@ -1,0 +1,78 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 56px;
+  }
+  body {
+    @apply bg-paper text-ink font-sans antialiased;
+    font-size: 17px;
+    line-height: 1.47;
+  }
+  h1,
+  h2,
+  h3 {
+    @apply font-display;
+    text-wrap: balance;
+    letter-spacing: -0.025em;
+  }
+  :focus-visible {
+    outline: 2px solid #ff4b22;
+    outline-offset: 3px;
+    border-radius: 8px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+}
+
+@layer components {
+  .text-flame {
+    @apply bg-flame bg-clip-text text-transparent;
+  }
+  .btn-flame {
+    @apply inline-flex min-h-[44px] items-center rounded-full bg-flame px-6 text-[17px] font-semibold text-[#100A2E] no-underline transition hover:brightness-105;
+  }
+  .link-more {
+    @apply inline-flex min-h-[44px] items-center text-[17px] text-flame-link hover:underline;
+  }
+  .link-more::after {
+    content: "\00a0›";
+  }
+  .on-night .link-more {
+    @apply text-flame-linkDark;
+  }
+  .tile {
+    @apply min-w-0 overflow-hidden rounded-tile px-4 pt-14 text-center;
+  }
+  .tile-title {
+    @apply text-[clamp(34px,5.4vw,56px)] font-extrabold leading-[1.05];
+  }
+  .tile-sub {
+    @apply mx-auto mt-2.5 max-w-[42ch] text-[clamp(19px,2vw,24px)] leading-[1.3];
+  }
+}
+
+/* Los bloques suben apenas al entrar en pantalla (sin ocultar contenido). */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .rise {
+      animation: rise linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 30%;
+    }
+    @keyframes rise {
+      from {
+        transform: translateY(28px) scale(0.97);
+      }
+      to {
+        transform: none;
+      }
+    }
+  }
+}
