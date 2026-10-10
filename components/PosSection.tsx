@@ -23,11 +23,19 @@ const TICKET = [
 export function PosSection() {
   return (
     <section id="pos" className="tile on-night rise bg-night text-snow">
-      <img src="/brand/ninjapos-dark.webp" alt="NinjaPOS" width={640} height={152} className="mx-auto mb-5 h-11 w-auto max-w-full" />
+      <img src="/images/brand/ninjapos-logo-dark.webp" alt="NinjaPOS" width={640} height={152} className="mx-auto mb-5 h-11 w-auto max-w-full" />
       <h2 className="tile-title">Vendé rápido. Controlá todo.</h2>
       <p className="tile-sub text-mist">
-        Caja, stock, cuotas y todos los medios de pago del país en una sola pantalla.
+        Punto de venta omnicanal: local, tienda online, delivery y sucursales sobre el mismo stock, con todos los
+        medios de pago del país.
       </p>
+      <ul aria-label="Canales" className="mx-auto mt-6 flex max-w-2xl flex-wrap justify-center gap-2">
+        {["Mostrador", "Tienda online", "Delivery", "Salón y mesas", "Multisucursal"].map((c) => (
+          <li key={c} className="rounded-full border border-white/10 bg-white/5 px-3.5 py-1.5 text-[13px] text-snow">
+            {c}
+          </li>
+        ))}
+      </ul>
       <div className="mt-5 flex flex-wrap items-center justify-center gap-8">
         <a href={POS_APP_URL} className="link-more">
           Probar gratis
@@ -62,7 +70,7 @@ export function PosSection() {
               ))}
               <div className="mt-auto flex items-baseline justify-between border-t border-white/10 pt-3">
                 <small className="text-xs uppercase tracking-[0.12em] text-mist">Total</small>
-                <strong className="font-display text-[30px] font-extrabold tabular-nums">$ 15.345</strong>
+                <strong className="font-display text-[30px] font-bold tabular-nums">$ 15.345</strong>
               </div>
               <div className="grid grid-cols-2 gap-1.5 pb-4">
                 {["Efectivo", "QR", "Débito"].map((m) => (

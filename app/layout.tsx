@@ -1,8 +1,9 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, JetBrains_Mono, Nunito } from "next/font/google";
+import { Inter, JetBrains_Mono, Quicksand } from "next/font/google";
 import "./globals.css";
 
-const display = Nunito({ subsets: ["latin"], weight: ["700", "800", "900"], variable: "--font-display" });
+// Quicksand es la tipografía del wordmark "Ninja" (Bold) y "Soft" (Regular) del logo.
+const display = Quicksand({ subsets: ["latin"], weight: ["500", "600", "700"], variable: "--font-display" });
 const body = Inter({ subsets: ["latin"], variable: "--font-body" });
 const mono = JetBrains_Mono({ subsets: ["latin"], weight: ["500"], variable: "--font-mono" });
 

@@ -20,8 +20,8 @@ pnpm lint && pnpm typecheck
 | Número de WhatsApp, URLs de POS y Food | `lib/content.ts` |
 | Medios de pago, rubros, funciones, proceso | `lib/content.ts` |
 | Colores y tipografías de marca | `tailwind.config.ts`, `app/layout.tsx` |
-| Logos | `public/brand/`, `public/pay/` |
-| Video del hero | `public/brand/hero.mp4` (si existe se reproduce; si no, imagen fija) |
+| Imágenes (siempre .webp) | `public/images/` (ver su README) · convertir con `scripts/to-webp.py` |
+| Video del hero | `public/videos/hero.mp4` (si existe se reproduce; si no, imagen fija) |
 
 ## Deploy
 

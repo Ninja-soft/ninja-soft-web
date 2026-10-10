@@ -8,7 +8,7 @@ export function Segments() {
       <div className="mx-auto mt-10 grid max-w-[1000px] grid-cols-1 gap-3 text-left sm:grid-cols-2 lg:grid-cols-4">
         {SEGMENTS.map((s) => (
           <article key={s.title} className="rounded-[22px] border border-white/10 bg-white/5 p-[22px]">
-            <h3 className="text-xl font-extrabold">{s.title}</h3>
+            <h3 className="text-xl font-bold">{s.title}</h3>
             <ul className="mt-3.5 grid gap-2.5">
               {s.items.map((item) => (
                 <li

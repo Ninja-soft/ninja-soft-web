@@ -2,10 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 
-// Isotipo del hero. Si existe /brand/hero.mp4 (video hecho con Gemini) se
+// Isotipo del hero. Si existe /videos/hero.mp4 (video hecho con Gemini) se
 // reproduce en loop; si no, o si la persona pidió reducir movimiento, queda la
 // imagen fija con un giro leve al scrollear.
-const VIDEO_SRC = "/brand/hero.mp4";
+const VIDEO_SRC = "/videos/hero.mp4";
 
 export function HeroArt() {
   const imgRef = useRef<HTMLImageElement>(null);
@@ -45,7 +45,7 @@ export function HeroArt() {
       <div className="mx-auto mt-8 w-full max-w-4xl">
         <video
           src={VIDEO_SRC}
-          poster="/brand/isotipo-black.webp"
+          poster="/images/brand/ninja-isotipo-black.webp"
           autoPlay
           muted
           loop
@@ -61,7 +61,7 @@ export function HeroArt() {
     <div className="relative mx-auto mt-12 w-[min(380px,72vw)] pb-10 after:absolute after:inset-x-[12%] after:bottom-[18px] after:h-7 after:rounded-[50%] after:bg-[radial-gradient(closest-side,rgba(17,12,34,.18),transparent)] after:content-['']">
       <img
         ref={imgRef}
-        src="/brand/isotipo-black.webp"
+        src="/images/brand/ninja-isotipo-black.webp"
         alt="Isotipo de Ninja Soft: una cinta en forma de S que forma una máscara ninja"
         width={720}
         height={865}

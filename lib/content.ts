@@ -16,27 +16,67 @@ export const NAV = [
   { href: "#nosotros", label: "Nosotros" },
 ] as const;
 
+// Menú superior: secciones planas + el desplegable de productos.
+export const NAV_LINKS = [
+  { href: "#rubros", label: "Rubros" },
+  { href: "#medios", label: "Medios de pago" },
+  { href: "#servicios", label: "Servicios" },
+  { href: "#nosotros", label: "Nosotros" },
+] as const;
+
+export const PRODUCTS = [
+  {
+    key: "pos",
+    logo: "/images/brand/ninjapos-logo-light.webp",
+    logoSize: [640, 152],
+    name: "NinjaPOS",
+    tagline: "Punto de venta para kioscos, tiendas, gastronomía y profesionales.",
+    href: "#pos",
+    accent: "text-flame-link",
+    links: [
+      { href: "#medios", label: "Medios de pago" },
+      { href: "#rubros", label: "Para cada rubro" },
+      { href: "#funciones", label: "Funciones" },
+    ],
+    cta: { href: POS_APP_URL, label: "Probar gratis" },
+  },
+  {
+    key: "food",
+    logo: "/images/brand/ninjafood-logo-light.webp",
+    logoSize: [640, 139],
+    name: "Ninja Food",
+    tagline: "Trazabilidad y gestión bromatológica para la industria alimenticia.",
+    href: "#food",
+    accent: "text-food",
+    links: [
+      { href: "#food", label: "Cómo funciona" },
+      { href: "#hablemos", label: "Pedir una demo" },
+    ],
+    cta: { href: FOOD_APP_URL, label: "Ingresar" },
+  },
+] as const;
+
 export const PROCESSORS = [
-  { src: "/pay/mercado_pago_large.webp", alt: "Mercado Pago" },
-  { src: "/pay/modo_large.webp", alt: "MODO" },
-  { src: "/pay/payway_large.webp", alt: "Payway" },
-  { src: "/pay/getnet_large.webp", alt: "Getnet" },
-  { src: "/pay/nave_large.webp", alt: "Nave" },
-  { src: "/pay/fiserv_large.webp", alt: "Fiserv" },
-  { src: "/pay/mobbex_large.webp", alt: "Mobbex" },
-  { src: "/pay/pagos360_large.webp", alt: "Pagos360" },
+  { src: "/images/payments/processors/mercadopago.webp", alt: "Mercado Pago" },
+  { src: "/images/payments/processors/modo.webp", alt: "MODO" },
+  { src: "/images/payments/processors/payway.webp", alt: "Payway" },
+  { src: "/images/payments/processors/getnet.webp", alt: "Getnet" },
+  { src: "/images/payments/processors/nave.webp", alt: "Nave" },
+  { src: "/images/payments/processors/fiserv.webp", alt: "Fiserv" },
+  { src: "/images/payments/processors/mobbex.webp", alt: "Mobbex" },
+  { src: "/images/payments/processors/pagos360.webp", alt: "Pagos360" },
 ] as const;
 
 export const NETWORKS = [
-  { src: "/pay/visa_credito.svg", alt: "Visa" },
-  { src: "/pay/mastercard_credito.svg", alt: "Mastercard" },
-  { src: "/pay/amex_credito.svg", alt: "American Express" },
-  { src: "/pay/cabal_credito.svg", alt: "Cabal" },
-  { src: "/pay/naranja_credito.svg", alt: "Naranja X" },
-  { src: "/pay/maestro_debito.svg", alt: "Maestro" },
-  { src: "/pay/diners_credito.svg", alt: "Diners Club" },
-  { src: "/pay/pago_facil.svg", alt: "Pago Fácil" },
-  { src: "/pay/rapipago.svg", alt: "Rapipago" },
+  { src: "/images/payments/networks/visa.webp", alt: "Visa" },
+  { src: "/images/payments/networks/mastercard.webp", alt: "Mastercard" },
+  { src: "/images/payments/networks/amex.webp", alt: "American Express" },
+  { src: "/images/payments/networks/cabal.webp", alt: "Cabal" },
+  { src: "/images/payments/networks/naranjax.webp", alt: "Naranja X" },
+  { src: "/images/payments/networks/maestro.webp", alt: "Maestro" },
+  { src: "/images/payments/networks/diners.webp", alt: "Diners Club" },
+  { src: "/images/payments/networks/pagofacil.webp", alt: "Pago Fácil" },
+  { src: "/images/payments/networks/rapipago.webp", alt: "Rapipago" },
 ] as const;
 
 export const SEGMENTS = [

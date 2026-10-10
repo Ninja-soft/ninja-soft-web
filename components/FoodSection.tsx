@@ -30,7 +30,7 @@ export function FoodSection() {
   const cells = qrCells();
   return (
     <section id="food" className="tile rise bg-paper-2">
-      <img src="/brand/ninjafood-light.webp" alt="Ninja Food" width={640} height={139} className="mx-auto mb-5 h-11 w-auto max-w-full" />
+      <img src="/images/brand/ninjafood-logo-light.webp" alt="Ninja Food" width={640} height={139} className="mx-auto mb-5 h-11 w-auto max-w-full" />
       <h2 className="tile-title">Cada lote, trazado.</h2>
       <p className="tile-sub text-ink-2">
         Trazabilidad y gestión bromatológica para la industria alimenticia, con respaldo técnico de ABR.
@@ -50,7 +50,7 @@ export function FoodSection() {
       >
         <div>
           <p className="font-mono text-[13px] text-ink-2">LOTE L-2610-014</p>
-          <h3 className="mt-2 text-2xl font-extrabold">Empanadas de carne · caja x12</h3>
+          <h3 className="mt-2 text-2xl font-bold">Empanadas de carne · caja x12</h3>
           <div className="mt-4 grid gap-2.5">
             {FACTS.map(([k, v]) => (
               <div key={k} className="flex justify-between gap-3 border-t border-line pt-2.5 text-sm text-ink-2">

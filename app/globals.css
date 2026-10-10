@@ -47,14 +47,303 @@
   .on-night .link-more {
     @apply text-flame-linkDark;
   }
+  .hero-chip {
+    @apply flex min-h-[44px] items-center gap-2.5 rounded-full border border-line bg-white py-2 pl-4 pr-4 shadow-[0_6px_20px_rgba(33,19,90,.05)] transition hover:-translate-y-px hover:border-ink/15 hover:shadow-[0_10px_28px_rgba(33,19,90,.10)];
+  }
+  .hero-chip-label {
+    @apply border-l border-line pl-2.5 text-[13px] font-medium text-ink-2;
+  }
   .tile {
     @apply min-w-0 overflow-hidden rounded-tile px-4 pt-14 text-center;
   }
   .tile-title {
-    @apply text-[clamp(34px,5.4vw,56px)] font-extrabold leading-[1.05];
+    @apply text-[clamp(34px,5.4vw,56px)] font-bold leading-[1.05];
   }
   .tile-sub {
     @apply mx-auto mt-2.5 max-w-[42ch] text-[clamp(19px,2vw,24px)] leading-[1.3];
+  }
+}
+
+/* Palabra con degradado vivo, estilo "mini" del iPad mini: los colores fluyen
+   lento a lo largo de la palabra. Sin movimiento: queda el degradado fijo. */
+.text-alive {
+  background-image: linear-gradient(
+    100deg,
+    #ff4b22 0%,
+    #ff2d6f 20%,
+    #b14dff 40%,
+    #e8620c 60%,
+    #ff4b22 80%,
+    #ff2d6f 100%
+  );
+  /* todos los tonos >= 3:1 sobre paper (texto grande en negrita) */
+  background-size: 300% 100%;
+  background-position: 0% 50%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  /* deja aire para descendentes y el punto final al recortar el fondo */
+  padding-bottom: 0.08em;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .text-alive {
+    animation: alive 9s ease-in-out infinite alternate;
+  }
+  @keyframes alive {
+    to {
+      background-position: 100% 50%;
+    }
+  }
+}
+
+/* Frase del hero: cada letra sube y se enfoca, escalonada */
+.letter-in {
+  display: inline-block;
+  white-space: pre;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .letter-in {
+    animation: letter-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  @keyframes letter-in {
+    from {
+      opacity: 0;
+      transform: translateY(0.45em) rotate(4deg);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+/* Ícono del pilar al activarse: rebote corto; Mercado Libre: apretón de manos */
+@media (prefers-reduced-motion: no-preference) {
+  .icon-pop {
+    animation: icon-pop 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+  @keyframes icon-pop {
+    0% {
+      transform: scale(0.7) rotate(-14deg);
+    }
+    60% {
+      transform: scale(1.14) rotate(5deg);
+    }
+    100% {
+      transform: none;
+    }
+  }
+  .icon-shake {
+    animation: icon-shake 1.1s ease-in-out both;
+  }
+  @keyframes icon-shake {
+    0% {
+      transform: scale(0.8);
+    }
+    20% {
+      transform: scale(1.08) translateY(-2px) rotate(-6deg);
+    }
+    40% {
+      transform: scale(1.08) translateY(2px) rotate(5deg);
+    }
+    60% {
+      transform: scale(1.04) translateY(-1.5px) rotate(-4deg);
+    }
+    80% {
+      transform: scale(1.02) translateY(1px) rotate(2deg);
+    }
+    100% {
+      transform: none;
+    }
+  }
+}
+
+/* Vitrina del hero (escenas). Sólo transform/opacity: fluido en GPU.
+   sc-window = aparece y se va (duración por inline style); sc-from = aparece y queda. */
+@media (prefers-reduced-motion: no-preference) {
+  .sc-in { animation: sc-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both; }
+  .sc-up { animation: sc-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both; }
+  .sc-pop { animation: sc-pop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+  .sc-node { animation: sc-node 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+  .sc-fade { animation: sc-fade 0.8s ease both; }
+  .sc-from { animation: sc-from 0.45s cubic-bezier(0.22, 1, 0.36, 1) both; }
+  .sc-window { animation: sc-window 1200ms ease both; }
+  .sc-paylogo { animation: sc-paylogo 900ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+  .sc-grow { transform-origin: left; animation: sc-grow 0.9s cubic-bezier(0.22, 1, 0.36, 1) both; }
+  .sc-draw { stroke-dasharray: 100; animation: sc-draw 1.4s cubic-bezier(0.22, 1, 0.36, 1) both; }
+  .sc-flow { animation: sc-fade 0.6s ease both, sc-flow 1.1s linear infinite; }
+  .sc-ping { animation: sc-ping 1.8s cubic-bezier(0, 0, 0.2, 1) infinite; }
+  .sc-type { animation: sc-type 0.4s steps(14) both; }
+  .sc-spinner { animation: sc-spin 0.75s linear infinite; }
+  .sc-shine { transform: translateX(-120%); animation: sc-shine 0.7s ease-in-out both; }
+  @keyframes sc-shine { to { transform: translateX(380%); } }
+
+  @keyframes sc-up { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+  @keyframes sc-pop { from { opacity: 0; transform: scale(0.6); } to { opacity: 1; transform: none; } }
+  @keyframes sc-node { from { opacity: 0; scale: 0.4; } to { opacity: 1; scale: 1; } }
+  @keyframes sc-fade { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes sc-from { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  @keyframes sc-window {
+    0% { opacity: 0; transform: translateY(8px); }
+    12%, 88% { opacity: 1; transform: none; }
+    100% { opacity: 0; transform: translateY(-8px); }
+  }
+  @keyframes sc-paylogo {
+    0% { opacity: 0; transform: translateY(100%); }
+    14%, 86% { opacity: 1; transform: none; }
+    100% { opacity: 0; transform: translateY(-100%); }
+  }
+  @keyframes sc-grow { from { transform: scaleX(0); } to { transform: none; } }
+  @keyframes sc-draw { from { stroke-dashoffset: 100; } to { stroke-dashoffset: 0; } }
+  @keyframes sc-flow { to { stroke-dashoffset: -16; } }
+  @keyframes sc-ping { 0% { opacity: 0.7; transform: scale(1); } 100% { opacity: 0; transform: scale(1.7); } }
+  @keyframes sc-type { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+  @keyframes sc-spin { to { transform: rotate(360deg); } }
+}
+/* Cursor de la cápsula del hero */
+@media (prefers-reduced-motion: no-preference) {
+  .caret { animation: caret 1s steps(1) infinite; }
+  @keyframes caret { 50% { opacity: 0; } }
+}
+
+/* Selector de medio de pago (Vendé): ::before = resaltado que recorre las
+   opciones; ::after = opción elegida. Color de la marca en --brand. Sólo opacity/transform. */
+.pm-tile { position: relative; isolation: isolate; }
+.pm-tile::before,
+.pm-tile::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  z-index: 0;
+  border-radius: inherit;
+  border: 1.5px solid var(--brand);
+  background: color-mix(in srgb, var(--brand) 22%, transparent);
+  box-shadow: 0 0 22px color-mix(in srgb, var(--brand) 45%, transparent);
+  opacity: 0;
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .pm-tile::before { animation: pm-flash var(--slot) ease-in-out both; animation-delay: var(--d); }
+  .pm-chosen::after { animation: sc-fade 0.35s ease both; animation-delay: var(--pick); }
+  .pm-chosen { animation: pm-pick 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both; animation-delay: var(--pick); }
+  @keyframes pm-flash {
+    0% { opacity: 0; }
+    35%, 60% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+  @keyframes pm-pick {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1.04); }
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pm-chosen::after { opacity: 1; }
+}
+
+/* Integrá en bucle: cada etapa ocupa 1/3 del ciclo (duración por inline style).
+   Los logos salen del hub a su órbita (--tx/--ty en cqw/cqh) y vuelven a ser absorbidos. */
+.integ-group { opacity: 0; }
+.integ-logo { transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))); }
+.integ-line { stroke-dasharray: 100; stroke-opacity: 0.75; }
+@media (prefers-reduced-motion: no-preference) {
+  .integ-group { animation: integ-group linear infinite both; }
+  .integ-logo { animation: integ-logo cubic-bezier(0.22, 1, 0.36, 1) infinite both; will-change: transform, opacity; }
+  .integ-line { animation: integ-line ease-in-out infinite both; }
+  .integ-hub { animation: integ-hub ease-in-out infinite; }
+  @keyframes integ-group {
+    0% { opacity: 0; }
+    1.5%, 31.5% { opacity: 1; }
+    33.3%, 100% { opacity: 0; }
+  }
+  @keyframes integ-logo {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.2); }
+    7%, 26% { opacity: 1; transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) scale(1); }
+    32%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(0.2); }
+  }
+  @keyframes integ-line {
+    0% { stroke-dashoffset: 100; }
+    8%, 25% { stroke-dashoffset: 0; }
+    31%, 100% { stroke-dashoffset: 100; }
+  }
+  @keyframes integ-hub {
+    0% { transform: scale(1); }
+    6% { transform: scale(1.12); }
+    16%, 84% { transform: scale(1); }
+    95% { transform: scale(0.9); }
+    100% { transform: scale(1); }
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .integ-group:first-child { opacity: 1; }
+}
+
+/* Sin movimiento: cada escena muestra su estado final */
+@media (prefers-reduced-motion: reduce) {
+  .sc-window, .sc-ping, .sc-shine { display: none; }
+  .sc-paylogo:not(:first-child) { display: none; }
+}
+
+/* Anillo que se dibuja alrededor del ícono del pilar activo (tiempo hasta el siguiente) */
+.pillar-ring {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  animation: pillar-ring linear forwards;
+}
+@keyframes pillar-ring {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pillar-ring {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Auroras del hero: 3 manchas de color desenfocadas que derivan lento.
+   El desenfoque es estático (se rasteriza una vez); sólo se anima transform. */
+.aurora > span {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(80px);
+  will-change: transform;
+}
+.aurora > span:nth-child(1) { width: 46vw; height: 36vw; left: -8vw; top: -10vw; background: #ff6a1a; opacity: 0.3; }
+.aurora > span:nth-child(2) { width: 42vw; height: 34vw; right: -10vw; top: -4vw; background: #6d4aff; opacity: 0.28; }
+.aurora > span:nth-child(3) { width: 36vw; height: 26vw; left: 30vw; top: 22vw; background: #ff2d6f; opacity: 0.14; }
+@media (prefers-reduced-motion: no-preference) {
+  .aurora > span:nth-child(1) { animation: aurora-a 22s ease-in-out infinite alternate; }
+  .aurora > span:nth-child(2) { animation: aurora-b 26s ease-in-out infinite alternate; }
+  .aurora > span:nth-child(3) { animation: aurora-c 30s ease-in-out infinite alternate; }
+  @keyframes aurora-a { to { transform: translate3d(14vw, 8vw, 0) scale(1.15); } }
+  @keyframes aurora-b { to { transform: translate3d(-16vw, 10vw, 0) scale(0.9); } }
+  @keyframes aurora-c { to { transform: translate3d(-12vw, -12vw, 0) scale(1.25); } }
+}
+
+/* Atmósfera del hero: halos de marca muy suaves + grilla de puntos técnica */
+.hero-atmos {
+  background:
+    radial-gradient(42% 38% at 18% 22%, rgba(255, 106, 26, 0.1), transparent 70%),
+    radial-gradient(40% 40% at 84% 30%, rgba(109, 74, 255, 0.1), transparent 70%),
+    radial-gradient(50% 40% at 50% 100%, rgba(255, 210, 31, 0.08), transparent 70%);
+}
+/* Los halos bajan desde arriba al cargar, acompañando la onda del canvas */
+@media (prefers-reduced-motion: no-preference) {
+  .hero-atmos {
+    animation: atmos-in 1.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+    transform-origin: 50% 0;
+  }
+  @keyframes atmos-in {
+    from {
+      opacity: 0;
+      transform: translateY(-12%) scaleY(0.7);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
   }
 }
 
