@@ -2,7 +2,7 @@ import { SERVICES } from "@/lib/content";
 
 export function ServicesAbout() {
   return (
-    <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+    <div className="grid grid-cols-1 sm:gap-3 md:grid-cols-2">
       <section id="servicios" className="tile on-night rise bg-night pb-12 text-snow">
         <h2 className="text-[clamp(30px,3.6vw,42px)] font-bold leading-[1.05]">Integraciones que no se caen.</h2>
         <p className="tile-sub text-mist">

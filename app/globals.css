@@ -54,7 +54,7 @@
     @apply border-l border-line pl-2.5 text-[13px] font-medium text-ink-2;
   }
   .tile {
-    @apply min-w-0 overflow-hidden rounded-tile px-4 pt-14 text-center;
+    @apply min-w-0 overflow-hidden px-4 pt-14 text-center sm:rounded-tile;
   }
   .tile-title {
     @apply text-[clamp(34px,5.4vw,56px)] font-bold leading-[1.05];

@@ -55,7 +55,7 @@ export const INTEGRAR_IMAGES = GROUPS.flatMap((g) => g.logos.map((l) => l.src));
 // Elipse alrededor del hub (centro 50% / 50%), en % del contenedor.
 const orbit = (i: number, n: number) => {
   const a = ((i / n) * 360 - 90) * (Math.PI / 180);
-  return { x: Math.cos(a) * 42, y: Math.sin(a) * 40 };
+  return { x: Math.cos(a) * 36, y: Math.sin(a) * 40 };
 };
 
 export function SceneIntegrar() {
@@ -98,7 +98,7 @@ export function SceneIntegrar() {
                   src={l.src}
                   alt={l.alt}
                   decoding="async"
-                  className="integ-logo absolute left-1/2 top-1/2 w-auto max-w-[110px] object-contain"
+                  className="integ-logo absolute left-1/2 top-1/2 w-auto max-w-[84px] object-contain sm:max-w-[110px]"
                   style={
                     {
                       height: l.h,

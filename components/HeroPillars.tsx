@@ -69,7 +69,7 @@ export function HeroPillars() {
       </p>
       {/* Frase en una línea: el tramo que rota va en una cápsula tipo terminal,
           bien distinta del título (más chica, clara sobre oscuro, cursor naranja). */}
-      <div aria-hidden className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-[clamp(20px,2.3vw,28px)]">
+      <div aria-hidden className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 px-4 text-[clamp(20px,2.3vw,28px)]">
         <span className="font-medium text-ink-2">Un solo sistema para</span>
         <span className="inline-flex items-center rounded-2xl bg-night px-4 py-1.5 font-display font-bold leading-tight text-snow ring-1 ring-white/10">
           <span key={current.phrase} className="whitespace-pre">
@@ -86,10 +86,10 @@ export function HeroPillars() {
       <div
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}
-        className="mt-9 grid gap-3 rounded-[32px] border border-line bg-white/85 p-2 text-left lg:grid-cols-[minmax(0,.9fr)_minmax(0,1.1fr)]"
+        className="mt-9 grid gap-0 border-y border-line bg-white/85 text-left sm:gap-3 sm:rounded-[32px] sm:border sm:p-2 lg:grid-cols-[minmax(0,.9fr)_minmax(0,1.1fr)]"
       >
         {/* Lista de pilares */}
-        <ul className="grid grid-cols-2 gap-1 sm:grid-cols-3 lg:grid-cols-1">
+        <ul className="grid grid-cols-2 gap-1 p-2 sm:grid-cols-3 sm:p-0 lg:grid-cols-1">
           {PILLARS.map((p, i) => {
             const on = i === active;
             return (

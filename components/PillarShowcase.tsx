@@ -29,7 +29,7 @@ export const SCENE_IMAGES = [
 
 export function PillarShowcase({ active, title, desc }: { active: PillarKey; title: string; desc: string }) {
   return (
-    <div className="relative isolate flex min-h-[540px] flex-col overflow-hidden rounded-[26px] bg-night p-6 text-snow [contain:layout_paint] sm:p-7 lg:h-[540px]">
+    <div className="relative isolate flex min-h-[540px] flex-col overflow-hidden bg-night px-4 py-6 text-snow [contain:layout_paint] sm:rounded-[26px] sm:p-7 lg:h-[540px]">
       <div
         aria-hidden
         className={`absolute inset-0 -z-10 ${

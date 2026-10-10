@@ -14,7 +14,7 @@ export default function Home() {
       <Nav />
       <main id="top">
         <Hero />
-        <div className="grid gap-3 p-3">
+        <div className="grid sm:gap-3 sm:p-3">
           <PosSection />
           <Payments />
           <Segments />
@@ -24,7 +24,7 @@ export default function Home() {
         </div>
         <Experience />
         <Process />
-        <div className="px-3 pb-3">
+        <div className="sm:px-3 sm:pb-3">
           <Contact />
         </div>
       </main>
