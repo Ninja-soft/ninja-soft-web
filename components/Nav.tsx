@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ChatCircleDots } from "@phosphor-icons/react";
 import { openChat } from "@/lib/chat-events";
 import { NAV_LINKS, POS_APP_URL, PRODUCTS, SERVICES } from "@/lib/content";
 
@@ -104,12 +103,13 @@ export function Nav() {
             type="button"
             onClick={openChat}
             aria-label="Abrir el chat"
-            title="Chateá con nosotros"
-            className="nav-chat-btn group relative grid h-10 w-10 place-items-center rounded-full"
+            className="flex min-h-[40px] items-center gap-2.5 rounded-full py-1 pl-1 pr-4 text-[14px] font-semibold text-ink transition hover:bg-ink/[.06]"
           >
-            <ChatCircleDots size={21} weight="fill" className="nav-chat-icon" />
-            <span aria-hidden className="nav-chat-tip">Chateá con nosotros</span>
-            <span aria-hidden className="absolute right-0.5 top-0.5 h-2.5 w-2.5 rounded-full bg-[#30d158] ring-2 ring-paper" />
+            <span className="relative grid h-8 w-8 place-items-center rounded-full bg-[#0b0720]">
+              <img src="/images/brand/ninja-isotipo-flame.webp" alt="" width={240} height={311} className="h-5 w-auto" />
+              <i aria-hidden className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-[#30d158] ring-2 ring-paper" />
+            </span>
+            Hablemos
           </button>
         </div>
 
