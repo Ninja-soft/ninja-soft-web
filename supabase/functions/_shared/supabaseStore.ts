@@ -91,6 +91,9 @@ export function supabaseStore(db: SupabaseClient): Store {
     async setSetting(key, value) {
       must(await db.from("app_settings").upsert({ key, value, updated_at: new Date().toISOString() }));
     },
+    async upsertContact(c) {
+      must(await db.rpc("upsert_contact", { p: c }));
+    },
     async openSessionByContact(email) {
       return must(
         await db

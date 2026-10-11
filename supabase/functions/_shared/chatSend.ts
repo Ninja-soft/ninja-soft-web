@@ -30,6 +30,7 @@ export async function handleChatSend(
     const lead = validateLead(o);
     if (!lead.ok) return { status: 400, json: { error: lead.error } };
     session = await store.createSession(input.userId, lead.value.name, lead.value.contact);
+    await store.upsertContact({ email: lead.value.contact, name: lead.value.name, source: "chat" });
   }
 
   const sKey = `chat:s:${session.id}`;

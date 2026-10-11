@@ -16,6 +16,7 @@ export const TEMPLATE_VARS = [
   "logo_soft_claro",
   "logo_pos_claro",
   "logo_food_claro",
+  "link_baja",
 ] as const;
 export type TemplateVar = (typeof TEMPLATE_VARS)[number];
 export type TemplateData = Partial<Record<TemplateVar, string>>;

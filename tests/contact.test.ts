@@ -107,5 +107,10 @@ describe("handleContact", () => {
     expect(store.contacts).toHaveLength(1);
     expect(m.sent.map((x) => x.to)).toEqual(["lucas@x.com"]);
   });
+
+  test("el formulario crea/actualiza el contacto (origen formulario)", async () => {
+    await handleContact({ store, mailer: fakeMailer().factory, telegram: fakeTelegram().factory }, { ip: "h", body: { ...body, company: "Don Pepe" } });
+    expect(store.upserts).toEqual([{ email: "ana@mail.com", name: "Ana", phone: "", company: "Don Pepe", business: "Kiosco", source: "form" }]);
+  });
 });
 

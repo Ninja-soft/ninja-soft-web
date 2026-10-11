@@ -46,6 +46,16 @@ export type ContactInput = {
 };
 export type ContactRecord = ContactInput & { ip_hash: string };
 
+// Base de contactos para remarketing (chat + formulario). Nunca reactiva una baja.
+export type ContactUpsert = {
+  email: string;
+  name: string;
+  phone?: string;
+  company?: string;
+  business?: string;
+  source: "chat" | "form";
+};
+
 export type HandlerResult = { status: number; json: Record<string, unknown> };
 
 // Acceso a datos. En producción lo implementa supabaseStore.ts; en tests, FakeStore.
@@ -63,6 +73,7 @@ export interface Store {
   template(key: TemplateKey): Promise<Template | null>;
   saveContact(c: ContactRecord): Promise<{ id: string }>;
   setSetting(key: string, value: string): Promise<void>;
+  upsertContact(c: ContactUpsert): Promise<void>;
   // retomar el chat en otro navegador (PIN por email)
   openSessionByContact(email: string): Promise<Session | null>;
   savePin(sessionId: string, hash: string, expiresAt: string): Promise<void>;

@@ -32,6 +32,8 @@ export async function handleContact(
   }
   await store.hit(bucket);
   await store.saveContact({ ...v.value, ip_hash: input.ip });
+  const c0 = v.value;
+  await store.upsertContact({ email: c0.email, name: c0.name, phone: c0.phone, company: c0.company, business: c0.business, source: "form" });
 
   const s = await store.settings();
   const c = v.value;

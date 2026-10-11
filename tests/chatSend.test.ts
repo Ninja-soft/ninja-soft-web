@@ -121,5 +121,10 @@ describe("handleChatSend", () => {
     expect(tg.calls.topics).toHaveLength(0);
     expect(store.sessions[0].telegram_thread_id).toBe(101);
   });
+
+  test("el primer mensaje crea el contacto para remarketing (origen chat)", async () => {
+    await handleChatSend({ store, telegram: fakeTelegram().factory, media: fakeMedia().media }, { userId: "u1", ip: "ip", body: { ...lead, message: "hola" } });
+    expect(store.upserts).toEqual([{ email: "ana@mail.com", name: "Ana", source: "chat" }]);
+  });
 });
 
