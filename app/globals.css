@@ -895,3 +895,17 @@ select.contact-input:has(option[value=""]:checked) { color: rgba(184, 174, 220, 
   -webkit-box-shadow: 0 0 0 1000px #f2f2f7 inset;
   transition: background-color 9999s ease-out 0s;
 }
+
+/* redes de pago en celular: tira infinita que se desliza; al tocarla se puede arrastrar */
+.net-marquee {
+  overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  padding-bottom: 6px;
+}
+.net-marquee::-webkit-scrollbar { display: none; }
+@media (prefers-reduced-motion: no-preference) {
+  .net-track { animation: net-scroll 28s linear infinite; }
+  .net-marquee:active .net-track, .net-marquee:focus-within .net-track { animation-play-state: paused; }
+  @keyframes net-scroll { to { transform: translateX(-50%); } }
+}

@@ -65,16 +65,26 @@ export function Payments() {
 
       {/* tarjetas y redes como íconos de app */}
       <p className="relative mt-14 text-[13px] font-semibold uppercase tracking-[.14em] text-[#86868b]">Tarjetas, billeteras y redes</p>
-      <ul className="relative mx-auto mt-6 flex max-w-[860px] flex-wrap justify-center gap-x-4 gap-y-5 sm:gap-x-5">
+      {/* escritorio: grilla */}
+      <ul className="relative mx-auto mt-6 hidden max-w-[860px] flex-wrap justify-center gap-x-5 gap-y-5 sm:flex">
         {NETWORKS.map((n, i) => (
           <li key={n.alt} className="ios-app flex flex-col items-center gap-2" style={{ "--d": `${500 + i * 45}ms` } as React.CSSProperties}>
-            <span className="grid aspect-square w-[52px] place-items-center rounded-[22.5%] sm:w-[58px] bg-white shadow-[0_1px_2px_rgba(0,0,0,.06),0_6px_16px_rgba(0,0,0,.06)] ring-1 ring-black/[.04]">
-              <img src={n.src} alt="" className="h-full w-full" />
-            </span>
+            <NetworkIcon src={n.src} />
             <span className="max-w-[72px] truncate text-[11px] text-[#3a3a3c]">{n.alt}</span>
           </li>
         ))}
       </ul>
+      {/* celular: tira que se desliza sola (y se puede arrastrar) */}
+      <div className="net-marquee relative mt-6 sm:hidden" aria-label="Tarjetas, billeteras y redes">
+        <ul className="net-track flex w-max gap-4 px-2">
+          {[...NETWORKS, ...NETWORKS].map((n, i) => (
+            <li key={`${n.alt}-${i}`} aria-hidden={i >= NETWORKS.length} className="flex w-[64px] flex-col items-center gap-2">
+              <NetworkIcon src={n.src} />
+              <span className="max-w-[72px] truncate text-[11px] text-[#3a3a3c]">{n.alt}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
 
       {/* formas de cobro */}
       <p className="relative mt-12 text-[13px] font-semibold uppercase tracking-[.14em] text-[#86868b]">Cobrá como quieras</p>
@@ -93,5 +103,13 @@ export function Payments() {
         Además: efectivo con cálculo de vuelto, transferencia, QR interoperable y DEBIN.
       </p>
     </section>
+  );
+}
+
+function NetworkIcon({ src }: { src: string }) {
+  return (
+    <span className="grid aspect-square w-[52px] place-items-center overflow-hidden rounded-[22.5%] bg-white shadow-[0_1px_2px_rgba(0,0,0,.06),0_6px_16px_rgba(0,0,0,.06)] ring-1 ring-black/[.04] sm:w-[58px]">
+      <img src={src} alt="" className="h-full w-full" />
+    </span>
   );
 }
