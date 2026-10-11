@@ -59,7 +59,7 @@ export function PosShowcase() {
       // listo cuando están los primeros cuadros (el resto sigue bajando en segundo plano)
       Promise.all(imgs.slice(0, 12).map((im) => im.decode().catch(() => {}))).then(() => setReady(true));
     };
-    const near = new IntersectionObserver(([e]) => e.isIntersecting && loadFrames(), { rootMargin: "1200px 0px" });
+    const near = new IntersectionObserver(([e]) => e.isIntersecting && loadFrames(), { rootMargin: "600px 0px" });
     near.observe(section);
     let lastFrame = -1;
     const draw = (i: number) => {
