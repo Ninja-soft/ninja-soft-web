@@ -91,16 +91,18 @@ export function FoodFlow() {
   return (
     <div ref={ref} className="food-canvas relative mx-auto mt-10 max-w-[1100px] overflow-hidden rounded-[24px] text-left">
       {/* barra superior estilo editor de workflows */}
-      <div className="flex items-center gap-3 border-b border-white/10 px-5 py-3 text-[13px] text-white/70">
-        <span className="flex gap-1.5">
+      <div className="flex items-center gap-3 border-b border-white/10 px-4 py-3 text-[13px] text-white/70 sm:px-5">
+        <span className="hidden gap-1.5 sm:flex">
           <i className="h-3 w-3 rounded-full bg-white/15" />
           <i className="h-3 w-3 rounded-full bg-white/15" />
           <i className="h-3 w-3 rounded-full bg-white/15" />
         </span>
-        <b className="font-semibold text-white">Traza · Empanadas de carne · Lote L-2610-014</b>
-        <span className="ml-auto flex items-center gap-2">
-          <i className={`h-2 w-2 rounded-full ${step >= 0 && step < FLOW.length ? "animate-pulse bg-[#22c55e]" : "bg-white/30"}`} />
-          {step >= FLOW.length ? "Trazado completo" : step >= 0 ? "Ejecutando…" : "Listo"}
+        <b className="min-w-0 flex-1 truncate font-semibold text-white">
+          <span className="hidden sm:inline">Traza · Empanadas de carne · </span>Lote L-2610-014
+        </b>
+        <span className="flex shrink-0 items-center gap-2 whitespace-nowrap">
+          <i className={`h-2 w-2 rounded-full ${step >= 0 && step < FLOW.length ? "animate-pulse bg-[#22c55e]" : step >= FLOW.length ? "bg-[#22c55e]" : "bg-white/30"}`} />
+          {step >= FLOW.length ? "Completo" : step >= 0 ? "Ejecutando…" : "Listo"}
         </span>
       </div>
 

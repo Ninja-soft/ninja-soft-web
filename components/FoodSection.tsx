@@ -34,7 +34,7 @@ const FEATURES: { Icon: Icon; title: string; desc: string }[] = [
 
 export function FoodSection() {
   return (
-    <section id="food" className="tile rise bg-paper-2">
+    <section id="food" className="tile rise food-bg !pb-12 sm:!pb-16">
       <img loading="lazy" decoding="async" src="/images/brand/ninjafood-logo-light.webp" alt="Ninja Food" width={640} height={142} className="mx-auto mb-5 h-11 w-auto max-w-full" />
       <h2 className="tile-title">Cada lote, trazado de punta a punta.</h2>
       <p className="tile-sub text-ink-2">

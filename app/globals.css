@@ -1006,3 +1006,13 @@ textarea.ix-input { height: auto; padding: 10px 12px; }
   .food-edge-flow.is-on { animation: food-flow 1s linear infinite; }
   @keyframes food-flow { to { stroke-dashoffset: -32; } }
 }
+
+/* Ninja Food: fondo verde de la marca */
+.food-bg {
+  background-color: #eef8ea;
+  background-image:
+    radial-gradient(900px 420px at 15% 0%, rgba(132, 204, 22, 0.22), transparent 60%),
+    radial-gradient(800px 480px at 90% 30%, rgba(22, 163, 74, 0.16), transparent 60%),
+    radial-gradient(700px 400px at 50% 100%, rgba(163, 230, 53, 0.18), transparent 60%),
+    linear-gradient(180deg, #f2faef 0%, #e4f4dd 100%);
+}
