@@ -131,7 +131,7 @@ export function ScreenGastro() {
               ["te-helado", "3 × Té helado", "$ 8.200"],
             ].map(([img, n, p], k) => (
               <div key={n} className="rb-in flex items-center gap-2 rounded-[10px] bg-white/[.05] p-1.5" style={D(1300 + k * 120)}>
-                <img src={P(img)} alt="" className="h-8 w-8 rounded-[8px] object-cover" />
+                <img loading="lazy" decoding="async" src={P(img)} alt="" className="h-8 w-8 rounded-[8px] object-cover" />
                 <span className="min-w-0">
                   <span className="block truncate text-[10.5px]">{n}</span>
                   <b className="text-[11px] tabular-nums">{p}</b>
@@ -149,10 +149,10 @@ export function ScreenGastro() {
           <div className="mt-3 grid gap-2">
             {ORDERS.map((o, i) => (
               <div key={o.id} className="rb-slide flex items-center gap-3 rounded-[12px] bg-white/[.05] p-2" style={D(700 + i * 700)}>
-                <img src={P(o.img)} alt="" className="h-11 w-11 rounded-[10px] object-cover" />
+                <img loading="lazy" decoding="async" src={P(o.img)} alt="" className="h-11 w-11 rounded-[10px] object-cover" />
                 <div className="min-w-0 flex-1">
                   <p className="flex items-center gap-1.5 text-[11.5px] font-semibold">
-                    <img src={`/images/integrations/${o.from}.webp`} alt="" className="h-3.5 w-auto" />
+                    <img loading="lazy" decoding="async" src={`/images/integrations/${o.from}.webp`} alt="" className="h-3.5 w-auto" />
                     {o.id}
                   </p>
                   <p className={`${muted} truncate text-[10.5px]`}>{o.items}</p>
@@ -194,7 +194,7 @@ export function ScreenGastro() {
               <p className="mt-1 text-[24px] font-bold leading-none tabular-nums">12 min</p>
               <p className={`${muted} text-[10.5px]`}>Av. Pellegrini 1250 · 2,4 km</p>
               <div className="mt-auto flex items-center gap-2">
-                <img src={P("burger")} alt="" className="h-7 w-7 rounded-full object-cover" />
+                <img loading="lazy" decoding="async" src={P("burger")} alt="" className="h-7 w-7 rounded-full object-cover" />
                 <span className="text-[11px]">Nico · repartidor</span>
               </div>
               <div className="mt-2 grid grid-cols-4 gap-1">
@@ -239,7 +239,7 @@ export function ScreenRetail() {
             const pick = R_CART.findIndex((c) => c[3] === n);
             return (
               <div key={n} className={`rb-in relative overflow-hidden rounded-[12px] bg-white/[.05] ${pick >= 0 ? "rb-tap" : ""}`} style={{ ...D(60 * i), ["--tap" as string]: `${700 + pick * 650}ms` }}>
-                <img src={P(img)} alt="" className="aspect-[16/10] w-full object-cover" />
+                <img loading="lazy" decoding="async" src={P(img)} alt="" className="aspect-[16/10] w-full object-cover" />
                 <div className="px-2.5 py-1.5">
                   <p className="truncate text-[11px] text-white/80">{n}</p>
                   <p className="text-[12.5px] font-semibold tabular-nums">{p}</p>
@@ -259,7 +259,7 @@ export function ScreenRetail() {
         <div className="mt-3 grid gap-2">
           {R_CART.map(([img, n, p], i) => (
             <div key={n} className="rb-slide flex items-center gap-2.5 rounded-[12px] bg-white/[.05] p-2" style={D(800 + i * 650)}>
-              <img src={P(img)} alt="" className="h-10 w-10 rounded-[9px] object-cover" />
+              <img loading="lazy" decoding="async" src={P(img)} alt="" className="h-10 w-10 rounded-[9px] object-cover" />
               <span className="min-w-0 flex-1 truncate text-[11.5px]">{n}</span>
               <b className="text-[12px] tabular-nums">{p}</b>
             </div>
@@ -287,13 +287,13 @@ export function ScreenRetail() {
           <div className="mt-2 grid gap-1.5">
             <span className="grid h-9 place-items-center rounded-[10px] bg-[linear-gradient(180deg,#ff6a2c_0%,#ec3f17_100%)] text-[13px] font-semibold">Cobrar</span>
             <span className="rb-press flex h-9 items-center justify-center gap-2 rounded-[12px] border border-[#009ee3]/40 bg-[#009ee3]/10 text-[11.5px] font-semibold text-[#5cc7f5]" style={D(2500)}>
-              <img src="/images/payments/processors/mercadopago-icon.webp" alt="" className="h-5 w-5" /> Cobrar con QR · Mercado Pago
+              <img loading="lazy" decoding="async" src="/images/payments/processors/mercadopago-icon.webp" alt="" className="h-5 w-5" /> Cobrar con QR · Mercado Pago
             </span>
             <span className="flex h-9 items-center justify-center gap-2 rounded-[12px] border border-[#00d1c1]/40 bg-[#00d1c1]/10 text-[11.5px] font-semibold text-[#2fd8cb]">
-              <img src="/images/payments/processors/modo.webp" alt="" className="h-3 w-auto" /> Cobrar con QR · MODO
+              <img loading="lazy" decoding="async" src="/images/payments/processors/modo.webp" alt="" className="h-3 w-auto" /> Cobrar con QR · MODO
             </span>
             <span className="flex h-9 items-center justify-center gap-2 rounded-[12px] bg-[#2b4a8f] text-[11.5px] font-semibold">
-              <img src="/images/payments/processors/payway-icon-white.webp" alt="" className="h-4 w-auto" /> Cobrar con link · Payway
+              <img loading="lazy" decoding="async" src="/images/payments/processors/payway-icon-white.webp" alt="" className="h-4 w-auto" /> Cobrar con link · Payway
             </span>
           </div>
         </div>
@@ -305,11 +305,11 @@ export function ScreenRetail() {
           {/* QR esperando */}
           <div className="sc-window absolute inset-0 flex flex-col items-center rounded-[18px] bg-[#15103a] p-5 text-center ring-1 ring-white/10" style={{ ...D(2900), animationDuration: "2600ms" }}>
             <p className="text-[13px] font-semibold">Cobrar con QR · Mercado Pago</p>
-            <img src="/images/payments/processors/mercadopago-icon.webp" alt="" className="mt-3 h-9 w-9" />
+            <img loading="lazy" decoding="async" src="/images/payments/processors/mercadopago-icon.webp" alt="" className="mt-3 h-9 w-9" />
             <p className={`${muted} mt-2 text-[11px]`}>Total a cobrar</p>
             <p className={`${total} text-[26px]`}>$ 267.800</p>
             <div className="mt-2 rounded-[12px] bg-white p-2">
-              <img src="/images/brand/qr-demo.webp" alt="" className="h-36 w-36" />
+              <img loading="lazy" decoding="async" src="/images/brand/qr-demo.webp" alt="" className="h-36 w-36" />
             </div>
             <p className={`${muted} mt-3 flex items-center gap-1.5 text-[11px]`}>
               <span className="sc-spinner inline-block h-3 w-3 rounded-full border-2 border-white/15 border-t-[#FF7A2E]" /> Esperando pago…
@@ -356,7 +356,7 @@ export function ScreenRetail() {
               </p>
               <p className="text-black/55">Mercado Pago QR · 6 cuotas</p>
               <div className="mt-2 flex items-center gap-2 rounded-[10px] bg-black/[.04] p-2">
-                <img src="/images/brand/qr-demo.webp" alt="" className="h-12 w-12" />
+                <img loading="lazy" decoding="async" src="/images/brand/qr-demo.webp" alt="" className="h-12 w-12" />
                 <p className="text-[9.5px] leading-snug text-black/60">
                   CAE 74123456789012 · Vto. 23/10/2026
                   <br />
@@ -393,7 +393,7 @@ export function ScreenTextil() {
     <div className="grid h-full grid-cols-[1.4fr_1fr] gap-4">
       <div className={`${glass} flex flex-col p-4`}>
         <div className="flex gap-3">
-          <img src={P("jean")} alt="" className="rb-in h-24 w-24 rounded-[12px] object-cover" />
+          <img loading="lazy" decoding="async" src={P("jean")} alt="" className="rb-in h-24 w-24 rounded-[12px] object-cover" />
           <div className="min-w-0 flex-1">
             <Head title="Jean recto" sub="SKU JR-2026 · Temporada otoño" />
             <p className={`${total} mt-1 text-[22px]`}>$ 54.900</p>
@@ -443,7 +443,7 @@ export function ScreenTextil() {
         </div>
         <div className="mt-auto flex gap-2 pt-3">
           {["vestido", "sweater", "tshirt", "jacket"].map((n, i) => (
-            <img key={n} src={P(n)} alt="" className="rb-in h-12 w-12 rounded-[10px] object-cover opacity-80" style={D(1200 + i * 80)} />
+            <img loading="lazy" decoding="async" key={n} src={P(n)} alt="" className="rb-in h-12 w-12 rounded-[10px] object-cover opacity-80" style={D(1200 + i * 80)} />
           ))}
           <span className={`${muted} self-center text-[10.5px]`}>+ 240 productos con variantes</span>
         </div>
@@ -541,7 +541,7 @@ export function ScreenKiosco() {
             ["bombones", "Bombones x12"],
           ].map(([img, n], i) => (
             <div key={i} className="rb-in overflow-hidden rounded-[10px] bg-white/[.05]" style={D(40 * i)}>
-              <img src={P(img)} alt="" className="aspect-square w-full object-cover" />
+              <img loading="lazy" decoding="async" src={P(img)} alt="" className="aspect-square w-full object-cover" />
               <p className="truncate px-1.5 py-1 text-[10px]">{n}</p>
             </div>
           ))}
@@ -559,7 +559,7 @@ export function ScreenKiosco() {
         <div className="mt-3 grid gap-2">
           {K_ITEMS.map(([img, n, p], i) => (
             <div key={n} className="rb-slide flex items-center gap-2.5 rounded-[12px] bg-white/[.05] p-2" style={D(600 + i * 700)}>
-              <img src={P(img)} alt="" className="h-9 w-9 rounded-[8px] object-cover" />
+              <img loading="lazy" decoding="async" src={P(img)} alt="" className="h-9 w-9 rounded-[8px] object-cover" />
               <span className="min-w-0 flex-1 truncate text-[11.5px]">{n}</span>
               <b className="text-[12px] tabular-nums">{p}</b>
             </div>
@@ -663,7 +663,7 @@ export function ScreenPro() {
         {/* WhatsApp */}
         <div className={`${glass} flex flex-1 flex-col p-4`}>
           <p className="flex items-center gap-1.5 text-[12px] font-semibold">
-            <img src="/images/integrations/whatsapp.webp" alt="WhatsApp" className="h-[18px] w-[18px]" /> Recordatorios
+            <img loading="lazy" decoding="async" src="/images/integrations/whatsapp.webp" alt="WhatsApp" className="h-[18px] w-[18px]" /> Recordatorios
           </p>
           <div className="mt-3 grid gap-2">
             <p className="rb-slide max-w-[90%] rounded-[12px] rounded-tl-[4px] bg-white/[.07] px-3 py-2 text-[11px]" style={D(2200)}>

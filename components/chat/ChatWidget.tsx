@@ -8,6 +8,7 @@ import { OPEN_CHAT } from "@/lib/chat-events";
 import { track } from "@/lib/track";
 import { visitorClient } from "@/lib/supabase/client";
 import { functionError } from "@/lib/supabase/functionError";
+import { BlinkAvatar } from "@/components/BlinkAvatar";
 
 // Chat web: los mensajes van a un tema de Telegram y las respuestas llegan por Realtime.
 type Msg = { id: string; sender: "visitor" | "agent" | "system"; body: string; created_at: string; media_path?: string | null };
@@ -256,12 +257,12 @@ export function ChatWidget() {
         <section role="dialog" aria-label="Chat con Ninja Soft" className="chat-panel chat-panel-in">
           <header className="flex items-center gap-3 border-b border-black/[.06] px-4 py-3">
             <span className="relative h-11 w-11 shrink-0 rounded-full bg-[#1d1931] p-[2px] shadow-[0_0_0_1px_rgba(17,12,34,.12)] ring-2 ring-inset ring-white">
-              <img src="/images/brand/ninja-isotipo-blink.webp" alt="" width={96} height={96} className="h-full w-full rounded-full" />
+              <BlinkAvatar className="h-full w-full rounded-full" />
               <i aria-hidden className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-[#30d158] ring-2 ring-white" />
             </span>
             <div className="min-w-0 flex-1">
               <p className="text-[15px] font-semibold leading-tight">Ninja Soft</p>
-              <p className="text-[12px] text-[#86868b]">En línea · respondemos en minutos</p>
+              <p className="text-[12px] text-[#6e6e73]">En línea · respondemos en minutos</p>
             </div>
             {session && (
               <button
@@ -304,7 +305,7 @@ export function ChatWidget() {
           <div ref={listRef} className="flex flex-1 flex-col-reverse overflow-y-auto overscroll-contain px-4 py-4">
             <div className="space-y-2">
             <Bubble sender="agent" body="¡Hola! 👋 Somos el equipo de Ninja Soft. Contanos qué necesitás para tu negocio y te respondemos por acá." />
-            <p className="px-1 text-[12px] leading-snug text-[#86868b]">
+            <p className="px-1 text-[12px] leading-snug text-[#6e6e73]">
               Si no te respondemos enseguida, te escribimos a tu email.
             </p>
             {!session && !loading && !resume && (
@@ -485,7 +486,7 @@ export function ChatWidget() {
 }
 
 function Bubble({ sender, body, media }: { sender: Msg["sender"]; body: string; media?: string | null }) {
-  if (sender === "system") return <p className="text-center text-[12.5px] text-[#86868b]">{body}</p>;
+  if (sender === "system") return <p className="text-center text-[12.5px] text-[#6e6e73]">{body}</p>;
   const mine = sender === "visitor";
   if (media) {
     return (

@@ -2,12 +2,12 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { ArrowClockwise, Flask, Megaphone, PaperPlaneTilt, Plus, X } from "@phosphor-icons/react";
+import { ArrowClockwise, FloppyDisk, Flask, Megaphone, PaperPlaneTilt, PencilSimple, Plus, Trash, X } from "@phosphor-icons/react";
 import { functionError } from "@/lib/supabase/functionError";
 import { brandVars, renderTemplate, type TemplateData } from "@/supabase/functions/_shared/template";
 import { Empty, Note, PageHeader, Spinner, SpinnerBlock } from "./ui";
 
-type Campaign = { id: string; subject: string; status: "sending" | "done"; total: number; sent: number; failed: number; created_at: string; finished_at: string | null };
+type Campaign = { id: string; subject: string; html: string; status: "draft" | "sending" | "done"; total: number; sent: number; failed: number; created_at: string; finished_at: string | null };
 
 const BASE_HTML = `<!doctype html>
 <html lang="es"><body style="margin:0;padding:0;background:#f3f2f8">
@@ -36,7 +36,9 @@ export function CampaignsTab({ sb }: { sb: SupabaseClient }) {
   const [editing, setEditing] = useState(false);
   const [subject, setSubject] = useState("Novedades de Ninja Soft para {{nombre}}");
   const [html, setHtml] = useState(BASE_HTML);
-  const [busy, setBusy] = useState<"" | "test" | "send">("");
+  const [busy, setBusy] = useState<"" | "test" | "send" | "save">("");
+  const [draftId, setDraftId] = useState<string | null>(null);
+  const [delId, setDelId] = useState<string | null>(null);
   const [confirm, setConfirm] = useState(false);
   const [progress, setProgress] = useState<{ sent: number; failed: number; total: number } | null>(null);
   const [note, setNote] = useState<{ ok: boolean; text: string } | null>(null);
@@ -52,7 +54,7 @@ export function CampaignsTab({ sb }: { sb: SupabaseClient }) {
 
   const load = useCallback(() => {
     sb.from("campaigns")
-      .select("id,subject,status,total,sent,failed,created_at,finished_at")
+      .select("id,subject,html,status,total,sent,failed,created_at,finished_at")
       .order("created_at", { ascending: false })
       .then(({ data }) => setList((data ?? []) as Campaign[]));
     sb.from("contacts")
@@ -72,6 +74,42 @@ export function CampaignsTab({ sb }: { sb: SupabaseClient }) {
   }, [sb, load]);
 
   const preview = useMemo(() => renderTemplate(html, { ...brand, nombre: "Juan", email: "juan@ejemplo.com", link_baja: "#" }), [html, brand]);
+
+  function openEditor(c?: Campaign) {
+    setDraftId(c?.id ?? null);
+    setSubject(c?.subject ?? "Novedades de Ninja Soft para {{nombre}}");
+    setHtml(c?.html ?? BASE_HTML);
+    setConfirm(false);
+    setNote(null);
+    setEditing(true);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  async function saveDraft() {
+    setBusy("save");
+    setNote(null);
+    const now = new Date().toISOString();
+    const { data, error } = draftId
+      ? await sb.from("campaigns").update({ subject, html, updated_at: now }).eq("id", draftId).select("id").single()
+      : await sb.from("campaigns").insert({ subject, html, status: "draft" }).select("id").single();
+    if (error) setNote({ ok: false, text: `No se pudo guardar: ${error.message}` });
+    else {
+      setDraftId(data.id);
+      setNote({ ok: true, text: "Borrador guardado." });
+      load();
+    }
+    setBusy("");
+  }
+
+  async function removeDraft(id: string) {
+    setDelId(null);
+    const { error } = await sb.from("campaigns").delete().eq("id", id).eq("status", "draft");
+    if (error) setNote({ ok: false, text: error.message });
+    else {
+      if (draftId === id) setEditing(false);
+      load();
+    }
+  }
 
   async function sendTest() {
     setBusy("test");
@@ -107,7 +145,7 @@ export function CampaignsTab({ sb }: { sb: SupabaseClient }) {
     setNote(null);
     setBusy("send");
     try {
-      const d = await call("start", { subject, html });
+      const d = await call("start", { subject, html, draft_id: draftId });
       setProgress({ total: Number(d.total), sent: 0, failed: 0 });
       await runBatches(String(d.id));
       setEditing(false);
@@ -130,7 +168,7 @@ export function CampaignsTab({ sb }: { sb: SupabaseClient }) {
         desc="Emails a toda tu base de contactos con la marca de Ninja Soft. Cada email lleva su link de baja."
         actions={
           !editing && (
-            <button type="button" onClick={() => setEditing(true)} className="ix-btn ix-btn-primary">
+            <button type="button" onClick={() => openEditor()} className="ix-btn ix-btn-primary">
               <Plus size={16} weight="bold" /> Nueva campaña
             </button>
           )
@@ -160,7 +198,7 @@ export function CampaignsTab({ sb }: { sb: SupabaseClient }) {
         {editing && (
           <section className="ix-card p-5">
             <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-[17px] font-bold">Nueva campaña</h2>
+              <h2 className="text-[17px] font-bold">{draftId ? "Editar borrador" : "Nueva campaña"}</h2>
               <button type="button" onClick={() => setEditing(false)} aria-label="Cerrar" className="grid h-9 w-9 place-items-center rounded-lg hover:bg-white/[.06]">
                 <X size={18} />
               </button>
@@ -198,6 +236,9 @@ export function CampaignsTab({ sb }: { sb: SupabaseClient }) {
                   </div>
                 ) : (
                   <div className="flex flex-wrap gap-2">
+                    <button type="button" onClick={saveDraft} disabled={!!busy} className="ix-btn">
+                      {busy === "save" ? <Spinner size={16} /> : <FloppyDisk size={16} />} Guardar borrador
+                    </button>
                     <button type="button" onClick={sendTest} disabled={!!busy} className="ix-btn">
                       {busy === "test" ? <Spinner size={16} /> : <Flask size={16} />} Enviarme una prueba
                     </button>
@@ -239,11 +280,32 @@ export function CampaignsTab({ sb }: { sb: SupabaseClient }) {
                       <td className="max-w-[320px] truncate font-medium">{c.subject}</td>
                       <td className="ix-muted text-[13px]">{new Date(c.created_at).toLocaleString("es-AR", { dateStyle: "short", timeStyle: "short" })}</td>
                       <td className="text-right">
-                        {c.sent} <span className="ix-muted">/ {c.total}</span>
+                        {c.status === "draft" ? <span className="ix-muted">—</span> : <>{c.sent} <span className="ix-muted">/ {c.total}</span></>}
                       </td>
                       <td className="text-right">{c.failed ? <span className="text-[#fca5a5]">{c.failed}</span> : <span className="ix-muted">0</span>}</td>
                       <td>
-                        {c.status === "done" ? (
+                        {c.status === "draft" ? (
+                          delId === c.id ? (
+                            <span className="flex items-center gap-1.5">
+                              <button type="button" onClick={() => setDelId(null)} className="ix-pill bg-white/[.06] text-[#cfc7ef]">
+                                Cancelar
+                              </button>
+                              <button type="button" onClick={() => removeDraft(c.id)} className="ix-pill bg-red-400/15 text-[#fca5a5]">
+                                Borrar
+                              </button>
+                            </span>
+                          ) : (
+                            <span className="flex items-center gap-1.5">
+                              <span className="ix-pill bg-white/[.06] text-[#cfc7ef]">Borrador</span>
+                              <button type="button" onClick={() => openEditor(c)} aria-label="Editar borrador" className="grid h-7 w-7 place-items-center rounded-md hover:bg-white/[.08]">
+                                <PencilSimple size={15} />
+                              </button>
+                              <button type="button" onClick={() => setDelId(c.id)} aria-label="Borrar borrador" className="grid h-7 w-7 place-items-center rounded-md text-[#fca5a5] hover:bg-red-400/10">
+                                <Trash size={15} />
+                              </button>
+                            </span>
+                          )
+                        ) : c.status === "done" ? (
                           <span className="ix-pill bg-emerald-400/10 text-[#6ee7b7]">Enviada</span>
                         ) : (
                           <button type="button" onClick={() => resume(c)} disabled={!!busy} className="ix-pill bg-amber-300/10 text-[#fcd34d] hover:bg-amber-300/20">

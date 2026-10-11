@@ -98,7 +98,7 @@ export function PosSection() {
   return (
     <section ref={sectionRef} id="rubros" className="rubros relative overflow-hidden bg-[#0b0720] px-4 pb-16 pt-16 text-center text-snow sm:rounded-tile sm:pb-20 sm:pt-20">
       <div aria-hidden className="rubros-bg" />
-      <img src="/images/brand/ninjapos-logo-dark.webp" alt="NinjaPOS" width={640} height={154} className="relative mx-auto h-9 w-auto sm:h-10" />
+      <img loading="lazy" decoding="async" src="/images/brand/ninjapos-logo-dark.webp" alt="NinjaPOS" width={640} height={154} className="relative mx-auto h-9 w-auto sm:h-10" />
       <h2 className="relative mt-4 text-[clamp(34px,5vw,60px)] font-bold leading-[1.04] tracking-[-0.03em]">Hecho para tu rubro.</h2>
 
       {/* selector de rubro */}
@@ -155,7 +155,7 @@ export function PosSection() {
                 setI(k);
                 setTick((t) => t + 1);
               }}
-              className={`relative h-2 overflow-hidden rounded-full transition-[width,background-color] duration-500 ${
+              className={`relative h-2 rounded-full transition-[width,background-color] duration-500 before:absolute before:-inset-x-1.5 before:-inset-y-4 before:content-[''] ${
                 k === i ? "w-12 bg-white/25" : "w-2 bg-white/40 hover:bg-white/70"
               }`}
             >

@@ -44,14 +44,23 @@ export function PosShowcase() {
     if (!section || !stage || !canvas || !ctx) return;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    // precarga de cuadros
-    const imgs: HTMLImageElement[] = [];
-    for (let i = 0; i < FRAMES; i++) {
+    // cuadros: se crean ya, pero se descargan recién cuando la sección se acerca (no frenan la carga inicial)
+    const imgs: HTMLImageElement[] = Array.from({ length: FRAMES }, () => {
       const im = new Image();
       im.decoding = "async";
-      im.src = frameSrc(i);
-      imgs.push(im);
-    }
+      return im;
+    });
+    let loading = false;
+    const loadFrames = () => {
+      if (loading) return;
+      loading = true;
+      imgs.forEach((im, i) => (im.src = frameSrc(i)));
+      imgs[0].onload = () => draw(lastFrame < 0 ? 0 : lastFrame);
+      // listo cuando están los primeros cuadros (el resto sigue bajando en segundo plano)
+      Promise.all(imgs.slice(0, 12).map((im) => im.decode().catch(() => {}))).then(() => setReady(true));
+    };
+    const near = new IntersectionObserver(([e]) => e.isIntersecting && loadFrames(), { rootMargin: "1200px 0px" });
+    near.observe(section);
     let lastFrame = -1;
     const draw = (i: number) => {
       const im = imgs[i];
@@ -110,11 +119,10 @@ export function PosShowcase() {
     io.observe(section);
     window.addEventListener("scroll", kick, { passive: true });
     window.addEventListener("resize", kick);
-    imgs[0].onload = () => draw(lastFrame < 0 ? 0 : lastFrame);
-    // listo cuando están los primeros cuadros (el resto sigue bajando en segundo plano)
-    Promise.all(imgs.slice(0, 12).map((im) => im.decode().catch(() => {}))).then(() => setReady(true));
+
     return () => {
       io.disconnect();
+      near.disconnect();
       window.removeEventListener("scroll", kick);
       window.removeEventListener("resize", kick);
       cancelAnimationFrame(raf);
@@ -133,7 +141,7 @@ export function PosShowcase() {
 
           {/* encabezado */}
           <div className="ks-head absolute inset-x-0 top-[10vh] z-10 px-4 text-center">
-            <img src="/images/brand/ninjapos-logo-light.webp" alt="NinjaPOS" width={640} height={154} className="mx-auto h-7 w-auto" />
+            <img loading="lazy" decoding="async" src="/images/brand/ninjapos-logo-light.webp" alt="NinjaPOS" width={640} height={154} className="mx-auto h-7 w-auto" />
             <h2 className="mt-5 font-display text-[clamp(38px,5.8vw,76px)] font-bold leading-[1] tracking-[-0.035em] text-[#1d1d1f]">
               <span className="sr-only">Vendé, cobrá, publicá y facturá.</span>
               <RotatingVerb />
@@ -179,7 +187,7 @@ export function PosShowcase() {
             <ul className="ios-stack" aria-live="polite">
               {NOTES.map((n, i) => (
                 <li key={n.title} className={`ios-note ${i < shown ? "in" : ""} ${shown - 1 - i >= 3 ? "old" : ""}`} style={{ "--i": shown - 1 - i } as React.CSSProperties}>
-                  <img src={n.icon} alt="" width={360} height={360} className="ios-icon" />
+                  <img loading="lazy" decoding="async" src={n.icon} alt="" width={360} height={360} className="ios-icon" />
                   <span className="min-w-0 flex-1">
                     <span className="flex items-baseline justify-between gap-2">
                       <span className="truncate text-[13px] font-semibold uppercase tracking-[.02em] text-black/50">{n.app}</span>

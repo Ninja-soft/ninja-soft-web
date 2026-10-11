@@ -57,11 +57,12 @@ Deno.serve(async (req) => {
         const { data: list, error } = await db.from("contacts").select("id").is("unsubscribed_at", null);
         if (error) throw new Error(error.message);
         if (!list?.length) return json(400, { error: "No hay contactos suscriptos." });
-        const { data: c, error: cerr } = await db
-          .from("campaigns")
-          .insert({ subject, html, total: list.length, created_by: u.user.id })
-          .select("id,total")
-          .single();
+        // Si viene de un borrador, se convierte en el envío (no se duplica en el historial).
+        const draftId = typeof body.draft_id === "string" ? body.draft_id : "";
+        const q = draftId
+          ? db.from("campaigns").update({ subject, html, status: "sending", total: list.length, created_at: new Date().toISOString() }).eq("id", draftId).eq("status", "draft")
+          : db.from("campaigns").insert({ subject, html, total: list.length, created_by: u.user.id });
+        const { data: c, error: cerr } = await q.select("id,total").single();
         if (cerr) throw new Error(cerr.message);
         const { error: rerr } = await db.from("campaign_recipients").insert(list.map((x) => ({ campaign_id: c.id, contact_id: x.id })));
         if (rerr) throw new Error(rerr.message);

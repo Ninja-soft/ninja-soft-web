@@ -53,18 +53,18 @@ export function Payments() {
         {PROCESSORS.map((p, i) => (
           <div key={p.alt} className="ios-widget" style={{ "--d": `${i * 70}ms` } as React.CSSProperties}>
             <div className="flex h-12 items-center">
-              <img src={p.src} alt={p.alt} className="max-h-full max-w-[78%] object-contain object-left" />
+              <img loading="lazy" decoding="async" src={p.src} alt={p.alt} className="max-h-full max-w-[78%] object-contain object-left" />
             </div>
             <div className="mt-4">
               <p className="text-[15px] font-semibold tracking-[-0.01em] text-[#1d1d1f]">{p.alt}</p>
-              <p className="mt-0.5 text-[13px] text-[#86868b]">{WHAT[p.alt]}</p>
+              <p className="mt-0.5 text-[13px] text-[#6e6e73]">{WHAT[p.alt]}</p>
             </div>
           </div>
         ))}
       </div>
 
       {/* tarjetas y redes como íconos de app */}
-      <p className="relative mt-14 text-[13px] font-semibold uppercase tracking-[.14em] text-[#86868b]">Tarjetas, billeteras y redes</p>
+      <p className="relative mt-14 text-[13px] font-semibold uppercase tracking-[.14em] text-[#6e6e73]">Tarjetas, billeteras y redes</p>
       {/* escritorio: grilla */}
       <ul className="relative mx-auto mt-6 hidden max-w-[860px] flex-wrap justify-center gap-x-5 gap-y-5 sm:flex">
         {NETWORKS.map((n, i) => (
@@ -87,7 +87,7 @@ export function Payments() {
       </div>
 
       {/* formas de cobro */}
-      <p className="relative mt-12 text-[13px] font-semibold uppercase tracking-[.14em] text-[#86868b]">Cobrá como quieras</p>
+      <p className="relative mt-12 text-[13px] font-semibold uppercase tracking-[.14em] text-[#6e6e73]">Cobrá como quieras</p>
       <ul className="relative mx-auto mt-5 grid max-w-[720px] grid-cols-2 gap-3 sm:grid-cols-4">
         {WAYS.map((w, i) => (
           <li key={w.label} className="ios-app flex items-center gap-3 rounded-[18px] bg-white px-4 py-3.5 text-left shadow-[0_1px_2px_rgba(0,0,0,.06),0_6px_16px_rgba(0,0,0,.05)]" style={{ "--d": `${1000 + i * 60}ms` } as React.CSSProperties}>
@@ -109,7 +109,7 @@ export function Payments() {
 function NetworkIcon({ src }: { src: string }) {
   return (
     <span className="grid aspect-square w-[52px] place-items-center overflow-hidden rounded-[22.5%] bg-white shadow-[0_1px_2px_rgba(0,0,0,.06),0_6px_16px_rgba(0,0,0,.06)] ring-1 ring-black/[.04] sm:w-[58px]">
-      <img src={src} alt="" className="h-full w-full" />
+      <img loading="lazy" decoding="async" src={src} alt="" className="h-full w-full" />
     </span>
   );
 }

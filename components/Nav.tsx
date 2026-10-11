@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { openChat } from "@/lib/chat-events";
 import { NAV_LINKS, POS_APP_URL, PRODUCTS, SERVICES } from "@/lib/content";
+import { BlinkAvatar } from "@/components/BlinkAvatar";
 
 // Única capa de vidrio del sitio: la barra flota sobre el contenido.
 // Desktop: desplegable "Productos" (mega menú con los logos). Mobile: hoja a pantalla completa.
@@ -107,7 +108,7 @@ export function Nav() {
           >
             <span className="relative h-11 w-11 rounded-full bg-[#1d1931] p-[2px] shadow-[0_0_0_1px_rgba(17,12,34,.12)] ring-2 ring-inset ring-white">
               {/* isotipo animado: los ojos se abren y se cierran */}
-              <img src="/images/brand/ninja-isotipo-blink.webp" alt="" width={96} height={96} className="h-full w-full rounded-full" />
+              <BlinkAvatar className="h-full w-full rounded-full" />
               <i aria-hidden className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-[#30d158] ring-2 ring-paper" />
             </span>
             Hablemos
