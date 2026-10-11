@@ -1,8 +1,8 @@
 import type { Mailer } from "./resend.ts";
 import type { TelegramApi } from "./telegram.ts";
-import { formatDate, renderTemplate, type TemplateData } from "./template.ts";
+import { brandVars, formatDate, renderTemplate, type TemplateData } from "./template.ts";
 import type { HandlerResult, Store, TemplateKey } from "./types.ts";
-import { isHoneypotFilled, obj, validateContact } from "./validate.ts";
+import { emailList, isHoneypotFilled, obj, validateContact } from "./validate.ts";
 
 export const CONTACT_LIMIT = { perIp: 5, windowMs: 3_600_000 };
 export const FORMS_TOPIC = "📥 Formularios";
@@ -34,6 +34,7 @@ export async function handleContact(
   const s = await store.settings();
   const c = v.value;
   const data: TemplateData = {
+    ...brandVars(s),
     nombre: c.name,
     email: c.email,
     telefono: c.phone,
@@ -62,8 +63,9 @@ export async function handleContact(
         console.error(`contact-submit: ${tplKey}`, err);
       }
     };
-    await send("contact_notify", s.notify_email, c.email);
-    await send("contact_ack", c.email, s.notify_email || undefined);
+    const team = emailList(s.notify_email);
+    for (const to of team) await send("contact_notify", to, c.email);
+    await send("contact_ack", c.email, team[0]);
   }
 
   // Aviso en Telegram, en el tema "Formularios".

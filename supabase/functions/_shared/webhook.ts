@@ -1,8 +1,8 @@
 import type { Mailer } from "./resend.ts";
 import { parseAgentUpdate } from "./telegram.ts";
-import { formatDate, renderTemplate } from "./template.ts";
+import { brandVars, formatDate, renderTemplate } from "./template.ts";
 import type { Store } from "./types.ts";
-import { isEmail } from "./validate.ts";
+import { emailList, isEmail } from "./validate.ts";
 
 export type WebhookDeps = { store: Store; mailer: (apiKey: string) => Mailer };
 
@@ -34,6 +34,7 @@ export async function handleTelegramUpdate(
     const tpl = await store.template("chat_reply");
     if (!key || !tpl || !s.sender) return { handled: true, emailed: false };
     const data = {
+      ...brandVars(s),
       nombre: session.name,
       email: session.contact,
       respuesta: reply.text,
@@ -45,7 +46,7 @@ export async function handleTelegramUpdate(
       to: session.contact,
       subject: renderTemplate(tpl.subject, data, { html: false }),
       html: renderTemplate(tpl.html, data),
-      replyTo: s.notify_email || undefined,
+      replyTo: emailList(s.notify_email)[0],
     });
     await store.markEmailed(saved.id);
     return { handled: true, emailed: true };

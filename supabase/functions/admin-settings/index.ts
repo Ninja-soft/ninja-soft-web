@@ -3,7 +3,7 @@ import { resendMailer } from "../_shared/resend.ts";
 import { adminClient, supabaseStore } from "../_shared/supabaseStore.ts";
 import { telegramApi } from "../_shared/telegram.ts";
 import { EDITABLE_SECRETS, SECRET_NAMES, type SecretName } from "../_shared/types.ts";
-import { isEmail, maskSecret, obj } from "../_shared/validate.ts";
+import { emailList, isEmail, maskSecret, obj } from "../_shared/validate.ts";
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: cors });
@@ -64,7 +64,7 @@ Deno.serve(async (req) => {
       }
       case "test_resend": {
         const key = await store.secret("resend_api_key");
-        const to = String(body.to ?? s.notify_email ?? "").trim();
+        const to = String(body.to ?? emailList(s.notify_email)[0] ?? "").trim();
         if (!key || !s.sender) return json(400, { error: "Falta la API key o el remitente." });
         if (!isEmail(to)) return json(400, { error: "Configurá un email de aviso válido." });
         await resendMailer(key)({ from: s.sender, to, subject: "Prueba de Resend · Ninja Soft", html: "<p>✅ Resend está conectado.</p>" });

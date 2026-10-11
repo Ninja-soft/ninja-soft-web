@@ -14,6 +14,13 @@ export function obj(v: unknown): Record<string, unknown> {
 const line = (v: unknown, max: number) => (typeof v === "string" ? v.trim().replace(/\s+/g, " ").slice(0, max) : "");
 
 export const isEmail = (v: string) => EMAIL.test(v);
+// Lista de emails separados por coma, punto y coma o espacios (descarta los inválidos).
+export const emailList = (v: string | undefined) =>
+  (v ?? "")
+    .split(/[,;\s]+/)
+    .map((x) => x.trim().toLowerCase())
+    .filter(isEmail);
+
 export const isPhone = (v: string) => PHONE.test(v) && v.replace(/\D/g, "").length >= 6;
 
 export function validateLead(raw: unknown): Result<Lead> {

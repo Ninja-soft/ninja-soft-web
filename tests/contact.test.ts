@@ -27,6 +27,17 @@ describe("handleContact", () => {
     expect(tg.calls.sent[0].text).toContain("Quiero una demo <ya>");
   });
 
+  test("varios emails de aviso: cada uno recibe el suyo; la auto-respuesta contesta al primero", async () => {
+    store.cfg.notify_email = "lucas@x.com, socio@x.com";
+    const m = fakeMailer();
+    await handleContact({ store, mailer: m.factory, telegram: fakeTelegram().factory }, { ip: "h", body });
+    expect(m.sent.map((x) => [x.to, x.replyTo])).toEqual([
+      ["lucas@x.com", "ana@mail.com"],
+      ["socio@x.com", "ana@mail.com"],
+      ["ana@mail.com", "lucas@x.com"],
+    ]);
+  });
+
   test("reutiliza el tema de Formularios", async () => {
     store.cfg.forms_thread_id = "77";
     const tg = fakeTelegram();

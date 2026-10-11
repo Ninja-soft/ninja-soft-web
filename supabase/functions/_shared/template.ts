@@ -8,9 +8,17 @@ export const TEMPLATE_VARS = [
   "respuesta",
   "fecha",
   "link_sitio",
+  "logo_soft",
+  "logo_pos",
+  "logo_food",
 ] as const;
 export type TemplateVar = (typeof TEMPLATE_VARS)[number];
 export type TemplateData = Partial<Record<TemplateVar, string>>;
+
+// Logos de cada unidad de negocio (configurables en /internal → Ajustes).
+export function brandVars(s: Record<string, string | undefined>): TemplateData {
+  return { logo_soft: s.logo_soft_url ?? "", logo_pos: s.logo_pos_url ?? "", logo_food: s.logo_food_url ?? "" };
+}
 
 export function escapeHtml(s: string): string {
   return s

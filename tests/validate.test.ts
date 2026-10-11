@@ -1,5 +1,6 @@
 import { describe, expect, test } from "vitest";
 import {
+  emailList,
   isHoneypotFilled,
   maskSecret,
   validateContact,
@@ -59,4 +60,9 @@ test("maskSecret", () => {
   expect(maskSecret("123456789:AAHxyz9876")).toBe("••••9876");
   expect(maskSecret("short")).toBe("••••");
   expect(maskSecret(null)).toBeNull();
+});
+
+test("emailList: varios emails separados por coma, punto y coma o espacio", () => {
+  expect(emailList(" a@x.com, B@Y.com ;c@z.com  nope ")).toEqual(["a@x.com", "b@y.com", "c@z.com"]);
+  expect(emailList("")).toEqual([]);
 });

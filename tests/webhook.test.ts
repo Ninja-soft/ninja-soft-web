@@ -47,6 +47,13 @@ describe("handleTelegramUpdate", () => {
     expect(store.emailed).toEqual(["m1"]);
   });
 
+  test("con varios emails de aviso, el reply-to es el primero", async () => {
+    store.cfg.notify_email = "lucas@x.com, socio@x.com";
+    const m = fakeMailer();
+    await handleTelegramUpdate({ store, mailer: m.factory }, update(55, "Hola"), Date.now() + 10 * 60_000);
+    expect(m.sent[0].replyTo).toBe("lucas@x.com");
+  });
+
   test("visitante ausente que dejó teléfono → nunca se intenta email", async () => {
     store.sessions[0].contact = "+54 9 341 555 1234";
     const m = fakeMailer();
