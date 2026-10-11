@@ -14,8 +14,8 @@ import { BlinkAvatar } from "@/components/BlinkAvatar";
 type Msg = { id: string; sender: "visitor" | "agent" | "system"; body: string; created_at: string; media_path?: string | null };
 type Sess = { id: string; name: string; contact: string };
 
-export function ChatWidget() {
-  const [open, setOpen] = useState(false);
+export function ChatWidget({ initialOpen = false }: { initialOpen?: boolean }) {
+  const [open, setOpen] = useState(initialOpen);
   const [session, setSession] = useState<Sess | null>(null);
   const [messages, setMessages] = useState<Msg[]>([]);
   const [name, setName] = useState("");

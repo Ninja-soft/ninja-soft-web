@@ -103,7 +103,7 @@ export function Nav() {
           <button
             type="button"
             onClick={openChat}
-            aria-label="Abrir el chat"
+            title="Chateá con nosotros"
             className="flex min-h-[44px] items-center gap-2.5 rounded-full py-0.5 pl-0.5 pr-4 text-[14px] font-semibold text-ink transition hover:bg-ink/[.06]"
           >
             <span className="relative h-11 w-11 rounded-full bg-[#1d1931] p-[2px] shadow-[0_0_0_1px_rgba(17,12,34,.12)] ring-2 ring-inset ring-white">

@@ -69,6 +69,9 @@ export const viewport: Viewport = { themeColor: "#FAF9FD", colorScheme: "light" 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="es-AR" className={`${display.variable} ${body.variable} ${mono.variable} ${wide.variable}`}>
+      <head>
+        <link rel="preconnect" href="https://tgaromemhaixgdsdlxiq.supabase.co" crossOrigin="" />
+      </head>
       <body>{children}</body>
     </html>
   );

@@ -1,4 +1,4 @@
-import { SUPABASE_URL } from "@/lib/supabase/client";
+import { SUPABASE_URL } from "@/lib/supabase/config";
 
 // Medición propia sin cookies: los eventos se juntan y se mandan con sendBeacon (no frena la navegación).
 // La identificación del visitante la calcula el servidor (hash diario), acá sólo hay un id de pestaña.

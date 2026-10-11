@@ -148,15 +148,19 @@ export function FoodFlow() {
       {/* celular: el mismo recorrido en vertical */}
       <ol className="grid gap-0 p-4 md:hidden">
         {FLOW.map((n, i) => (
-          <li key={n.title} className="relative flex gap-3 pb-4 last:pb-0">
-            {i < FLOW.length - 1 && <span aria-hidden className={`absolute left-[19px] top-11 h-[calc(100%-36px)] w-[2px] ${done(i) ? "bg-[#22c55e]" : "bg-white/12"}`} />}
-            <span className="relative z-[1] grid h-10 w-10 shrink-0 place-items-center rounded-[10px] text-white" style={{ background: n.color }}>
+          <li key={n.title} className={`food-m-item relative flex gap-3 pb-4 last:pb-0 ${done(i) ? "is-done" : ""} ${running(i) ? "is-running" : ""}`}>
+            {i < FLOW.length - 1 && (
+              <span aria-hidden className="absolute left-[19px] top-11 h-[calc(100%-36px)] w-[2px] overflow-hidden rounded-full bg-white/10">
+                <i className="food-m-line" />
+              </span>
+            )}
+            <span className="food-m-icon relative z-[1] grid h-10 w-10 shrink-0 place-items-center rounded-[10px] text-white" style={{ background: n.color }}>
               <n.Icon size={20} weight="fill" />
             </span>
-            <div className={`food-node-m min-w-0 flex-1 ${running(i) ? "is-running" : ""}`}>
+            <div className="food-m-card min-w-0 flex-1">
               <div className="flex items-center justify-between gap-2">
                 <p className="text-[14px] font-semibold text-white">{n.title}</p>
-                {done(i) && <CheckCircle size={17} weight="fill" className="shrink-0 text-[#22c55e]" />}
+                {done(i) && <CheckCircle size={17} weight="fill" className="food-m-check shrink-0 text-[#22c55e]" />}
               </div>
               <p className="mt-0.5 text-[12.5px] leading-snug text-white/60">{n.detail}</p>
               <span className="mt-1.5 inline-block rounded-md bg-white/[.07] px-2 py-0.5 font-mono text-[11px] text-white/80">{n.tag}</span>

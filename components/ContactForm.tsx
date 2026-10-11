@@ -13,8 +13,7 @@ import {
   Stethoscope,
   type Icon,
 } from "@phosphor-icons/react";
-import { visitorClient } from "@/lib/supabase/client";
-import { functionError } from "@/lib/supabase/functionError";
+import { callFunction } from "@/lib/supabase/config";
 import { track } from "@/lib/track";
 
 const RUBROS: { label: string; Icon: Icon }[] = [
@@ -45,9 +44,10 @@ export function ContactForm() {
     setError(null);
     setState("sending");
     const body = Object.fromEntries(new FormData(e.currentTarget).entries());
-    const { error: ferr } = await visitorClient().functions.invoke("contact-submit", { body });
-    if (ferr) {
-      setError(await functionError(ferr, "No pudimos enviar tu consulta. Probá de nuevo."));
+    try {
+      await callFunction("contact-submit", body, "No pudimos enviar tu consulta. Probá de nuevo.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "No pudimos enviar tu consulta. Probá de nuevo.");
       setState("idle");
       return;
     }

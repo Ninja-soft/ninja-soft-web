@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { CheckCircle, EnvelopeSimpleOpen, WarningCircle } from "@phosphor-icons/react";
-import { SUPABASE_KEY, SUPABASE_URL } from "@/lib/supabase/client";
+import { SUPABASE_KEY, SUPABASE_URL } from "@/lib/supabase/config";
 
 // Baja de las novedades por email. El link del email trae un token y la persona confirma con un botón
 // (los antivirus que abren links solos no dan de baja a nadie).
