@@ -206,38 +206,42 @@
   @keyframes caret { 50% { opacity: 0; } }
 }
 
-/* Selector de medio de pago (Vendé): ::before = resaltado que recorre las
-   opciones; ::after = opción elegida. Color de la marca en --brand. Sólo opacity/transform. */
+/* Selector de medio de pago (Vendé): botones con el color de cada marca.
+   Arrancan atenuados; el escaneo los enciende de a uno; el elegido queda
+   encendido con halo de su color (::after) y un check. Sólo opacity/transform. */
 .pm-tile { position: relative; isolation: isolate; }
-.pm-tile::before,
 .pm-tile::after {
   content: "";
   position: absolute;
-  inset: -1px;
-  z-index: 0;
-  border-radius: inherit;
-  border: 1.5px solid var(--brand);
-  background: color-mix(in srgb, var(--brand) 22%, transparent);
-  box-shadow: 0 0 22px color-mix(in srgb, var(--brand) 45%, transparent);
+  inset: -3px;
+  z-index: -1;
+  border-radius: 14px;
+  border: 2px solid var(--brand);
+  box-shadow: 0 0 22px color-mix(in srgb, var(--brand) 55%, transparent);
   opacity: 0;
   pointer-events: none;
 }
 @media (prefers-reduced-motion: no-preference) {
-  .pm-tile::before { animation: pm-flash var(--slot) ease-in-out both; animation-delay: var(--d); }
+  .pm-tile { animation: pm-scan var(--slot) ease-in-out both; animation-delay: var(--d); }
+  .pm-chosen {
+    animation: pm-scan var(--slot) ease-in-out both, pm-pick 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    animation-delay: var(--d), var(--pick);
+  }
   .pm-chosen::after { animation: sc-fade 0.35s ease both; animation-delay: var(--pick); }
-  .pm-chosen { animation: pm-pick 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both; animation-delay: var(--pick); }
-  @keyframes pm-flash {
-    0% { opacity: 0; }
-    35%, 60% { opacity: 1; }
-    100% { opacity: 0; }
+  .pm-check { animation: sc-pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both; animation-delay: calc(var(--pick) + 150ms); }
+  @keyframes pm-scan {
+    0%, 100% { opacity: 0.42; transform: scale(0.96); }
+    40%, 60% { opacity: 1; transform: scale(1.04); }
   }
   @keyframes pm-pick {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-    100% { transform: scale(1.04); }
+    0% { opacity: 0.42; transform: scale(0.96); }
+    55% { opacity: 1; transform: scale(1.1); }
+    100% { opacity: 1; transform: scale(1.05); }
   }
 }
 @media (prefers-reduced-motion: reduce) {
+  .pm-tile { opacity: 0.6; }
+  .pm-chosen { opacity: 1; }
   .pm-chosen::after { opacity: 1; }
 }
 

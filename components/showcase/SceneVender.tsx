@@ -119,9 +119,10 @@ export function SceneVender() {
         {PAY.map((p, i) => (
           <li
             key={p.key}
-            className={`pm-tile flex h-11 items-center justify-center rounded-xl border border-white/10 bg-white/[.04] px-1.5 ${p.key === chosen.key ? "pm-chosen" : ""}`}
+            className={`pm-tile flex h-11 items-center justify-center rounded-xl px-1.5 ${p.key === chosen.key ? "pm-chosen" : ""}`}
             style={
               {
+                background: p.btn.bg,
                 "--brand": p.brand,
                 "--d": `${SCAN_START + i * SCAN_SLOT}ms`,
                 "--slot": `${SCAN_SLOT * 1.6}ms`,
@@ -129,7 +130,12 @@ export function SceneVender() {
               } as React.CSSProperties
             }
           >
-            <img src={p.src} alt={p.alt} className="relative z-[1] w-auto max-w-full object-contain" style={{ height: p.h }} />
+            <img src={p.btn.logo} alt={p.alt} className="relative z-[1] w-auto max-w-full object-contain" style={{ height: p.btn.h }} />
+            {p.key === chosen.key && (
+              <span aria-hidden className="pm-check absolute -right-1.5 -top-1.5 z-[2] text-[#30D158]">
+                <CheckCircle size={18} weight="fill" className="rounded-full bg-white" />
+              </span>
+            )}
           </li>
         ))}
       </ul>
