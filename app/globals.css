@@ -714,3 +714,13 @@
   font-size: 16px; /* 16px evita el zoom de iOS */ color: #1d1d1f; outline: none;
 }
 .chat-input:focus { box-shadow: 0 0 0 2px rgba(255, 75, 34, 0.45); }
+/* formulario de contacto (sobre fondo oscuro) */
+.contact-input {
+  width: 100%; border-radius: 14px; padding: 12px 14px; font-size: 16px;
+  color: #fff; background: rgba(255, 255, 255, 0.07);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1); outline: none;
+}
+.contact-input::placeholder { color: rgba(184, 174, 220, 0.8); }
+.contact-input:focus { box-shadow: inset 0 0 0 1px rgba(255, 138, 31, 0.8); }
+.contact-input option { color: #1d1d1f; }
+select.contact-input:has(option[value=""]:checked) { color: rgba(184, 174, 220, 0.8); }

@@ -5,6 +5,7 @@ import {
   MapPin,
 } from "@phosphor-icons/react/dist/ssr";
 import { OpenChatButton } from "@/components/chat/OpenChatButton";
+import { ContactForm } from "@/components/ContactForm";
 import { Year } from "@/components/Year";
 import { ADDRESS, FOOD_APP_URL, INSTAGRAM_URL, MAPS_URL, POS_APP_URL } from "@/lib/content";
 
@@ -91,6 +92,7 @@ export function Contact() {
           Probar NinjaPOS gratis
         </a>
       </div>
+      <ContactForm />
     </section>
   );
 }
