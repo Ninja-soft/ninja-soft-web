@@ -23,7 +23,7 @@ const TICKET = [
 export function PosSection() {
   return (
     <section id="pos" className="tile on-night rise bg-night text-snow">
-      <img src="/images/brand/ninjapos-logo-dark.webp" alt="NinjaPOS" width={640} height={152} className="mx-auto mb-5 h-11 w-auto max-w-full" />
+      <img src="/images/brand/ninjapos-logo-dark.webp" alt="NinjaPOS" width={640} height={154} className="mx-auto mb-5 h-11 w-auto max-w-full" />
       <h2 className="tile-title">Vendé rápido. Controlá todo.</h2>
       <p className="tile-sub text-mist">
         Punto de venta omnicanal: local, tienda online, delivery y sucursales sobre el mismo stock, con todos los

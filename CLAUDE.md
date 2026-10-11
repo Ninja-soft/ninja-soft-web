@@ -17,7 +17,8 @@ Hermanos: `..\ninja-soft-pos` (fuente de verdad de features y medios de pago) y 
   convertir con `scripts/to-webp.py`). Logos de terceros: buscarlos primero en `..\ninja-soft-pos` y en
   `..\GitHub\ANDESMAR\Img` (Logipaq) antes de bajarlos de internet.
 - **Respetar los logos oficiales** de Ninja Soft, NinjaPOS y Ninja Food (`public/images/brand/`). Food mantiene su verde.
-  `ninjasoft-logo-light.webp` es derivado (Ninja en negro + Soft gradiente), igual criterio que el logo light de NinjaPOS.
+  Logos oficiales en `Dropbox\Ninja Soft\Logos` (OJO: ahí "Dark" = letras negras → nuestro `-light`;
+  "Light" = letras blancas → nuestro `-dark`).
 - Medios de pago con logos reales sobre fondo blanco (`public/images/payments/`), sacados del POS.
 - Íconos de UI: **Phosphor** (`@phosphor-icons/react`, estilo `duotone`). Sin sombras en los íconos.
   Mercado Libre usa su logo real (`images/integrations/mercadolibre.webp`); inactivo = mismo logo en gris (transición suave, sin cambiar de dibujo).

@@ -28,7 +28,7 @@ export const PRODUCTS = [
   {
     key: "pos",
     logo: "/images/brand/ninjapos-logo-light.webp",
-    logoSize: [640, 152],
+    logoSize: [640, 154],
     name: "NinjaPOS",
     tagline: "Punto de venta para kioscos, tiendas, gastronomía y profesionales.",
     href: "#pos",
@@ -43,7 +43,7 @@ export const PRODUCTS = [
   {
     key: "food",
     logo: "/images/brand/ninjafood-logo-light.webp",
-    logoSize: [640, 139],
+    logoSize: [640, 142],
     name: "Ninja Food",
     tagline: "Trazabilidad y gestión bromatológica para la industria alimenticia.",
     href: "#food",

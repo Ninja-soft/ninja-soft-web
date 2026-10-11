@@ -81,6 +81,8 @@ export function TechBackground() {
 
     const draw = (now: number) => {
       const t = now - start;
+      // canvas sin tamaño (oculto o aún sin layout): nada que dibujar
+      if (!w || !h || !base.width || !base.height) return;
       ctx.clearRect(0, 0, w, h);
 
       // Revelado: la grilla baja desde arriba en 1.6 s (recorte, sin redibujar puntos)

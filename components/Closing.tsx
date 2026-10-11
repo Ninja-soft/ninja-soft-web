@@ -39,7 +39,7 @@ export function Contact() {
         height={578}
         className="mx-auto mb-7 block h-auto w-[120px] drop-shadow-[0_20px_40px_rgba(255,106,26,.25)]"
       />
-      <img src="/images/brand/ninjasoft-logo-dark.webp" alt="Ninja Soft" width={640} height={178} className="mx-auto mb-6 h-10 w-auto" />
+      <img src="/images/brand/ninjasoft-logo-dark.webp" alt="Ninja Soft" width={640} height={145} className="mx-auto mb-6 h-10 w-auto" />
       <h2 className="text-[clamp(40px,6vw,72px)] font-bold">Hablemos de tu negocio.</h2>
       <p className="tile-sub text-mist">Te respondemos por WhatsApp, en horario comercial.</p>
       <div className="mt-8 flex flex-wrap items-center justify-center gap-7">

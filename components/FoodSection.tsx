@@ -30,7 +30,7 @@ export function FoodSection() {
   const cells = qrCells();
   return (
     <section id="food" className="tile rise bg-paper-2">
-      <img src="/images/brand/ninjafood-logo-light.webp" alt="Ninja Food" width={640} height={139} className="mx-auto mb-5 h-11 w-auto max-w-full" />
+      <img src="/images/brand/ninjafood-logo-light.webp" alt="Ninja Food" width={640} height={142} className="mx-auto mb-5 h-11 w-auto max-w-full" />
       <h2 className="tile-title">Cada lote, trazado.</h2>
       <p className="tile-sub text-ink-2">
         Trazabilidad y gestión bromatológica para la industria alimenticia, con respaldo técnico de ABR.

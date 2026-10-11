@@ -10,6 +10,7 @@ images/
 │   ├── ninjapos-logo-light.webp
 │   ├── ninjapos-logo-dark.webp
 │   ├── ninjafood-logo-light.webp
+│   ├── ninjafood-logo-dark.webp
 │   ├── ninja-isotipo-black.webp
 │   └── ninja-isotipo-white.webp
 ├── payments/

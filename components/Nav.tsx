@@ -60,7 +60,7 @@ export function Nav() {
             height={311}
             className="h-8 w-auto transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-105"
           />
-          <img src="/images/brand/ninjasoft-logo-light.webp" alt="Ninja Soft" width={640} height={178} className="h-6 w-auto" />
+          <img src="/images/brand/ninjasoft-logo-light.webp" alt="Ninja Soft" width={640} height={145} className="h-6 w-auto" />
         </a>
 
         <nav aria-label="Principal" className="hidden items-center lg:flex">
