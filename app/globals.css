@@ -977,3 +977,32 @@ textarea.ix-input { height: auto; padding: 10px 12px; }
 .faq-item[open] .faq-plus { transform: rotate(45deg); background: #ffece4; color: #ff4b22; }
 .faq-plus { transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.2s ease; }
 .faq-item summary:hover h3 { color: #ff4b22; }
+
+/* Ninja Food: lienzo estilo n8n con el recorrido del lote */
+.food-canvas {
+  background-color: #12121a;
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.09) 1px, transparent 1.4px);
+  background-size: 20px 20px;
+  box-shadow: 0 30px 80px rgba(17, 12, 34, 0.25);
+}
+.food-stage { position: relative; aspect-ratio: 1100 / 470; container-type: inline-size; }
+.food-scale { position: absolute; left: 0; top: 0; width: 1100px; height: 470px; transform-origin: 0 0; scale: calc(100cqw / 1100px); }
+.food-edge { fill: none; stroke: rgba(255, 255, 255, 0.16); stroke-width: 2; }
+.food-edge-flow { fill: none; stroke: #22c55e; stroke-width: 2.5; stroke-dasharray: 6 10; opacity: 0; transition: opacity 0.4s ease; }
+.food-edge-flow.is-on { opacity: 1; }
+.food-node {
+  position: absolute; border-radius: 14px; padding: 12px; background: #1e1e2a;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08), 0 10px 24px rgba(0, 0, 0, 0.35);
+  transition: background-color 0.3s ease, transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease;
+}
+.food-node.is-running { background: #26263a; transform: translateY(-3px); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16), 0 0 0 6px rgba(34, 197, 94, 0.12), 0 16px 34px rgba(0, 0, 0, 0.4); }
+.food-node.is-done { background: #1c2420; }
+.food-port { position: absolute; top: 50%; width: 10px; height: 10px; margin-top: -5px; border-radius: 9999px; background: #2c2c3a; box-shadow: 0 0 0 2px #12121a; }
+.food-port-in { left: -5px; }
+.food-port-out { right: -5px; }
+.food-node-m { border-radius: 12px; padding: 10px 12px; background: #1e1e2a; transition: background-color 0.3s ease; }
+.food-node-m.is-running { background: #26263a; }
+@media (prefers-reduced-motion: no-preference) {
+  .food-edge-flow.is-on { animation: food-flow 1s linear infinite; }
+  @keyframes food-flow { to { stroke-dashoffset: -32; } }
+}
