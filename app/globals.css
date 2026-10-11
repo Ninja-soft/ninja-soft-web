@@ -909,3 +909,7 @@ select.contact-input:has(option[value=""]:checked) { color: rgba(184, 174, 220, 
   .net-marquee:active .net-track, .net-marquee:focus-within .net-track { animation-play-state: paused; }
   @keyframes net-scroll { to { transform: translateX(-50%); } }
 }
+
+/* "Hecho para tu rubro": las escenas no corren hasta que la sección está en pantalla */
+.rb-hold, .rb-hold * { animation-play-state: paused !important; }
+.rb-paused, .rb-paused * { animation-play-state: paused !important; }
