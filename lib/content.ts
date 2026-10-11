@@ -71,17 +71,17 @@ export const PROCESSORS = [
 ] as const;
 
 export const NETWORKS = [
-  { src: "/images/payments/networks/visa.webp", alt: "Visa" },
-  { src: "/images/payments/networks/mastercard.webp", alt: "Mastercard" },
-  { src: "/images/payments/networks/maestro.webp", alt: "Maestro" },
-  { src: "/images/payments/networks/amex.webp", alt: "Amex" },
-  { src: "/images/payments/networks/naranjax.webp", alt: "Naranja X" },
-  { src: "/images/payments/networks/cabal.webp", alt: "Cabal" },
-  { src: "/images/payments/networks/diners.webp", alt: "Diners Club" },
-  { src: "/images/payments/networks/applepay.webp", alt: "Apple Pay" },
-  { src: "/images/payments/networks/googlepay.webp", alt: "Google Pay" },
-  { src: "/images/payments/networks/pagofacil.webp", alt: "Pago Fácil" },
-  { src: "/images/payments/networks/rapipago.webp", alt: "Rapipago" },
+  { src: "/images/payments/networks/visa.webp?v=2", alt: "Visa" },
+  { src: "/images/payments/networks/mastercard.webp?v=2", alt: "Mastercard" },
+  { src: "/images/payments/networks/maestro.webp?v=2", alt: "Maestro" },
+  { src: "/images/payments/networks/amex.webp?v=2", alt: "Amex" },
+  { src: "/images/payments/networks/naranjax.webp?v=2", alt: "Naranja X" },
+  { src: "/images/payments/networks/cabal.webp?v=2", alt: "Cabal" },
+  { src: "/images/payments/networks/diners.webp?v=2", alt: "Diners Club" },
+  { src: "/images/payments/networks/applepay.webp?v=2", alt: "Apple Pay" },
+  { src: "/images/payments/networks/googlepay.webp?v=2", alt: "Google Pay" },
+  { src: "/images/payments/networks/pagofacil.webp?v=2", alt: "Pago Fácil" },
+  { src: "/images/payments/networks/rapipago.webp?v=2", alt: "Rapipago" },
 ] as const;
 
 // Decisión comercial (Lucas, 2026-10-10): las funciones del roadmap se
