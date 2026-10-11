@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { functionError } from "@/lib/supabase/functionError";
+import { PageHeader } from "./ui";
 
 const FIELDS: { key: string; label: string; hint?: string }[] = [
   { key: "notify_email", label: "Emails de aviso", hint: "Dónde te llegan los contactos. Podés poner varios separados por coma." },
@@ -66,14 +67,16 @@ export function SettingsTab({ sb }: { sb: SupabaseClient }) {
     });
 
   return (
-    <div className="grid gap-6">
+    <div>
+      <PageHeader eyebrow="Plataforma" title="Configuración" desc="Telegram, Resend, emails de aviso, tiempos del chat y logos de cada marca." />
+      <div className="grid gap-6">
       {note && (
-        <p role="status" className={`rounded-[14px] px-4 py-3 text-[14px] ${note.ok ? "bg-[#e8f8ee] text-[#1e7a3e]" : "bg-[#fdecec] text-[#b3261e]"}`}>
+        <p role="status" className={`rounded-[14px] px-4 py-3 text-[14px] ${note.ok ? "border border-emerald-400/20 bg-emerald-400/[.06] text-[#6ee7b7]" : "border border-red-400/20 bg-red-400/[.06] text-[#fca5a5]"}`}>
           {note.text}
         </p>
       )}
 
-      <section className="int-card grid gap-4 p-6">
+      <section className="ix-card grid gap-4 p-6">
         <h2 className="text-[20px] font-bold">Claves</h2>
         {(
           [
@@ -84,7 +87,7 @@ export function SettingsTab({ sb }: { sb: SupabaseClient }) {
           <div key={name} className="grid gap-2 sm:grid-cols-[1fr_auto] sm:items-end">
             <label className="grid gap-1 text-[14px]">
               <span>
-                {label} <span className="text-[#86868b]">· actual: {secrets[name] ?? "sin cargar"}</span>
+                {label} <span className="ix-muted">· actual: {secrets[name] ?? "sin cargar"}</span>
               </span>
               <input
                 type="password"
@@ -92,40 +95,41 @@ export function SettingsTab({ sb }: { sb: SupabaseClient }) {
                 value={draft[name]}
                 onChange={(e) => setDraft((x) => ({ ...x, [name]: e.target.value }))}
                 placeholder="Pegá el nuevo valor"
-                className="int-input"
+                className="ix-input"
               />
             </label>
-            <button type="button" disabled={!draft[name].trim()} onClick={() => saveSecret(name)} className="btn-flame justify-center disabled:opacity-50">
+            <button type="button" disabled={!draft[name].trim()} onClick={() => saveSecret(name)} className="ix-btn ix-btn-primary disabled:opacity-50">
               Guardar
             </button>
           </div>
         ))}
         <div className="flex flex-wrap gap-3">
-          <button type="button" onClick={() => run("Webhook de Telegram registrado.", () => call("register_webhook"))} className="int-btn">
+          <button type="button" onClick={() => run("Webhook de Telegram registrado.", () => call("register_webhook"))} className="ix-btn">
             Registrar webhook
           </button>
-          <button type="button" onClick={() => run("Mensaje de prueba enviado a Telegram.", () => call("test_telegram"))} className="int-btn">
+          <button type="button" onClick={() => run("Mensaje de prueba enviado a Telegram.", () => call("test_telegram"))} className="ix-btn">
             Probar Telegram
           </button>
-          <button type="button" onClick={() => run("Email de prueba enviado.", () => call("test_resend"))} className="int-btn">
+          <button type="button" onClick={() => run("Email de prueba enviado.", () => call("test_resend"))} className="ix-btn">
             Probar email
           </button>
         </div>
       </section>
 
-      <section className="int-card grid gap-4 p-6">
+      <section className="ix-card grid gap-4 p-6">
         <h2 className="text-[20px] font-bold">Ajustes</h2>
         {FIELDS.map((f) => (
           <label key={f.key} className="grid gap-1 text-[14px]">
             <span>{f.label}</span>
-            <input value={values[f.key] ?? ""} onChange={(e) => setValues((v) => ({ ...v, [f.key]: e.target.value }))} className="int-input" />
-            {f.hint && <span className="text-[12px] text-[#86868b]">{f.hint}</span>}
+            <input value={values[f.key] ?? ""} onChange={(e) => setValues((v) => ({ ...v, [f.key]: e.target.value }))} className="ix-input" />
+            {f.hint && <span className="text-[12px] ix-muted">{f.hint}</span>}
           </label>
         ))}
-        <button type="button" onClick={saveSettings} className="btn-flame justify-self-start">
+        <button type="button" onClick={saveSettings} className="ix-btn ix-btn-primary justify-self-start">
           Guardar ajustes
         </button>
       </section>
+      </div>
     </div>
   );
 }

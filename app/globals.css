@@ -913,3 +913,61 @@ select.contact-input:has(option[value=""]:checked) { color: rgba(184, 174, 220, 
 /* "Hecho para tu rubro": las escenas no corren hasta que la sección está en pantalla */
 .rb-hold, .rb-hold * { animation-play-state: paused !important; }
 .rb-paused, .rb-paused * { animation-play-state: paused !important; }
+
+/* ============ /internal v2 · estética del panel interno de NinjaPOS (tema void) ============ */
+@layer components {
+.ix {
+  --ix-bg: #0a0518; --ix-fg: #f4f2ff; --ix-card: rgba(22, 15, 48, 0.72); --ix-pop: #15103a;
+  --ix-muted: rgba(255, 255, 255, 0.05); --ix-muted-fg: #a99fd0; --ix-border: rgba(255, 255, 255, 0.1);
+  --ix-input: rgba(255, 255, 255, 0.06); --ix-accent: #ff6a1a; --ix-success: #6ee7b7; --ix-warning: #fcd34d; --ix-danger: #fca5a5;
+  color: var(--ix-fg); background-color: var(--ix-bg); color-scheme: dark;
+}
+.ix-bg {
+  background-color: var(--ix-bg);
+  background-image: radial-gradient(circle at 1.2px 1.2px, rgba(255, 255, 255, 0.07) 1.2px, transparent 1.6px),
+    radial-gradient(900px 500px at 100% 0%, rgba(109, 74, 255, 0.10), transparent 60%),
+    radial-gradient(800px 500px at 0% 100%, rgba(255, 106, 26, 0.07), transparent 60%);
+  background-size: 22px 22px, auto, auto;
+  background-attachment: fixed;
+}
+.ix-card { border-radius: 12px; border: 1px solid var(--ix-border); background: var(--ix-card); box-shadow: 0 6px 20px rgba(8, 5, 20, 0.18); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); }
+.ix-muted { color: var(--ix-muted-fg); }
+.ix-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px; border-radius: 9999px; border: 1px solid var(--ix-border);
+  background: var(--ix-muted); padding: 4px 12px; font-size: 10px; font-weight: 600; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--ix-muted-fg);
+}
+.ix-eyebrow::before { content: ""; width: 6px; height: 6px; border-radius: 9999px; background: linear-gradient(135deg, #ff4b22, #ff8a1f, #ffd21f); box-shadow: 0 0 24px rgba(255, 106, 26, 0.6); }
+.ix-input {
+  height: 40px; width: 100%; border-radius: 8px; border: 1px solid var(--ix-border); background: var(--ix-input);
+  padding: 0 12px; font-size: 14px; color: var(--ix-fg); outline: none; transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+textarea.ix-input { height: auto; padding: 10px 12px; }
+.ix-input::placeholder { color: rgba(169, 159, 208, 0.6); }
+.ix-input:focus { border-color: rgba(255, 255, 255, 0.28); box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.04); }
+.ix-input:-webkit-autofill { -webkit-text-fill-color: #f4f2ff; -webkit-box-shadow: 0 0 0 1000px #1a1433 inset; transition: background-color 9999s ease-out 0s; }
+.ix-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 40px; padding: 0 16px; border-radius: 8px;
+  font-size: 14px; font-weight: 600; border: 1px solid var(--ix-border); background: var(--ix-muted); color: var(--ix-fg); transition: background-color 0.15s ease;
+}
+.ix-btn:hover { background: rgba(255, 255, 255, 0.09); }
+.ix-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.ix-btn-primary { border: 0; color: #fff; background: linear-gradient(180deg, #ff6a2a, #f0461c); }
+.ix-btn-primary:hover { background: linear-gradient(180deg, #ff7a3a, #f5521f); }
+.ix-btn-danger { border: 0; color: #fff; background: #c2352b; }
+.ix-table { width: 100%; font-size: 14px; }
+.ix-table thead { background: var(--ix-muted); text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--ix-muted-fg); }
+.ix-table th, .ix-table td { padding: 12px 16px; }
+.ix-table tbody tr { border-top: 1px solid var(--ix-border); transition: background-color 0.15s ease; }
+.ix-table tbody tr:hover { background: rgba(255, 255, 255, 0.025); }
+.ix-spinner { display: inline-block; border-radius: 9999px; border: 2px solid rgba(169, 159, 208, 0.3); border-top-color: #ff6a1a; animation: chat-spin 0.8s linear infinite; }
+.ix-nav-item { display: flex; align-items: center; gap: 12px; border-radius: 8px; padding: 8px 12px; font-size: 14px; color: var(--ix-muted-fg); transition: background-color 0.15s ease, color 0.15s ease; width: 100%; text-align: left; }
+.ix-nav-item:hover { background: var(--ix-muted); color: var(--ix-fg); }
+.ix-nav-item.is-active { background: rgba(255, 75, 34, 0.15); color: #ff8a4c; font-weight: 500; }
+.ix-pop { border-radius: 10px; border: 1px solid var(--ix-border); background: var(--ix-pop); box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45); padding: 6px; }
+.ix-pop-item { display: flex; width: 100%; align-items: center; gap: 8px; border-radius: 6px; padding: 8px 12px; font-size: 14px; color: var(--ix-fg); text-align: left; }
+.ix-pop-item:hover { background: rgba(255, 255, 255, 0.06); }
+.ix-pill { display: inline-flex; align-items: center; gap: 6px; border-radius: 9999px; padding: 3px 10px; font-size: 12px; font-weight: 600; }
+.ix-fade { animation: chat-fade 0.2s ease both; }
+}
+@keyframes chat-fade { from { opacity: 0; } }

@@ -2,28 +2,45 @@
 
 import { useEffect, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
+import {
+  AddressBook,
+  ArrowSquareOut,
+  CaretUpDown,
+  ChartLineUp,
+  ChatsCircle,
+  EnvelopeSimple,
+  GearSix,
+  House,
+  Key,
+  List,
+  Megaphone,
+  SignOut,
+  UsersThree,
+  X,
+  type Icon,
+} from "@phosphor-icons/react";
 import { internalClient } from "@/lib/supabase/client";
+import { CampaignsTab } from "./CampaignsTab";
 import { ChatsTab } from "./ChatsTab";
 import { ContactsTab } from "./ContactsTab";
 import { HomeTab } from "./HomeTab";
 import { LoginForm, SetPasswordForm } from "./LoginForm";
 import { SettingsTab } from "./SettingsTab";
+import { StatsTab } from "./StatsTab";
 import { TeamTab } from "./TeamTab";
 import { TemplatesTab } from "./TemplatesTab";
+import { Avatar, Spinner } from "./ui";
 
-const TABS = [
-  { key: "home", label: "Inicio" },
-  { key: "chats", label: "Chats" },
-  { key: "contacts", label: "Contactos" },
-  { key: "settings", label: "Configuración" },
-  { key: "templates", label: "Plantillas" },
-  { key: "team", label: "Equipo" },
-] as const;
-type TabKey = (typeof TABS)[number]["key"];
-
-function Shell({ children }: { children: React.ReactNode }) {
-  return <main className="int-bg grid min-h-screen place-items-center px-4">{children}</main>;
-}
+const NAV: { key: string; label: string; Icon: Icon }[] = [
+  { key: "inicio", label: "Inicio", Icon: House },
+  { key: "estadisticas", label: "Estadísticas", Icon: ChartLineUp },
+  { key: "chats", label: "Chats", Icon: ChatsCircle },
+  { key: "contactos", label: "Contactos", Icon: AddressBook },
+  { key: "campanas", label: "Campañas", Icon: Megaphone },
+  { key: "plantillas", label: "Plantillas", Icon: EnvelopeSimple },
+  { key: "equipo", label: "Equipo", Icon: UsersThree },
+  { key: "configuracion", label: "Configuración", Icon: GearSix },
+];
 
 // Cierre de sesión por inactividad (8 h). La marca vive en localStorage para valer entre pestañas.
 const IDLE_MS = 8 * 60 * 60 * 1000;
@@ -43,14 +60,30 @@ function touchActivity() {
   }
 }
 
+const tabFromHash = () => {
+  const h = typeof window === "undefined" ? "" : window.location.hash.replace("#", "");
+  return NAV.some((n) => n.key === h) ? h : "inicio";
+};
+
+function Center({ children }: { children: React.ReactNode }) {
+  return <main className="ix ix-bg grid min-h-screen place-items-center px-4">{children}</main>;
+}
+
 export function InternalApp() {
   const sb = internalClient();
   const [session, setSession] = useState<Session | null>(null);
   const [ready, setReady] = useState(false);
   const [admin, setAdmin] = useState<boolean | null>(null);
-  const [tab, setTab] = useState<TabKey>("home");
+  const [tab, setTab] = useState("inicio");
   // Viene de una invitación o de "olvidé mi contraseña": primero elige contraseña.
   const [setPw, setSetPw] = useState(false);
+
+  useEffect(() => {
+    setTab(tabFromHash());
+    const onHash = () => setTab(tabFromHash());
+    window.addEventListener("hashchange", onHash);
+    return () => window.removeEventListener("hashchange", onHash);
+  }, []);
 
   useEffect(() => {
     sb.auth.getSession().then(async ({ data }) => {
@@ -86,7 +119,7 @@ export function InternalApp() {
     const check = () => {
       if (Date.now() - lastActivity() > IDLE_MS) void sb.auth.signOut();
     };
-    const events = ["pointerdown", "keydown", "scroll", "visibilitychange"] as const;
+    const events = ["pointerdown", "keydown", "scroll"] as const;
     events.forEach((ev) => window.addEventListener(ev, onActivity, { passive: true }));
     document.addEventListener("visibilitychange", check);
     const id = window.setInterval(check, 60_000);
@@ -109,7 +142,7 @@ export function InternalApp() {
       .then(({ data }) => setAdmin(!!data));
   }, [sb, session]);
 
-  if (!ready) return <Shell><span role="status" aria-label="Cargando" className="int-spinner" /></Shell>;
+  if (!ready) return <Center><Spinner size={32} /></Center>;
   if (!session) return <LoginForm />;
   if (setPw)
     return (
@@ -120,55 +153,231 @@ export function InternalApp() {
         }}
       />
     );
-  if (admin === null) return <Shell><span role="status" aria-label="Cargando" className="int-spinner" /></Shell>;
+  if (admin === null) return <Center><Spinner size={32} /></Center>;
   if (!admin) {
     return (
-      <Shell>
-        <div className="text-center">
-          <p>Tu usuario no tiene acceso al panel interno.</p>
-          <button type="button" onClick={() => sb.auth.signOut()} className="link-more mt-4">
-            Salir
+      <Center>
+        <div className="ix-card max-w-sm p-8 text-center">
+          <p className="font-semibold">Tu usuario no tiene acceso al panel interno.</p>
+          <button type="button" onClick={() => sb.auth.signOut()} className="ix-btn mt-5">
+            Cerrar sesión
           </button>
         </div>
-      </Shell>
+      </Center>
     );
   }
 
+  const go = (key: string) => {
+    window.location.hash = key;
+    setTab(key);
+  };
+
   return (
-    <div className="int-bg min-h-screen text-[#1d1d1f]">
-      <header className="sticky top-0 z-10 border-b border-black/[.06] bg-white/80 backdrop-blur">
-        <div className="mx-auto flex max-w-[1100px] flex-wrap items-center gap-3 px-4 py-3">
-          <img src="/images/brand/ninja-isotipo-flame.webp" alt="" width={240} height={311} className="h-7 w-auto" />
-          <b className="text-[15px]">Internal</b>
-          <nav className="order-last flex w-full gap-1 overflow-x-auto rounded-full bg-black/[.05] p-1 sm:order-none sm:w-auto" aria-label="Secciones">
-            {TABS.map((t) => (
-              <button
-                key={t.key}
-                type="button"
-                onClick={() => setTab(t.key)}
-                aria-current={tab === t.key ? "page" : undefined}
-                className={`whitespace-nowrap rounded-full px-3.5 py-1.5 text-[14px] font-medium ${
-                  tab === t.key ? "bg-white shadow-sm" : "text-[#6e6e73]"
-                }`}
-              >
-                {t.label}
-              </button>
-            ))}
-          </nav>
-          <span className="ml-auto hidden text-[13px] text-[#86868b] sm:inline">{session.user.email}</span>
-          <button type="button" onClick={() => sb.auth.signOut()} className="text-[14px] font-semibold text-flame-link">
-            Salir
+    <Shell session={session} tab={tab} onGo={go} onSignOut={() => sb.auth.signOut()}>
+      {tab === "inicio" && <HomeTab sb={sb} onGo={go} />}
+      {tab === "estadisticas" && <StatsTab sb={sb} />}
+      {tab === "chats" && <ChatsTab sb={sb} />}
+      {tab === "contactos" && <ContactsTab sb={sb} />}
+      {tab === "campanas" && <CampaignsTab sb={sb} />}
+      {tab === "plantillas" && <TemplatesTab sb={sb} />}
+      {tab === "equipo" && <TeamTab sb={sb} />}
+      {tab === "configuracion" && <SettingsTab sb={sb} />}
+    </Shell>
+  );
+}
+
+function displayName(session: Session) {
+  const meta = session.user.user_metadata as { name?: string; full_name?: string } | undefined;
+  const raw = meta?.full_name || meta?.name || (session.user.email ?? "").split("@")[0];
+  return raw.replace(/[._-]+/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+function Shell({
+  session,
+  tab,
+  onGo,
+  onSignOut,
+  children,
+}: {
+  session: Session;
+  tab: string;
+  onGo: (k: string) => void;
+  onSignOut: () => void;
+  children: React.ReactNode;
+}) {
+  const [drawer, setDrawer] = useState(false);
+  const [menu, setMenu] = useState(false);
+  const [pwOpen, setPwOpen] = useState(false);
+  const name = displayName(session);
+
+  const nav = (
+    <nav className="flex h-full flex-col gap-1 p-3">
+      <button type="button" onClick={() => onGo("inicio")} className="mb-3 flex items-center px-2 py-2">
+        <img src="/images/brand/ninjasoft-logo-dark.webp" alt="Ninja Soft" width={640} height={145} className="h-8 w-auto" />
+      </button>
+      {NAV.map(({ key, label, Icon: I }) => (
+        <button
+          key={key}
+          type="button"
+          onClick={() => {
+            onGo(key);
+            setDrawer(false);
+          }}
+          className={`ix-nav-item ${tab === key ? "is-active" : ""}`}
+          aria-current={tab === key ? "page" : undefined}
+        >
+          <I size={18} weight={tab === key ? "fill" : "regular"} />
+          {label}
+        </button>
+      ))}
+      <div className="mt-auto space-y-2 pt-3">
+        <a href="/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2.5 rounded-lg border border-white/10 bg-[rgba(22,15,48,.72)] p-2 text-[14px] transition hover:bg-white/[.06]">
+          <span className="grid h-8 w-8 place-items-center rounded-lg bg-white/[.05] text-[#ff8a4c]">
+            <ArrowSquareOut size={16} />
+          </span>
+          Ver el sitio
+        </a>
+        <div className="relative">
+          <button
+            type="button"
+            onClick={() => setMenu((v) => !v)}
+            aria-expanded={menu}
+            className="flex w-full items-center gap-2.5 rounded-lg border border-white/10 bg-[rgba(22,15,48,.72)] p-2 text-left transition hover:bg-white/[.06]"
+          >
+            <Avatar name={name} size={34} />
+            <span className="min-w-0 flex-1">
+              <span className="block truncate text-[14px] font-medium">{name}</span>
+              <span className="ix-muted block truncate text-[12px]">{session.user.email}</span>
+              <span className="block text-[11px] font-medium text-[#ff8a4c]">Admin</span>
+            </span>
+            <CaretUpDown size={15} className="ix-muted shrink-0" />
           </button>
+          {menu && (
+            <div className="ix-pop ix-fade absolute bottom-full left-0 z-50 mb-2 w-full">
+              <p className="ix-muted truncate px-3 py-2 text-[12px]">{session.user.email}</p>
+              <button
+                type="button"
+                onClick={() => {
+                  setMenu(false);
+                  setPwOpen(true);
+                }}
+                className="ix-pop-item"
+              >
+                <Key size={16} /> Cambiar contraseña
+              </button>
+              <div className="my-1 h-px bg-white/10" />
+              <button type="button" onClick={onSignOut} className="ix-pop-item text-[#fca5a5]">
+                <SignOut size={16} /> Cerrar sesión
+              </button>
+            </div>
+          )}
         </div>
-      </header>
-      <main className="mx-auto max-w-[1100px] px-4 py-8">
-        {tab === "home" && <HomeTab sb={sb} />}
-        {tab === "chats" && <ChatsTab sb={sb} />}
-        {tab === "contacts" && <ContactsTab sb={sb} />}
-        {tab === "settings" && <SettingsTab sb={sb} />}
-        {tab === "templates" && <TemplatesTab sb={sb} />}
-        {tab === "team" && <TeamTab sb={sb} />}
-      </main>
+      </div>
+    </nav>
+  );
+
+  return (
+    <div className="ix flex min-h-dvh">
+      <aside className="sticky top-0 hidden h-dvh w-64 shrink-0 border-r border-white/10 bg-[#0a0518]/60 backdrop-blur-xl lg:block">{nav}</aside>
+
+      {drawer && (
+        <div className="fixed inset-0 z-50 lg:hidden">
+          <button type="button" aria-label="Cerrar menú" onClick={() => setDrawer(false)} className="ix-fade absolute inset-0 bg-black/50" />
+          <aside className="absolute left-0 top-0 h-full w-64 border-r border-white/10 bg-[#15103a]">
+            <button type="button" aria-label="Cerrar menú" onClick={() => setDrawer(false)} className="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-lg hover:bg-white/[.06]">
+              <X size={18} />
+            </button>
+            {nav}
+          </aside>
+        </div>
+      )}
+
+      <div className="flex min-w-0 flex-1 flex-col">
+        <header className="sticky top-0 z-40 flex h-14 items-center gap-3 border-b border-white/10 bg-[#0a0518]/70 px-4 backdrop-blur-xl lg:hidden">
+          <button type="button" onClick={() => setDrawer(true)} aria-label="Abrir menú" className="grid h-9 w-9 place-items-center rounded-lg hover:bg-white/[.06]">
+            <List size={20} />
+          </button>
+          <img src="/images/brand/ninjasoft-logo-dark.webp" alt="Ninja Soft" width={640} height={145} className="h-6 w-auto" />
+          <span className="ml-auto">
+            <Avatar name={name} size={30} />
+          </span>
+        </header>
+        <main className="ix-bg flex min-h-0 flex-1 flex-col">
+          <div className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6">{children}</div>
+          <footer className="border-t border-white/10">
+            <div className="ix-muted mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-5 text-[12px] sm:px-6">
+              <span className="flex items-center gap-2">
+                <img src="/images/brand/ninja-isotipo-flame.webp" alt="" width={240} height={311} className="h-4 w-auto" />
+                © {new Date().getFullYear()} Ninja Soft · Panel interno
+              </span>
+              <span className="flex gap-4">
+                <a href="/" target="_blank" rel="noopener noreferrer" className="hover:text-white">
+                  Sitio
+                </a>
+                <a href="https://pos.soft.ninja/internal" target="_blank" rel="noopener noreferrer" className="hover:text-white">
+                  NinjaPOS
+                </a>
+                <a href="https://food.soft.ninja/internal" target="_blank" rel="noopener noreferrer" className="hover:text-white">
+                  Ninja Food
+                </a>
+              </span>
+            </div>
+          </footer>
+        </main>
+      </div>
+
+      {pwOpen && <ChangePassword onClose={() => setPwOpen(false)} />}
+    </div>
+  );
+}
+
+function ChangePassword({ onClose }: { onClose: () => void }) {
+  const [password, setPassword] = useState("");
+  const [repeat, setRepeat] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [done, setDone] = useState(false);
+  const [busy, setBusy] = useState(false);
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+    if (password.length < 8) return setError("Usá al menos 8 caracteres.");
+    if (password !== repeat) return setError("Las contraseñas no coinciden.");
+    setBusy(true);
+    const { error: err } = await internalClient().auth.updateUser({ password });
+    setBusy(false);
+    if (err) return setError("No pudimos cambiarla. Probá de nuevo.");
+    setDone(true);
+  }
+
+  return (
+    <div className="fixed inset-0 z-[60] grid place-items-center p-4">
+      <button type="button" aria-label="Cerrar" onClick={onClose} className="ix-fade absolute inset-0 bg-black/60" />
+      <form onSubmit={submit} className="ix-card ix-fade relative grid w-full max-w-sm gap-4 bg-[#15103a] p-6">
+        <p className="text-[18px] font-bold">Cambiar contraseña</p>
+        {done ? (
+          <>
+            <p className="text-[#6ee7b7]">Listo, tu contraseña se actualizó.</p>
+            <button type="button" onClick={onClose} className="ix-btn ix-btn-primary">
+              Cerrar
+            </button>
+          </>
+        ) : (
+          <>
+            <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Contraseña nueva" autoComplete="new-password" className="ix-input" />
+            <input type="password" required value={repeat} onChange={(e) => setRepeat(e.target.value)} placeholder="Repetila" autoComplete="new-password" className="ix-input" />
+            {error && <p className="text-[14px] text-[#fca5a5]">{error}</p>}
+            <div className="flex justify-end gap-2">
+              <button type="button" onClick={onClose} className="ix-btn">
+                Cancelar
+              </button>
+              <button type="submit" disabled={busy} className="ix-btn ix-btn-primary">
+                {busy ? <Spinner size={16} /> : "Guardar"}
+              </button>
+            </div>
+          </>
+        )}
+      </form>
     </div>
   );
 }
