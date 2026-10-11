@@ -2,9 +2,6 @@
 // rubros y funciones. Las secciones sólo leen de acá.
 
 // TODO(lucas): reemplazar por el número real (formato internacional sin "+").
-export const WHATSAPP_NUMBER = "5490000000000";
-export const whatsappUrl = (text = "Hola Ninja Soft, quiero hacer una consulta.") =>
-  `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
 
 export const POS_APP_URL = "https://pos.soft.ninja";
 export const FOOD_APP_URL = "https://food.soft.ninja";

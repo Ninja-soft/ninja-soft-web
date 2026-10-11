@@ -1,11 +1,12 @@
 import {
   ArrowUpRight,
+  ChatCircleDots,
   InstagramLogo,
   MapPin,
-  WhatsappLogo,
 } from "@phosphor-icons/react/dist/ssr";
+import { OpenChatButton } from "@/components/chat/OpenChatButton";
 import { Year } from "@/components/Year";
-import { ADDRESS, FOOD_APP_URL, INSTAGRAM_URL, MAPS_URL, POS_APP_URL, whatsappUrl } from "@/lib/content";
+import { ADDRESS, FOOD_APP_URL, INSTAGRAM_URL, MAPS_URL, POS_APP_URL } from "@/lib/content";
 
 // Trayectoria como lista agrupada estilo iOS: qué implementamos y de qué tipo es.
 const PAST: { group: string; rows: [string, string][] }[] = [
@@ -83,11 +84,9 @@ export function Contact() {
       />
       <img src="/images/brand/ninjasoft-logo-dark.webp" alt="Ninja Soft" width={640} height={145} className="mx-auto mb-6 h-10 w-auto" />
       <h2 className="text-[clamp(40px,6vw,72px)] font-bold">Hablemos de tu negocio.</h2>
-      <p className="tile-sub text-mist">Te respondemos por WhatsApp, en horario comercial.</p>
+      <p className="tile-sub text-mist">Escribinos por el chat o dejanos tu consulta. Te respondemos en horario comercial.</p>
       <div className="mt-8 flex flex-wrap items-center justify-center gap-7">
-        <a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" className="btn-flame">
-          Escribir por WhatsApp
-        </a>
+        <OpenChatButton className="btn-flame">Abrir el chat</OpenChatButton>
         <a href={POS_APP_URL} className="link-more">
           Probar NinjaPOS gratis
         </a>
@@ -146,9 +145,9 @@ export function Footer() {
               <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" aria-label="Instagram de Ninja Soft" className="foot-social">
                 <InstagramLogo size={22} />
               </a>
-              <a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp de Ninja Soft" className="foot-social">
-                <WhatsappLogo size={22} />
-              </a>
+              <OpenChatButton label="Chatear con Ninja Soft" className="foot-social">
+                <ChatCircleDots size={22} />
+              </OpenChatButton>
             </div>
             <a href={MAPS_URL} target="_blank" rel="noopener noreferrer" className="group mt-7 flex items-start gap-3 text-[15px]">
               <span className="grid h-10 w-10 shrink-0 place-items-center rounded-[12px] bg-white/[.07] text-[#ff8a1f]">

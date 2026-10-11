@@ -7,6 +7,7 @@ import { Payments } from "@/components/Payments";
 import { PosShowcase } from "@/components/PosShowcase";
 import { Process } from "@/components/Process";
 import { PosSection } from "@/components/PosSection";
+import { ChatWidget } from "@/components/chat/ChatWidget";
 import { ScrollHint } from "@/components/ScrollHint";
 import { ServicesAbout } from "@/components/ServicesAbout";
 
@@ -32,6 +33,7 @@ export default function Home() {
         </div>
       </main>
       <Footer />
+      <ChatWidget />
     </>
   );
 }
