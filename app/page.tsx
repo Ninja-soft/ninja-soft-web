@@ -7,6 +7,7 @@ import { Payments } from "@/components/Payments";
 import { PosShowcase } from "@/components/PosShowcase";
 import { Process } from "@/components/Process";
 import { PosSection } from "@/components/PosSection";
+import { Analytics } from "@/components/Analytics";
 import { ChatWidget } from "@/components/chat/ChatWidget";
 import { ScrollArrows } from "@/components/ScrollArrows";
 import { ScrollHint } from "@/components/ScrollHint";
@@ -36,6 +37,7 @@ export default function Home() {
       <Footer />
       <ScrollArrows />
       <ChatWidget />
+      <Analytics />
     </>
   );
 }

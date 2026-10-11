@@ -15,6 +15,7 @@ import {
 } from "@phosphor-icons/react";
 import { visitorClient } from "@/lib/supabase/client";
 import { functionError } from "@/lib/supabase/functionError";
+import { track } from "@/lib/track";
 
 const RUBROS: { label: string; Icon: Icon }[] = [
   { label: "Gastronomía", Icon: ForkKnife },
@@ -50,6 +51,7 @@ export function ContactForm() {
       setState("idle");
       return;
     }
+    track("form_submit");
     setState("sent");
   }
 

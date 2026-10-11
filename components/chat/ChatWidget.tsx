@@ -5,6 +5,7 @@ import type { RealtimeChannel } from "@supabase/supabase-js";
 import { ChatCircleDots, ImageSquare, NotePencil, PaperPlaneRight, X } from "@phosphor-icons/react";
 import { ChatImage, compressImage } from "@/components/chat/ChatImage";
 import { OPEN_CHAT } from "@/lib/chat-events";
+import { track } from "@/lib/track";
 import { visitorClient } from "@/lib/supabase/client";
 import { functionError } from "@/lib/supabase/functionError";
 
@@ -91,7 +92,10 @@ export function ChatWidget() {
 
   useEffect(() => {
     openRef.current = open;
-    if (open) setUnread(0);
+    if (open) {
+      setUnread(0);
+      track("chat_open");
+    }
   }, [open]);
 
   useEffect(() => {
@@ -145,6 +149,7 @@ export function ChatWidget() {
       const r = data as { id: string; sessionId: string };
       if (!session) await attach({ id: r.sessionId, name: name.trim(), contact: contact.trim() });
       addMessages([{ id: r.id, sender: "visitor", body: message, created_at: new Date().toISOString() }]);
+      track("chat_msg");
       setText("");
     } catch (err) {
       setError(err instanceof Error ? err.message : "No se pudo enviar.");
