@@ -7,7 +7,8 @@ export function Hero() {
       <div aria-hidden className="hero-atmos pointer-events-none absolute inset-0 -z-10" />
       <TechBackground />
       <h1 className="mt-4 px-4 sm:px-0 text-[clamp(44px,8vw,88px)] font-bold leading-[1.02] tracking-[-0.035em]">
-        Software seguro para negocios <span className="text-alive">inteligentes.</span>
+        Software seguro para <br className="hidden sm:inline" />
+        negocios <span className="text-alive">inteligentes.</span>
       </h1>
 
       <HeroPillars />

@@ -121,33 +121,11 @@ export function ChatWidget() {
     return () => window.clearInterval(id);
   }, []);
 
-  // Siempre anclado al último mensaje: al abrir salta abajo sin animación, y mientras el visitante
-  // esté abajo lo mantenemos ahí aunque después carguen fotos o lleguen respuestas.
-  const pinned = useRef(true);
+  // Siempre en el último mensaje: la lista es flex-col-reverse, así que el navegador la ancla abajo
+  // de forma nativa (aunque carguen fotos o lleguen respuestas). scrollTop 0 = fondo.
   useEffect(() => {
-    const list = listRef.current;
-    if (!open || !list) return;
-    pinned.current = true;
-    list.scrollTop = list.scrollHeight;
-    const onScroll = () => {
-      pinned.current = list.scrollHeight - list.scrollTop - list.clientHeight < 80;
-    };
-    const ro = new ResizeObserver(() => {
-      if (pinned.current) list.scrollTop = list.scrollHeight;
-    });
-    for (const child of Array.from(list.children)) ro.observe(child);
-    ro.observe(list);
-    list.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      ro.disconnect();
-      list.removeEventListener("scroll", onScroll);
-    };
-  }, [open, messages.length, loading]);
-
-  useEffect(() => {
-    const list = listRef.current;
-    if (list && pinned.current) list.scrollTo({ top: list.scrollHeight, behavior: "smooth" });
-  }, [messages]);
+    if (open && listRef.current) listRef.current.scrollTop = 0;
+  }, [open, loading, messages.length]);
 
   async function send(e: React.FormEvent) {
     e.preventDefault();
@@ -272,8 +250,8 @@ export function ChatWidget() {
       {open && (
         <section role="dialog" aria-label="Chat con Ninja Soft" className="chat-panel chat-panel-in">
           <header className="flex items-center gap-3 border-b border-black/[.06] px-4 py-3">
-            <span className="relative grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#0b0720]">
-              <img src="/images/brand/ninja-isotipo-flame.webp" alt="" width={240} height={311} className="h-6 w-auto" />
+            <span className="relative h-11 w-11 shrink-0 rounded-full bg-[#1d1931] p-[2px] shadow-[0_0_0_1px_rgba(17,12,34,.12)] ring-2 ring-inset ring-white">
+              <img src="/images/brand/ninja-isotipo-blink.webp" alt="" width={96} height={96} className="h-full w-full rounded-full" />
               <i aria-hidden className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-[#30d158] ring-2 ring-white" />
             </span>
             <div className="min-w-0 flex-1">
@@ -318,7 +296,8 @@ export function ChatWidget() {
             </div>
           )}
 
-          <div ref={listRef} className="flex-1 space-y-2 overflow-y-auto px-4 py-4">
+          <div ref={listRef} className="flex flex-1 flex-col-reverse overflow-y-auto overscroll-contain px-4 py-4">
+            <div className="space-y-2">
             <Bubble sender="agent" body="¡Hola! 👋 Somos el equipo de Ninja Soft. Contanos qué necesitás para tu negocio y te respondemos por acá." />
             <p className="px-1 text-[12px] leading-snug text-[#86868b]">
               Si no te respondemos enseguida, te escribimos a tu email.
@@ -355,6 +334,7 @@ export function ChatWidget() {
                 {byEmail ? `Si cerrás la página, te escribimos a ${session?.contact}.` : "Si cerrás la página, te contactamos."}
               </p>
             )}
+            </div>
           </div>
 
           {resume && !session ? (

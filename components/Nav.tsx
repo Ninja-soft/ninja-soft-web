@@ -105,9 +105,9 @@ export function Nav() {
             aria-label="Abrir el chat"
             className="flex min-h-[44px] items-center gap-2.5 rounded-full py-0.5 pl-0.5 pr-4 text-[14px] font-semibold text-ink transition hover:bg-ink/[.06]"
           >
-            <span className="relative h-11 w-11 rounded-full bg-[#1d1931]">
+            <span className="relative h-11 w-11 rounded-full bg-[#1d1931] p-[2px] shadow-[0_0_0_1px_rgba(17,12,34,.12)] ring-2 ring-inset ring-white">
               {/* isotipo animado: los ojos se abren y se cierran */}
-              <img src="/images/brand/ninja-isotipo-blink.webp" alt="" width={96} height={96} className="h-11 w-11 rounded-full" />
+              <img src="/images/brand/ninja-isotipo-blink.webp" alt="" width={96} height={96} className="h-full w-full rounded-full" />
               <i aria-hidden className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-[#30d158] ring-2 ring-paper" />
             </span>
             Hablemos
