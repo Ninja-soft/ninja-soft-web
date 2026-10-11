@@ -73,7 +73,7 @@ export function InternalApp() {
         <div className="mx-auto flex max-w-[1100px] flex-wrap items-center gap-3 px-4 py-3">
           <img src="/images/brand/ninja-isotipo-flame.webp" alt="" width={240} height={311} className="h-7 w-auto" />
           <b className="text-[15px]">Internal</b>
-          <nav className="seg order-last w-full overflow-x-auto sm:order-none sm:w-auto" aria-label="Secciones">
+          <nav className="order-last flex w-full gap-1 overflow-x-auto rounded-full bg-black/[.05] p-1 sm:order-none sm:w-auto" aria-label="Secciones">
             {TABS.map((t) => (
               <button
                 key={t.key}
