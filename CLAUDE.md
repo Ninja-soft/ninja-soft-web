@@ -37,3 +37,23 @@ Todo el texto/datos en `lib/content.ts`. WhatsApp: `WHATSAPP_NUMBER` (pendiente 
 ## Pendientes
 - Número de WhatsApp real · video Gemini · confirmar "Seller Manager"/"Simbel" · dominio soft.ninja.
 - Rediseño "más pro" en curso, de a una sección (ver referencias).
+
+## Chat, contacto y /internal (2026-10-11)
+
+- Backend: Supabase **Ninja Soft Web** (`tgaromemhaixgdsdlxiq`, sa-east-1, org Free "Ninja Soft Internal"). Migraciones en `supabase/migrations/`, se aplican con `node scripts/db-apply.mjs <archivo>` (Management API, requiere `SUPABASE_ACCESS_TOKEN`). Nunca tocar los proyectos de POS/Food desde acá.
+- Edge Functions (`supabase/functions/`): `chat-send`, `telegram-webhook`, `contact-submit`, `admin-settings`, `chat-purge`. Deploy: `npx -y supabase@2.120.0 functions deploy <fn> --project-ref tgaromemhaixgdsdlxiq --no-verify-jwt --use-api` (validan usuario/secreto adentro).
+- Lógica en `_shared/*.ts` puros con dependencias inyectadas (tests: `pnpm test`); los `index.ts` sólo cablean Supabase/Telegram/Resend.
+- Secretos en `app_secrets` (sin políticas RLS; sólo service_role). Se cargan desde /internal → Configuración o con `scripts/set-secret.mjs`. Nunca imprimirlos ni commitearlos.
+- Telegram: grupo "Ninja Soft Chat Web" (`-1003773063419`) con Temas, bot `@Ninja_soft_bot`. Un tema por visitante ("Nombre · email") + tema "📥 Formularios". Fotos ida y vuelta (bucket privado `chat-media`, carpeta = id de sesión). Si cambia el token: Configuración → Registrar webhook.
+- Resend: dominio `soft.ninja` verificado; remitente `Ninja Soft <hola@soft.ninja>`. Emails de aviso configurables (varios, separados por coma).
+- Retención: el chat (mensajes + fotos) se borra a los 15 días sin actividad — pg_cron `purge-old-chats` llama a `chat-purge` con `cron_secret`.
+- Admin de /internal: `$env:ADMIN_PASSWORD='...'; node scripts/create-admin.mjs <email>`.
+- Prueba de aislamiento: `node scripts/check-rls.mjs` (con el token cargado crea un tema "RLS Test" en Telegram: borrarlo después).
+
+### Logos por unidad de negocio (Cloudinary, para emails)
+
+- Ninja Soft: `https://res.cloudinary.com/dl6yhrcx0/image/upload/f_auto,q_auto/Ninja_Soft_Logo_tft2oy`
+- NinjaPOS: `https://res.cloudinary.com/dl6yhrcx0/image/upload/f_auto,q_auto/Ninja_Pos_Logo_pmxzew`
+- Ninja Food: pendiente (ajuste `logo_food_url`).
+- Isotipo naranja PNG (emails): `https://tgaromemhaixgdsdlxiq.supabase.co/storage/v1/object/public/brand/ninja-isotipo-flame.png`
+- Los logos de Cloudinary son para fondo oscuro (texto blanco). En plantillas: `{{logo_soft}}`, `{{logo_pos}}`, `{{logo_food}}` (se editan en /internal → Ajustes).

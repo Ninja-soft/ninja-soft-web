@@ -689,3 +689,209 @@
   .proc.is-on .proc-step { opacity: 1; transform: none; transition: opacity 0.6s ease var(--d), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1) var(--d); }
   .proc.is-on .proc-step .proc-node { transform: none; transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) var(--d); }
 }
+/* chat web */
+.chat-fab {
+  position: fixed; right: 20px; bottom: 20px; z-index: 50;
+  display: grid; place-items: center; width: 56px; height: 56px; border-radius: 9999px;
+  color: #fff; background: linear-gradient(135deg, #ff4b22, #ff8a1f);
+  box-shadow: 0 12px 30px rgba(255, 75, 34, 0.4);
+  transition: transform 0.2s ease;
+}
+.chat-fab:hover { transform: translateY(-2px); }
+.chat-panel {
+  position: fixed; inset: 0; z-index: 50; display: flex; flex-direction: column;
+  background: #fff; color: #1d1d1f;
+}
+@media (min-width: 640px) {
+  .chat-panel {
+    inset: auto 20px 88px auto; width: 380px; height: min(600px, calc(100vh - 120px));
+    border-radius: 24px; overflow: hidden;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06), 0 24px 60px rgba(11, 7, 32, 0.25);
+  }
+}
+.chat-input {
+  width: 100%; border-radius: 14px; background: #f2f2f7; padding: 10px 12px;
+  font-size: 16px; /* 16px evita el zoom de iOS */ color: #1d1d1f; outline: none;
+}
+.chat-input:focus { background: #ebebf0; }
+/* formulario de contacto (sobre fondo oscuro) */
+.contact-input {
+  width: 100%; border-radius: 14px; padding: 12px 14px; font-size: 16px;
+  color: #fff; background: rgba(255, 255, 255, 0.07);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1); outline: none;
+}
+.contact-input::placeholder { color: rgba(184, 174, 220, 0.8); }
+.contact-input:focus { background: rgba(255, 255, 255, 0.11); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.28); }
+.contact-input option { color: #1d1d1f; }
+select.contact-input:has(option[value=""]:checked) { color: rgba(184, 174, 220, 0.8); }
+/* panel interno */
+.int-card { border-radius: 20px; background: #fff; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 10px 26px rgba(0, 0, 0, 0.05); }
+.int-input {
+  width: 100%; border-radius: 12px; background: #fff; padding: 11px 13px; font-size: 16px;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1); outline: none;
+}
+.int-input:focus { box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.28); }
+.int-btn { border-radius: 9999px; padding: 9px 16px; font-size: 14px; font-weight: 600; background: #fff; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12); }
+.int-btn:hover { box-shadow: inset 0 0 0 1px rgba(255, 75, 34, 0.6); }
+
+/* chat: botón flotante con identidad + animaciones fluidas (sólo transform/opacity) */
+.chat-fab {
+  width: 60px; height: 60px; overflow: visible;
+  background: radial-gradient(120% 120% at 30% 20%, #ffb547 0%, #ff8a1f 35%, #ff4b22 75%);
+  box-shadow: 0 14px 34px rgba(255, 75, 34, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+.chat-fab:hover { transform: translateY(-2px) scale(1.04); }
+.chat-fab-icon { position: relative; display: grid; place-items: center; }
+.chat-fab-ring {
+  position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  box-shadow: 0 0 0 0 rgba(255, 106, 26, 0.55);
+}
+.chat-fab-badge {
+  position: absolute; top: -2px; right: -2px; min-width: 20px; height: 20px; padding: 0 6px;
+  display: grid; place-items: center; border-radius: 9999px;
+  background: #fff; color: #ff4b22; font-size: 12px; font-weight: 700;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+.chat-spinner {
+  width: 26px; height: 26px; border-radius: 9999px;
+  border: 3px solid rgba(255, 75, 34, 0.18); border-top-color: #ff4b22;
+  animation: chat-spin 0.8s linear infinite;
+}
+@keyframes chat-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: no-preference) {
+  .chat-fab:not(.is-open) .chat-fab-ring { animation: chat-pulse 2.6s ease-out infinite; }
+  @keyframes chat-pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 106, 26, 0.5); } 70%, 100% { box-shadow: 0 0 0 16px rgba(255, 106, 26, 0); } }
+  .chat-fab:not(.is-open) .chat-fab-icon { animation: chat-wiggle 6s ease-in-out 2s infinite; }
+  @keyframes chat-wiggle {
+    0%, 86%, 100% { transform: none; }
+    88% { transform: rotate(-14deg) scale(1.1); }
+    91% { transform: rotate(12deg) scale(1.1); }
+    94% { transform: rotate(-8deg); }
+    97% { transform: rotate(4deg); }
+  }
+  .chat-fab.is-open .chat-fab-icon { animation: chat-turn 0.3s ease both; }
+  @keyframes chat-turn { from { transform: rotate(-90deg); opacity: 0; } }
+  .chat-panel-in { animation: chat-in 0.32s cubic-bezier(0.22, 1, 0.36, 1) both; transform-origin: bottom right; }
+  @keyframes chat-in { from { opacity: 0; transform: translateY(16px) scale(0.96); } }
+  .chat-bubble-in { animation: chat-bubble 0.28s cubic-bezier(0.22, 1, 0.36, 1) both; }
+  @keyframes chat-bubble { from { opacity: 0; transform: translateY(6px); } }
+}
+
+
+/* formulario de contacto: tarjeta + switch de reunión */
+.contact-card {
+  border-radius: 28px; background: rgba(255, 255, 255, 0.05);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.09), 0 30px 80px rgba(0, 0, 0, 0.25);
+}
+.contact-meeting { background: rgba(255, 255, 255, 0.05); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08); transition: box-shadow 0.2s ease, background-color 0.2s ease; }
+.contact-meeting.is-on { background: rgba(91, 95, 199, 0.22); box-shadow: none; }
+.contact-meeting:focus-within { box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.3); }
+.contact-switch { position: relative; width: 51px; height: 31px; flex-shrink: 0; border-radius: 9999px; background: rgba(255, 255, 255, 0.18); transition: background-color 0.25s ease; }
+.contact-switch::after { content: ""; position: absolute; top: 2px; left: 2px; width: 27px; height: 27px; border-radius: 9999px; background: #fff; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25); transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1); }
+.contact-meeting.is-on .contact-switch { background: #30d158; }
+.contact-meeting.is-on .contact-switch::after { transform: translateX(20px); }
+
+/* rubro como chips seleccionables */
+.contact-chip {
+  display: flex; align-items: center; gap: 8px; min-height: 48px; padding: 10px 12px; cursor: pointer;
+  border-radius: 14px; font-size: 14px; font-weight: 500; line-height: 1.2; color: #fff;
+  background: rgba(255, 255, 255, 0.06); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+}
+.contact-chip svg { flex-shrink: 0; color: #ff8a1f; }
+.contact-chip:hover { background: rgba(255, 255, 255, 0.1); }
+.contact-chip:active { transform: scale(0.98); }
+.contact-chip:has(input:checked) { background: linear-gradient(135deg, #ff4b22, #ff8a1f); box-shadow: none; font-weight: 600; }
+.contact-chip:has(input:checked) svg { color: #fff; }
+.contact-chip:has(input:focus-visible) { box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.4); }
+
+/* login del panel interno (estética del acceso interno de NinjaPOS) */
+.int-login {
+  border-radius: 14px; background: rgba(22, 16, 46, 0.82);
+  box-shadow: inset 0 0 0 1px rgba(255, 75, 34, 0.28), 0 30px 80px rgba(0, 0, 0, 0.45);
+  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+}
+.int-login-input {
+  width: 100%; height: 44px; border-radius: 10px; padding: 0 12px; font-size: 16px; color: #fff;
+  background: #0b0718; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08); outline: none;
+}
+.int-login-input:focus { background: #120c26; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.28); }
+.int-login-btn {
+  height: 44px; border-radius: 10px; font-size: 15px; font-weight: 700; color: #fff;
+  background: linear-gradient(180deg, #ff6a2a, #f0461c); transition: filter 0.2s ease;
+}
+.int-login-btn:hover { filter: brightness(1.06); }
+.int-login-btn:disabled { opacity: 0.6; }
+
+/* flechas ir arriba / ir abajo */
+.scroll-arrows { position: fixed; left: 20px; bottom: 20px; z-index: 40; display: grid; gap: 8px; }
+.scroll-arrow {
+  display: grid; place-items: center; width: 44px; height: 44px; border-radius: 9999px; color: #fff;
+  background: rgba(16, 12, 34, 0.72); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+  -webkit-backdrop-filter: blur(16px) saturate(160%); backdrop-filter: blur(16px) saturate(160%);
+  transition: opacity 0.3s ease, transform 0.3s ease, background-color 0.2s ease;
+}
+.scroll-arrow:hover { background: rgba(255, 75, 34, 0.9); }
+.scroll-arrow.is-hidden { opacity: 0; transform: scale(0.8); pointer-events: none; }
+@media (max-width: 640px) { .scroll-arrows { left: 16px; bottom: 16px; } .scroll-arrow { width: 40px; height: 40px; } }
+
+
+
+/* visor de fotos del chat */
+.photo-viewer {
+  position: fixed; inset: 0; z-index: 70; display: grid; place-items: center; padding: 24px;
+  background: rgba(8, 5, 20, 0.88); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); cursor: zoom-out;
+}
+.photo-viewer-img { max-width: min(1100px, 100%); max-height: 88vh; border-radius: 16px; cursor: default; box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5); }
+.photo-viewer-btn {
+  display: grid; place-items: center; width: 44px; height: 44px; border-radius: 9999px; color: #fff;
+  background: rgba(255, 255, 255, 0.14); transition: background-color 0.2s ease;
+}
+.photo-viewer-btn:hover { background: rgba(255, 255, 255, 0.26); }
+@media (prefers-reduced-motion: no-preference) {
+  .photo-viewer { animation: chat-fade 0.2s ease both; }
+  .photo-viewer-img { animation: chat-in 0.3s cubic-bezier(0.22, 1, 0.36, 1) both; }
+  @keyframes chat-fade { from { opacity: 0; } }
+}
+.chat-spinner-light { border-color: rgba(255, 255, 255, 0.35); border-top-color: #fff; }
+
+/* panel interno: fondo con atmósfera de marca + spinner */
+.int-bg {
+  background-color: #f5f4f9;
+  background-image:
+    radial-gradient(900px 500px at 0% 0%, rgba(255, 106, 26, 0.10), transparent 60%),
+    radial-gradient(900px 600px at 100% 0%, rgba(124, 77, 255, 0.10), transparent 60%),
+    radial-gradient(circle at 1px 1px, rgba(29, 29, 31, 0.07) 1px, transparent 1.5px);
+  background-size: auto, auto, 28px 28px;
+  background-attachment: fixed;
+}
+.int-auth-bg {
+  background-color: #0b0720;
+  background-image:
+    radial-gradient(700px 500px at 15% 20%, rgba(255, 75, 34, 0.18), transparent 60%),
+    radial-gradient(800px 600px at 90% 10%, rgba(124, 77, 255, 0.22), transparent 60%),
+    radial-gradient(700px 500px at 70% 100%, rgba(255, 138, 31, 0.10), transparent 60%);
+}
+.int-spinner {
+  display: block; width: 34px; height: 34px; border-radius: 9999px;
+  border: 3px solid rgba(255, 75, 34, 0.2); border-top-color: #ff4b22;
+  animation: chat-spin 0.8s linear infinite;
+}
+
+/* autocompletado del navegador: sin el fondo celeste, respetando el diseño de cada campo */
+.int-login-input:-webkit-autofill, .int-login-input:-webkit-autofill:hover, .int-login-input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #fff; caret-color: #fff;
+  -webkit-box-shadow: 0 0 0 1000px #0b0718 inset, inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  transition: background-color 9999s ease-out 0s;
+}
+.contact-input:-webkit-autofill, .contact-input:-webkit-autofill:hover, .contact-input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #fff; caret-color: #fff;
+  -webkit-box-shadow: 0 0 0 1000px #1a1530 inset, inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+  transition: background-color 9999s ease-out 0s;
+}
+.chat-input:-webkit-autofill, .chat-input:-webkit-autofill:hover, .chat-input:-webkit-autofill:focus,
+.int-input:-webkit-autofill, .int-input:-webkit-autofill:hover, .int-input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #1d1d1f;
+  -webkit-box-shadow: 0 0 0 1000px #f2f2f7 inset;
+  transition: background-color 9999s ease-out 0s;
+}

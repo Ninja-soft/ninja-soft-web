@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { NAV_LINKS, POS_APP_URL, PRODUCTS, SERVICES, whatsappUrl } from "@/lib/content";
+import { openChat } from "@/lib/chat-events";
+import { NAV_LINKS, POS_APP_URL, PRODUCTS, SERVICES } from "@/lib/content";
 
 // Única capa de vidrio del sitio: la barra flota sobre el contenido.
 // Desktop: desplegable "Productos" (mega menú con los logos). Mobile: hoja a pantalla completa.
@@ -98,15 +99,19 @@ export function Nav() {
           >
             Probar gratis
           </a>
-          <a
-            href={whatsappUrl()}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex min-h-[40px] items-center gap-2 rounded-full bg-ink px-4 text-[14px] font-semibold text-paper transition hover:bg-ink/85"
+          <button
+            type="button"
+            onClick={openChat}
+            aria-label="Abrir el chat"
+            className="flex min-h-[44px] items-center gap-2.5 rounded-full py-0.5 pl-0.5 pr-4 text-[14px] font-semibold text-ink transition hover:bg-ink/[.06]"
           >
-            <span aria-hidden className="h-2 w-2 rounded-full bg-[#25D366] shadow-[0_0_0_3px_rgba(37,211,102,.25)]" />
+            <span className="relative h-11 w-11 rounded-full bg-[#1d1931] p-[2px] shadow-[0_0_0_1px_rgba(17,12,34,.12)] ring-2 ring-inset ring-white">
+              {/* isotipo animado: los ojos se abren y se cierran */}
+              <img src="/images/brand/ninja-isotipo-blink.webp" alt="" width={96} height={96} className="h-full w-full rounded-full" />
+              <i aria-hidden className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-[#30d158] ring-2 ring-paper" />
+            </span>
             Hablemos
-          </a>
+          </button>
         </div>
 
         <button
@@ -194,9 +199,16 @@ export function Nav() {
           ))}
         </nav>
         <div className="mt-8 grid gap-3">
-          <a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" className="btn-flame justify-center">
-            Hablar por WhatsApp
-          </a>
+          <button
+            type="button"
+            onClick={() => {
+              close();
+              openChat();
+            }}
+            className="btn-flame justify-center"
+          >
+            Abrir el chat
+          </button>
           <a href={POS_APP_URL} className="flex min-h-[44px] items-center justify-center rounded-full border border-line text-[15px] font-semibold">
             Probar NinjaPOS gratis
           </a>
