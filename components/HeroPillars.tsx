@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CashRegister, ChartLineUp, CodeBlock, PlugsConnected, ShieldCheck, type Icon } from "@phosphor-icons/react";
 import { PillarShowcase, SCENE_IMAGES } from "./PillarShowcase";
 
@@ -30,6 +30,16 @@ export function HeroPillars() {
   const [active, setActive] = useState(0);
   const [hover, setHover] = useState(false);
   const [tick, setTick] = useState(0);
+  // Slider mobile: lleva el pilar activo a la vista sin mover la página.
+  const listRef = useRef<HTMLUListElement>(null);
+  useEffect(() => {
+    const list = listRef.current;
+    if (!list || window.matchMedia("(min-width: 640px)").matches) return;
+    const item = list.children[active] as HTMLElement | undefined;
+    if (!item) return;
+    const left = item.offsetLeft - (list.clientWidth - item.offsetWidth) / 2;
+    list.scrollTo({ left: Math.max(0, left), behavior: "smooth" });
+  }, [active]);
 
   useEffect(() => {
     if (hover) return;
@@ -89,16 +99,19 @@ export function HeroPillars() {
         className="mt-9 grid gap-0 border-y border-line bg-white/85 text-left sm:gap-3 sm:rounded-[32px] sm:border sm:p-2 lg:grid-cols-[minmax(0,.9fr)_minmax(0,1.1fr)]"
       >
         {/* Lista de pilares */}
-        <ul className="grid grid-cols-2 gap-1 p-2 sm:grid-cols-3 sm:p-0 lg:grid-cols-1">
+        <ul
+          ref={listRef}
+          className="flex snap-x snap-mandatory gap-1.5 overflow-x-auto px-3 py-2.5 [scrollbar-width:none] sm:grid sm:snap-none sm:grid-cols-3 sm:gap-1 sm:overflow-visible sm:p-0 lg:grid-cols-1 [&::-webkit-scrollbar]:hidden"
+        >
           {PILLARS.map((p, i) => {
             const on = i === active;
             return (
-              <li key={p.key}>
+              <li key={p.key} className="shrink-0 snap-center sm:shrink">
                 <button
                   type="button"
                   onClick={() => pick(i)}
                   aria-pressed={on}
-                  className={`relative flex w-full items-center gap-3.5 overflow-hidden rounded-[20px] px-3.5 py-3 text-left transition-colors duration-500 ${
+                  className={`relative flex w-full items-center gap-2.5 overflow-hidden whitespace-nowrap rounded-[20px] py-2 pl-2 pr-4 text-left transition-colors duration-500 sm:gap-3.5 sm:whitespace-normal sm:px-3.5 sm:py-3 ${
                     on ? "bg-white shadow-[0_1px_0_rgba(17,12,34,.04)] ring-1 ring-ink/[.06]" : "hover:bg-white/70"
                   }`}
                 >

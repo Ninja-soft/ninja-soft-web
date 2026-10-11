@@ -2,7 +2,7 @@ import { NAV, POS_APP_URL, PROCESS, whatsappUrl } from "@/lib/content";
 
 export function Experience() {
   return (
-    <section id="experiencia" className="mx-auto max-w-[980px] px-4 pb-10 pt-[110px]">
+    <section id="experiencia" className="mx-auto max-w-[980px] px-4 pb-8 pt-16 sm:pb-10 sm:pt-[110px]">
       <p className="font-display text-[clamp(30px,4.6vw,52px)] font-bold leading-[1.12] tracking-[-0.03em] text-[#B9B3CB] [text-wrap:balance]">
         <em className="not-italic text-ink">Años implementando</em> Presea, Napse, Softland, Cygnus y Posberry.{" "}
         <em className="not-italic text-ink">Integrando</em> Producteca, E3 Stores, Mercado Libre y Mercado Pago.{" "}
@@ -17,7 +17,7 @@ export function Experience() {
 
 export function Process() {
   return (
-    <section aria-label="Cómo trabajamos" className="mx-auto grid max-w-5xl grid-cols-1 gap-7 px-4 pb-[110px] pt-10 sm:grid-cols-2 lg:grid-cols-4">
+    <section aria-label="Cómo trabajamos" className="mx-auto grid max-w-5xl grid-cols-1 gap-7 px-4 pb-16 pt-6 sm:grid-cols-2 sm:pb-[110px] sm:pt-10 lg:grid-cols-4">
       {PROCESS.map((step, i) => (
         <div key={step.title} className="min-w-0 border-t-2 border-ink pt-4">
           <p className="font-mono text-[13px] text-flame-link">{String(i + 1).padStart(2, "0")}</p>
@@ -31,7 +31,7 @@ export function Process() {
 
 export function Contact() {
   return (
-    <section id="hablemos" className="tile on-night bg-night px-4 pb-[88px] pt-24 text-snow">
+    <section id="hablemos" className="tile on-night bg-night px-4 pb-16 pt-16 text-snow sm:pb-[88px] sm:pt-24">
       <img
         src="/images/brand/ninja-isotipo-white.webp"
         alt=""

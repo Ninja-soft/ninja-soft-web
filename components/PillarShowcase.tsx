@@ -29,7 +29,7 @@ export const SCENE_IMAGES = [
 
 export function PillarShowcase({ active, title, desc }: { active: PillarKey; title: string; desc: string }) {
   return (
-    <div className="relative isolate flex min-h-[540px] flex-col overflow-hidden bg-night px-4 py-6 text-snow [contain:layout_paint] sm:rounded-[26px] sm:p-7 lg:h-[540px]">
+    <div className="relative isolate flex flex-col sm:min-h-[540px] overflow-hidden bg-night px-4 py-6 text-snow [contain:layout_paint] sm:rounded-[26px] sm:p-7 lg:h-[540px]">
       <div
         aria-hidden
         className={`absolute inset-0 -z-10 ${
@@ -43,7 +43,7 @@ export function PillarShowcase({ active, title, desc }: { active: PillarKey; tit
       <div key={active} className="sc-in flex flex-1 flex-col">
         <p className="font-mono text-[12px] uppercase tracking-[.16em] text-mist">{title}</p>
         <p className="mt-2 max-w-[36ch] font-display text-[21px] font-bold leading-snug">{desc}</p>
-        <div className="mt-5 flex flex-1 flex-col justify-end">{SCENES[active]}</div>
+        <div className="mt-5 flex flex-1 flex-col sm:justify-end">{SCENES[active]}</div>
       </div>
     </div>
   );

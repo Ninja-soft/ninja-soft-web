@@ -58,7 +58,7 @@ export function HeroArt() {
   }
 
   return (
-    <div className="relative mx-auto mt-12 w-[min(380px,72vw)] pb-10 after:absolute after:inset-x-[12%] after:bottom-[18px] after:h-7 after:rounded-[50%] after:bg-[radial-gradient(closest-side,rgba(17,12,34,.18),transparent)] after:content-['']">
+    <div className="relative mx-auto mt-8 w-[min(380px,46vw)] pb-6 sm:mt-12 sm:w-[min(380px,72vw)] sm:pb-10 after:absolute after:inset-x-[12%] after:bottom-[18px] after:h-7 after:rounded-[50%] after:bg-[radial-gradient(closest-side,rgba(17,12,34,.18),transparent)] after:content-['']">
       <img
         ref={imgRef}
         src="/images/brand/ninja-isotipo-black.webp"

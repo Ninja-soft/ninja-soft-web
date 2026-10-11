@@ -100,7 +100,7 @@ export function SceneVender() {
       </div>
       <ul className="grid gap-2">
         {cart.items.map((c, i) => (
-          <li key={c.name} className="sc-up flex items-center gap-3" style={T(i * 120)}>
+          <li key={c.name} className={`sc-up items-center gap-3 ${i === 2 ? "hidden sm:flex" : "flex"}`} style={T(i * 120)}>
             <img src={c.img} alt="" width={320} height={320} className="h-11 w-11 rounded-xl object-cover" />
             <span className="min-w-0 flex-1 truncate text-[14px]">
               {c.name} <span className="text-mist">× {c.qty}</span>

@@ -62,7 +62,7 @@ export function SceneIntegrar() {
   const cycle = { animationDuration: `${INTEGRAR_CYCLE_MS}ms` };
   return (
     // container-type: size habilita cqw/cqh para posicionar los logos con transform
-    <div className="relative h-[290px] w-full [container-type:size]">
+    <div className="relative h-[250px] w-full [container-type:size] sm:h-[290px]">
       {GROUPS.map((g, gi) => {
         const start = gi * INTEGRAR_PHASE_MS;
         return (
