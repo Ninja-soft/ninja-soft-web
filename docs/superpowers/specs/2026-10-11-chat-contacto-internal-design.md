@@ -1,6 +1,6 @@
 # Chat web → Telegram, formulario de contacto y panel /internal
 
-Fecha: 2026-10-11 · Estado: **en revisión**
+Fecha: 2026-10-11 · Estado: **aprobado** (2026-10-11)
 
 ## Objetivo
 
