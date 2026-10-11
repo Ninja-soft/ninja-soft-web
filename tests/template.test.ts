@@ -27,3 +27,10 @@ test("brandVars expone los logos configurados como variables", () => {
     '<img src="https://cdn/soft.png"><img src="https://cdn/pos.png">',
   );
 });
+
+test("brandVars también expone las versiones para fondo claro", () => {
+  const vars = brandVars({ logo_soft_claro_url: "https://cdn/soft-negro.png", logo_pos_claro_url: "https://cdn/pos-negro.png" });
+  expect(renderTemplate("{{logo_soft_claro}}|{{logo_pos_claro}}|{{logo_food_claro}}", vars)).toBe(
+    "https://cdn/soft-negro.png|https://cdn/pos-negro.png|",
+  );
+});

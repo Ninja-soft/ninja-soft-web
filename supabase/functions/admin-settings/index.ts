@@ -41,7 +41,6 @@ Deno.serve(async (req) => {
         const token = await store.secret("telegram_bot_token");
         if (!token) return json(400, { error: "Cargá primero el token del bot." });
         const secret = crypto.randomUUID().replaceAll("-", "");
-        await saveSecret("telegram_webhook_secret", secret);
         const r = await fetch(`https://api.telegram.org/bot${token}/setWebhook`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -54,6 +53,7 @@ Deno.serve(async (req) => {
         });
         const d = obj(await r.json());
         if (d.ok !== true) return json(502, { error: `Telegram: ${String(d.description ?? r.status)}` });
+        await saveSecret("telegram_webhook_secret", secret);
         return json(200, { ok: true });
       }
       case "test_telegram": {

@@ -1,11 +1,13 @@
 import type { Mailer } from "./resend.ts";
-import type { TelegramApi } from "./telegram.ts";
+import { isTopicGone, type TelegramApi } from "./telegram.ts";
 import { brandVars, formatDate, renderTemplate, type TemplateData } from "./template.ts";
 import type { HandlerResult, Store, TemplateKey } from "./types.ts";
 import { emailList, isHoneypotFilled, obj, validateContact } from "./validate.ts";
 
 export const CONTACT_LIMIT = { perIp: 5, windowMs: 3_600_000 };
 export const FORMS_TOPIC = "📥 Formularios";
+// Tope global de auto-respuestas: evita usar el formulario para mandar mails a terceros desde nuestro dominio.
+export const ACK_GLOBAL_PER_HOUR = 30;
 
 export type ContactDeps = {
   store: Store;
@@ -67,7 +69,10 @@ export async function handleContact(
     };
     const team = emailList(s.notify_email);
     for (const to of team) await send("contact_notify", to, c.email);
-    await send("contact_ack", c.email, team[0]);
+    if ((await store.countRecent("contact:ack:global", 3_600_000)) < ACK_GLOBAL_PER_HOUR) {
+      await store.hit("contact:ack:global");
+      await send("contact_ack", c.email, team[0]);
+    }
   }
 
   // Aviso en Telegram, en el tema "Formularios".
@@ -75,18 +80,25 @@ export async function handleContact(
     const token = await store.secret("telegram_bot_token");
     if (token && s.telegram_group_id) {
       const tg = deps.telegram(token, s.telegram_group_id);
-      let thread = Number(s.forms_thread_id) || 0;
-      if (!thread) {
-        thread = await tg.createTopic(FORMS_TOPIC);
-        await store.setSetting("forms_thread_id", String(thread));
-      }
+      const newTopic = async () => {
+        const id = await tg.createTopic(FORMS_TOPIC);
+        await store.setSetting("forms_thread_id", String(id));
+        return id;
+      };
+      const thread = Number(s.forms_thread_id) || (await newTopic());
       const lines = ["📥 Nuevo contacto", `Nombre: ${c.name}`, `Email: ${c.email}`];
       if (c.company) lines.push(`Empresa: ${c.company}`);
       if (c.phone) lines.push(`Teléfono: ${c.phone}`);
       if (c.business) lines.push(`Rubro: ${c.business}`);
       if (c.meeting) lines.push(`📅 Quiere una reunión por Teams${c.meeting_pref ? ` (${c.meeting_pref})` : ""}`);
       lines.push("", c.message);
-      await tg.send(thread, lines.join("\n").slice(0, 4000));
+      const text = lines.join("\n").slice(0, 4000);
+      try {
+        await tg.send(thread, text);
+      } catch (err) {
+        if (!isTopicGone(err)) throw err;
+        await tg.send(await newTopic(), text);
+      }
     }
   } catch (err) {
     console.error("contact-submit: telegram", err);

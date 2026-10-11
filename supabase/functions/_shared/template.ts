@@ -13,13 +13,24 @@ export const TEMPLATE_VARS = [
   "logo_soft",
   "logo_pos",
   "logo_food",
+  "logo_soft_claro",
+  "logo_pos_claro",
+  "logo_food_claro",
 ] as const;
 export type TemplateVar = (typeof TEMPLATE_VARS)[number];
 export type TemplateData = Partial<Record<TemplateVar, string>>;
 
 // Logos de cada unidad de negocio (configurables en /internal → Ajustes).
 export function brandVars(s: Record<string, string | undefined>): TemplateData {
-  return { logo_soft: s.logo_soft_url ?? "", logo_pos: s.logo_pos_url ?? "", logo_food: s.logo_food_url ?? "" };
+  // logo_x: texto blanco (fondo oscuro) · logo_x_claro: texto negro (fondo claro)
+  return {
+    logo_soft: s.logo_soft_url ?? "",
+    logo_pos: s.logo_pos_url ?? "",
+    logo_food: s.logo_food_url ?? "",
+    logo_soft_claro: s.logo_soft_claro_url ?? "",
+    logo_pos_claro: s.logo_pos_claro_url ?? "",
+    logo_food_claro: s.logo_food_claro_url ?? "",
+  };
 }
 
 export function escapeHtml(s: string): string {

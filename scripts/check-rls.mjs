@@ -30,6 +30,7 @@ const ins = await b.from("chat_messages").insert({ session_id: sessB.data?.[0]?.
 check(!!ins.error, "B no puede insertar mensajes directo");
 
 await sql("delete from auth.users where id in (select user_id from chat_sessions where name = 'RLS Test')");
-await sql("delete from auth.users where is_anonymous and id not in (select user_id from chat_sessions)");
+const ids = [(await a.auth.getUser()).data.user?.id, (await b.auth.getUser()).data.user?.id].filter(Boolean);
+if (ids.length) await sql(`delete from auth.users where id in (${ids.map((i) => `'${i}'`).join(",")})`);
 console.log(fails ? `${fails} fallas` : "RLS OK");
 process.exit(fails ? 1 : 0);

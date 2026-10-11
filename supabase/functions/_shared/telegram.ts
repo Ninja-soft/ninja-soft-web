@@ -27,6 +27,10 @@ export function parseAgentUpdate(update: unknown, groupId: string): AgentReply |
   return { ...base, text: m.text.trim() };
 }
 
+// ¿El error es porque el tema ya no existe (Lucas lo borró o lo cerró)? Sólo ahí conviene crear otro.
+export const isTopicGone = (err: unknown) =>
+  /thread not found|topic_deleted|topic_closed|topic not found/i.test(err instanceof Error ? err.message : String(err));
+
 export type TelegramApi = {
   createTopic(name: string): Promise<number>;
   send(threadId: number | null, text: string): Promise<number>;

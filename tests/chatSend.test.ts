@@ -111,4 +111,15 @@ describe("handleChatSend", () => {
       expect(r.status).toBe(400);
     }
   });
+
+  test("error de Telegram que NO es tema borrado (429, red) → no crea otro tema", async () => {
+    const first = fakeTelegram();
+    await handleChatSend({ store, telegram: first.factory, media: fakeMedia().media }, { userId: "u1", ip: "ip", body: { ...lead, message: "uno" } });
+    const tg = fakeTelegram({ failSendOnce: true, failMessage: "Telegram sendMessage: Too Many Requests: retry after 5" });
+    const r = await handleChatSend({ store, telegram: tg.factory, media: fakeMedia().media }, { userId: "u1", ip: "ip", body: { message: "dos" } });
+    expect(r.json.delivered).toBe(false);
+    expect(tg.calls.topics).toHaveLength(0);
+    expect(store.sessions[0].telegram_thread_id).toBe(101);
+  });
 });
+

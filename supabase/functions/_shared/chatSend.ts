@@ -1,4 +1,4 @@
-import { topicName, type TelegramApi } from "./telegram.ts";
+import { isTopicGone, topicName, type TelegramApi } from "./telegram.ts";
 import type { HandlerResult, Media, Session, Store } from "./types.ts";
 import { isHoneypotFilled, obj, validateLead, validateMessage } from "./validate.ts";
 
@@ -67,7 +67,7 @@ async function forward(deps: ChatDeps, session: Session, text: string, mediaPath
     try {
       await deliver(thread);
     } catch (err) {
-      if (session.telegram_thread_id == null) throw err;
+      if (session.telegram_thread_id == null || !isTopicGone(err)) throw err;
       await deliver(await newTopic());
     }
     return true;

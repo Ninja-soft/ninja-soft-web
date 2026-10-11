@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, test } from "vitest";
-import { CONTACT_LIMIT, handleContact } from "../supabase/functions/_shared/contact.ts";
+import { ACK_GLOBAL_PER_HOUR, CONTACT_LIMIT, handleContact } from "../supabase/functions/_shared/contact.ts";
 import { FakeStore, fakeMailer, fakeTelegram } from "./fakes.ts";
 
 const CFG = { telegram_group_id: "-100", sender: "Ninja <a@b.co>", notify_email: "lucas@x.com", site_url: "https://s", forms_thread_id: "" };
@@ -89,4 +89,23 @@ describe("handleContact", () => {
     for (let i = 0; i < CONTACT_LIMIT.perIp; i++) await handleContact(deps, { ip: "h", body });
     expect((await handleContact(deps, { ip: "h", body })).status).toBe(429);
   });
+
+  test("tema Formularios borrado → se recrea y el aviso llega", async () => {
+    store.cfg.forms_thread_id = "77";
+    const tg = fakeTelegram({ failSendOnce: true });
+    await handleContact({ store, mailer: fakeMailer().factory, telegram: tg.factory }, { ip: "h", body });
+    expect(tg.calls.topics).toEqual(["📥 Formularios"]);
+    expect(tg.calls.sent[0].threadId).toBe(101);
+    expect(store.cfg.forms_thread_id).toBe("101");
+  });
+
+  test("tope global de auto-respuestas por hora: se guarda y avisa a Lucas, pero no se responde al cliente", async () => {
+    for (let i = 0; i < ACK_GLOBAL_PER_HOUR; i++) await store.hit("contact:ack:global");
+    const m = fakeMailer();
+    const r = await handleContact({ store, mailer: m.factory, telegram: fakeTelegram().factory }, { ip: "otra", body });
+    expect(r.status).toBe(200);
+    expect(store.contacts).toHaveLength(1);
+    expect(m.sent.map((x) => x.to)).toEqual(["lucas@x.com"]);
+  });
 });
+

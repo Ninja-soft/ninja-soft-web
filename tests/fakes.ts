@@ -86,7 +86,7 @@ export class FakeStore implements Store {
   }
 }
 
-export function fakeTelegram(opts: { failSendOnce?: boolean } = {}) {
+export function fakeTelegram(opts: { failSendOnce?: boolean; failMessage?: string } = {}) {
   const calls = {
     topics: [] as string[],
     sent: [] as { threadId: number | null; text: string }[],
@@ -102,7 +102,7 @@ export function fakeTelegram(opts: { failSendOnce?: boolean } = {}) {
     async send(threadId, text) {
       if (fail) {
         fail = false;
-        throw new Error("Telegram sendMessage: Bad Request: message thread not found");
+        throw new Error(opts.failMessage ?? "Telegram sendMessage: Bad Request: message thread not found");
       }
       calls.sent.push({ threadId, text });
       return calls.sent.length;

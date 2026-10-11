@@ -6,7 +6,7 @@ import { lit, SB_URL, serviceKey, sql } from "./sb.mjs";
 const email = (process.argv[2] ?? "").trim().toLowerCase();
 const password = process.env.ADMIN_PASSWORD ?? "";
 if (!email.includes("@")) throw new Error("Pasá el email del admin");
-if (password.length < 12) throw new Error("ADMIN_PASSWORD debe tener al menos 12 caracteres");
+if (password.length < 8) throw new Error("ADMIN_PASSWORD debe tener al menos 8 caracteres");
 
 const admin = createClient(SB_URL, await serviceKey(), { auth: { persistSession: false } }).auth.admin;
 const [existing] = await sql(`select id from auth.users where lower(email) = ${lit(email)}`);
