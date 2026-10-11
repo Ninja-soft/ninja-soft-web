@@ -126,5 +126,13 @@ describe("handleChatSend", () => {
     await handleChatSend({ store, telegram: fakeTelegram().factory, media: fakeMedia().media }, { userId: "u1", ip: "ip", body: { ...lead, message: "hola" } });
     expect(store.upserts).toEqual([{ email: "ana@mail.com", name: "Ana", source: "chat" }]);
   });
-});
 
+  test("si falla guardar el contacto, el chat sigue funcionando (no se pierde el lead)", async () => {
+    store.upsertContact = async () => {
+      throw new Error("contacts caído");
+    };
+    const r = await handleChatSend({ store, telegram: fakeTelegram().factory, media: fakeMedia().media }, { userId: "u1", ip: "ip", body: { ...lead, message: "hola" } });
+    expect(r.status).toBe(200);
+    expect(store.messages).toHaveLength(1);
+  });
+});

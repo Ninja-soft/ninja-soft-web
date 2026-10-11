@@ -5,7 +5,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { ArrowClockwise, FloppyDisk, Flask, Megaphone, PaperPlaneTilt, PencilSimple, Plus, Trash, X } from "@phosphor-icons/react";
 import { functionError } from "@/lib/supabase/functionError";
 import { brandVars, renderTemplate, type TemplateData } from "@/supabase/functions/_shared/template";
-import { Empty, Note, PageHeader, Spinner, SpinnerBlock } from "./ui";
+import { Empty, NoData, Note, PageHeader, Spinner, SpinnerBlock } from "./ui";
 
 type Campaign = { id: string; subject: string; html: string; status: "draft" | "sending" | "done"; total: number; sent: number; failed: number; created_at: string; finished_at: string | null };
 
@@ -280,7 +280,7 @@ export function CampaignsTab({ sb }: { sb: SupabaseClient }) {
                       <td className="max-w-[320px] truncate font-medium">{c.subject}</td>
                       <td className="ix-muted text-[13px]">{new Date(c.created_at).toLocaleString("es-AR", { dateStyle: "short", timeStyle: "short" })}</td>
                       <td className="text-right">
-                        {c.status === "draft" ? <span className="ix-muted">—</span> : <>{c.sent} <span className="ix-muted">/ {c.total}</span></>}
+                        {c.status === "draft" ? <NoData label="Sin enviar" /> : <>{c.sent} <span className="ix-muted">/ {c.total}</span></>}
                       </td>
                       <td className="text-right">{c.failed ? <span className="text-[#fca5a5]">{c.failed}</span> : <span className="ix-muted">0</span>}</td>
                       <td>

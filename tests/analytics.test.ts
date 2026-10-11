@@ -23,6 +23,14 @@ describe("classifySource", () => {
     expect(classifySource("https://t.co/abc", {}, SITE)).toMatchObject({ source: "X", medium: "social" });
     expect(classifySource("https://web.whatsapp.com/", {}, SITE)).toMatchObject({ source: "WhatsApp", medium: "social" });
   });
+  test("clic de Google Ads sin UTM (gclid) → Google pago", () => {
+    expect(classifySource("https://www.google.com/", { gclid: "abc" }, SITE)).toEqual({ source: "Google", medium: "cpc", campaign: "" });
+  });
+  test("sólo los .vercel.app del proyecto cuentan como directo", () => {
+    expect(classifySource("https://ninja-soft-web.vercel.app/", {}, SITE).source).toBe("Directo");
+    expect(classifySource("https://ninja-soft-web-git-x-lucas.vercel.app/", {}, SITE).source).toBe("Directo");
+    expect(classifySource("https://otro-sitio.vercel.app/", {}, SITE).source).toBe("otro-sitio.vercel.app");
+  });
   test("otros sitios → referido con su dominio", () => {
     expect(classifySource("https://www.blogdekioscos.com.ar/nota", {}, SITE)).toEqual({ source: "blogdekioscos.com.ar", medium: "referido", campaign: "" });
   });

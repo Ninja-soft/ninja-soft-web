@@ -9,7 +9,7 @@ let viewSent = false;
 export function Analytics() {
   useEffect(() => {
     const q = new URLSearchParams(window.location.search);
-    const utm = { source: q.get("utm_source") ?? "", medium: q.get("utm_medium") ?? "", campaign: q.get("utm_campaign") ?? "" };
+    const utm = { source: q.get("utm_source") ?? "", medium: q.get("utm_medium") ?? "", campaign: q.get("utm_campaign") ?? "", gclid: q.get("gclid") ?? "" };
     if (!viewSent) {
       viewSent = true; // una sola visita por carga de página
       track("view", { referrer: document.referrer, utm });

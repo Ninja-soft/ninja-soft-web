@@ -19,6 +19,7 @@ import {
   X,
   type Icon,
 } from "@phosphor-icons/react";
+import { Year } from "@/components/Year";
 import { internalClient } from "@/lib/supabase/client";
 import { CampaignsTab } from "./CampaignsTab";
 import { ChatsTab } from "./ChatsTab";
@@ -308,7 +309,7 @@ function Shell({
             <div className="ix-muted mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-5 text-[12px] sm:px-6">
               <span className="flex items-center gap-2">
                 <img src="/images/brand/ninja-isotipo-flame.webp" alt="" width={240} height={311} className="h-4 w-auto" />
-                © {new Date().getFullYear()} Ninja Soft · Panel interno
+                © <Year initial={new Date().getFullYear()} /> Ninja Soft · Panel interno
               </span>
               <span className="flex gap-4">
                 <a href="/" target="_blank" rel="noopener noreferrer" className="hover:text-white">

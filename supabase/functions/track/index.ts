@@ -3,9 +3,11 @@ import { clientIp, cors, sha256 } from "../_shared/http.ts";
 import { adminClient, supabaseStore } from "../_shared/supabaseStore.ts";
 
 // Medición propia (sin cookies). Recibe beacons del sitio; el visitante se identifica con un hash
-// diario de IP + navegador + secreto, que no permite recuperar la IP ni seguirlo entre días.
+// diario de IP + navegador + sal secreta, que no permite recuperar la IP ni seguirlo entre días.
 const db = adminClient();
+const store = supabaseStore(db);
 let salt = "";
+const LIMIT = { requests: 120, windowMs: 10 * 60_000 }; // por visitante: frena scripts que inflan las estadísticas
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: cors });
@@ -19,17 +21,26 @@ Deno.serve(async (req) => {
     } catch {
       return new Response(null, { status: 400, headers: cors });
     }
-    const list = (Array.isArray(raw) ? raw : [raw]).slice(0, 20);
-    if (!salt) salt = (await supabaseStore(db).secret("cron_secret")) ?? "ns";
+    if (!salt) {
+      const s = await store.secret("analytics_salt");
+      if (!s) return new Response(null, { status: 204, headers: cors }); // sin sal no se mide (nunca un hash débil)
+      salt = s;
+    }
     const day = new Date().toLocaleDateString("en-CA", { timeZone: "America/Argentina/Buenos_Aires" });
-    const visitor = await sha256(`${clientIp(req)}|${req.headers.get("user-agent") ?? ""}|${day}|${salt}`);
+    const visitor = (await sha256(`${clientIp(req)}|${req.headers.get("user-agent") ?? ""}|${day}|${salt}`)).slice(0, 32);
+
+    const bucket = `track:${visitor}`;
+    if ((await store.countRecent(bucket, LIMIT.windowMs)) >= LIMIT.requests) return new Response(null, { status: 429, headers: cors });
+    await store.hit(bucket);
+
+    const list = (Array.isArray(raw) ? raw : [raw]).slice(0, 20);
     const rows = list
       .map(validateEvent)
       .filter((e) => e !== null)
       .map((e) => {
         const src = classifySource(e!.referrer, e!.utm, "soft.ninja");
         return {
-          visitor: visitor.slice(0, 32),
+          visitor,
           sid: e!.sid,
           type: e!.type,
           path: e!.path,

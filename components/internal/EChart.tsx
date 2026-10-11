@@ -21,6 +21,8 @@ const BASE: EChartsOption = {
 
 export function EChart({ option, height = 280 }: { option: EChartsOption; height?: number }) {
   const ref = useRef<HTMLDivElement>(null);
+  const optionRef = useRef(option);
+  optionRef.current = option;
   const chart = useRef<{ setOption: (o: EChartsOption, notMerge?: boolean) => void; resize: () => void; dispose: () => void } | null>(null);
 
   useEffect(() => {
@@ -31,7 +33,7 @@ export function EChart({ option, height = 280 }: { option: EChartsOption; height
       if (!alive || !ref.current) return;
       const c = echarts.init(ref.current, undefined, { renderer: "canvas" });
       chart.current = c;
-      c.setOption({ ...BASE, ...option } as EChartsOption, true);
+      c.setOption({ ...BASE, ...optionRef.current } as EChartsOption, true);
       ro = new ResizeObserver(() => c.resize());
       ro.observe(ref.current);
     })();

@@ -68,10 +68,10 @@ export function HomeTab({ sb, onGo }: { sb: SupabaseClient; onGo: (k: string) =>
       <PageHeader eyebrow="Panel interno" title="Inicio" desc="Lo importante de hoy: visitas, conversaciones y contactos." />
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <Kpi icon={Eye} label="Visitantes hoy" value={stats ? today?.visitors ?? 0 : "—"} sub={stats ? `${stats.totals.visitors} en 14 días` : undefined} />
-        <Kpi icon={HourglassMedium} label="Chats esperando" value={chats ? waiting : "—"} sub="El último mensaje es del visitante" tone={waiting ? "#fcd34d" : undefined} />
-        <Kpi icon={AddressBook} label="Contactos" value={stats ? stats.totals.contacts : "—"} sub={stats ? `+${stats.totals.contacts_new} en 14 días` : undefined} />
-        <Kpi icon={UsersThree} label="Suscriptos" value={stats ? stats.totals.subscribed : "—"} sub="Reciben campañas" tone="#6ee7b7" />
+        <Kpi icon={Eye} label="Visitantes hoy" value={stats ? today?.visitors ?? 0 : undefined} sub={stats ? `${stats.totals.visitors} en 14 días` : undefined} />
+        <Kpi icon={HourglassMedium} label="Chats esperando" value={chats ? waiting : undefined} sub="El último mensaje es del visitante" tone={waiting ? "#fcd34d" : undefined} />
+        <Kpi icon={AddressBook} label="Contactos" value={stats ? stats.totals.contacts : undefined} sub={stats ? `+${stats.totals.contacts_new} en 14 días` : undefined} />
+        <Kpi icon={UsersThree} label="Suscriptos" value={stats ? stats.totals.subscribed : undefined} sub="Reciben campañas" tone="#6ee7b7" />
       </div>
 
       <div className="mt-4 grid gap-4 lg:grid-cols-[1.6fr_1fr]">
@@ -109,7 +109,7 @@ export function HomeTab({ sb, onGo }: { sb: SupabaseClient; onGo: (k: string) =>
                         <b className="truncate text-[14px] font-semibold">{c.name}</b>
                         <span className="ix-muted shrink-0 text-[11px]">{timeAgo(c.last_at)}</span>
                       </span>
-                      <span className="ix-muted block truncate text-[13px]">{c.last_media && !c.last_body ? "📷 Foto" : c.last_body ?? "—"}</span>
+                      <span className="ix-muted block truncate text-[13px]">{c.last_media && !c.last_body ? "📷 Foto" : c.last_body ?? "Sin mensajes"}</span>
                     </span>
                     {c.last_sender === "visitor" && <i className="h-2 w-2 shrink-0 rounded-full bg-[#ff6a1a]" aria-label="Esperando respuesta" />}
                   </button>

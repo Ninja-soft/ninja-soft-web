@@ -55,7 +55,7 @@ function Panel({ title, icon: I, children }: { title: string; icon: typeof Eye; 
   );
 }
 
-const pct = (a: number, b: number) => (b ? `${Math.round((a / b) * 100)}%` : "—");
+const pct = (a: number, b: number) => (b ? `${Math.round((a / b) * 100)}%` : null);
 
 export function StatsTab({ sb }: { sb: SupabaseClient }) {
   const [days, setDays] = useState(30);
@@ -65,7 +65,15 @@ export function StatsTab({ sb }: { sb: SupabaseClient }) {
   useEffect(() => {
     setStats(null);
     setError(null);
-    sb.rpc("internal_stats", { p_days: days }).then(({ data, error: err }) => (err ? setError(err.message) : setStats(data as Stats)));
+    let alive = true; // si cambiás de rango rápido, una respuesta vieja no pisa a la nueva
+    sb.rpc("internal_stats", { p_days: days }).then(({ data, error: err }) => {
+      if (!alive) return;
+      if (err) setError(err.message);
+      else setStats(data as Stats);
+    });
+    return () => {
+      alive = false;
+    };
   }, [sb, days]);
 
   const charts = useMemo(() => {
@@ -200,7 +208,7 @@ export function StatsTab({ sb }: { sb: SupabaseClient }) {
       ) : (
         <div className="grid gap-4">
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-6">
-            <Kpi icon={UsersThree} label="Visitantes" value={stats.totals.visitors} />
+            <Kpi icon={UsersThree} label="Visitantes" value={stats.totals.visitors} sub="Únicos por día, sumados" />
             <Kpi icon={Eye} label="Visitas" value={stats.totals.views} />
             <Kpi icon={Funnel} label="Conversión" value={pct(stats.funnel.converted, stats.funnel.visitors)} sub="Escribieron o formulario" tone="#ff8a4c" />
             <Kpi icon={ChatsCircle} label="Abrieron el chat" value={stats.totals.chat_open} />

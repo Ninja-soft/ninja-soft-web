@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { AddressBook, DownloadSimple, EnvelopeSimple, MagnifyingGlass, MicrosoftTeamsLogo, Tray } from "@phosphor-icons/react";
-import { Avatar, Empty, PageHeader, SpinnerBlock, timeAgo } from "./ui";
+import { Avatar, Empty, NoData, PageHeader, SpinnerBlock, timeAgo } from "./ui";
 
 type Contact = {
   id: string;
@@ -75,8 +75,11 @@ export function ContactsTab({ sb }: { sb: SupabaseClient }) {
     );
   }, [contacts, q, status, source]);
 
-  async function toggleSub(c: Contact) {
-    const value = c.unsubscribed_at ? null : new Date().toISOString();
+  // Sólo se puede dar de baja (con confirmación). Una baja no se revierte desde el panel: la persona eligió no recibir más.
+  const [confirmId, setConfirmId] = useState<string | null>(null);
+  async function unsubscribe(c: Contact) {
+    setConfirmId(null);
+    const value = new Date().toISOString();
     const { error } = await sb.from("contacts").update({ unsubscribed_at: value }).eq("id", c.id);
     if (!error) setContacts((cs) => cs?.map((x) => (x.id === c.id ? { ...x, unsubscribed_at: value } : x)) ?? null);
   }
@@ -167,7 +170,7 @@ export function ContactsTab({ sb }: { sb: SupabaseClient }) {
                         <div className="flex items-center gap-3">
                           <Avatar name={c.name || c.email} size={34} />
                           <div className="min-w-0">
-                            <p className="truncate font-medium">{c.name || "—"}</p>
+                            <p className="truncate font-medium">{c.name || <NoData label="Sin nombre" />}</p>
                             <a href={`mailto:${c.email}`} className="ix-muted block truncate text-[12.5px] hover:text-white">
                               {c.email}
                             </a>
@@ -176,7 +179,7 @@ export function ContactsTab({ sb }: { sb: SupabaseClient }) {
                         </div>
                       </td>
                       <td className="ix-muted">
-                        {c.company || "—"}
+                        {c.company || (c.business ? null : <NoData />)}
                         {c.business && <span className="block text-[12px]">{c.business}</span>}
                       </td>
                       <td>
@@ -190,14 +193,24 @@ export function ContactsTab({ sb }: { sb: SupabaseClient }) {
                       </td>
                       <td className="ix-muted text-[13px]">{timeAgo(c.created_at)}</td>
                       <td>
-                        <button
-                          type="button"
-                          onClick={() => toggleSub(c)}
-                          title={c.unsubscribed_at ? "Volver a suscribir" : "Dar de baja"}
-                          className={`ix-pill ${c.unsubscribed_at ? "bg-red-400/10 text-[#fca5a5]" : "bg-emerald-400/10 text-[#6ee7b7]"}`}
-                        >
-                          {c.unsubscribed_at ? "De baja" : "Suscripto"}
-                        </button>
+                        {c.unsubscribed_at ? (
+                          <span className="ix-pill bg-red-400/10 text-[#fca5a5]" title="Se dio de baja: no recibe campañas">
+                            De baja
+                          </span>
+                        ) : confirmId === c.id ? (
+                          <span className="flex items-center gap-1.5">
+                            <button type="button" onClick={() => setConfirmId(null)} className="ix-pill bg-white/[.06] text-[#cfc7ef]">
+                              Cancelar
+                            </button>
+                            <button type="button" onClick={() => unsubscribe(c)} className="ix-pill bg-red-400/15 text-[#fca5a5]">
+                              Dar de baja
+                            </button>
+                          </span>
+                        ) : (
+                          <button type="button" onClick={() => setConfirmId(c.id)} title="Dar de baja de las campañas" className="ix-pill bg-emerald-400/10 text-[#6ee7b7] hover:bg-emerald-400/20">
+                            Suscripto
+                          </button>
+                        )}
                       </td>
                     </tr>
                   ))}

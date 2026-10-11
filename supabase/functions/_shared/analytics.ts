@@ -1,6 +1,6 @@
 // Medición propia de visitas (sin cookies): clasificación de fuente/dispositivo y validación de eventos.
 
-export type Utm = { source?: string; medium?: string; campaign?: string };
+export type Utm = { source?: string; medium?: string; campaign?: string; gclid?: string };
 export type Source = { source: string; medium: string; campaign: string };
 
 const SOCIAL: [RegExp, string][] = [
@@ -27,6 +27,8 @@ export function classifySource(referrer: string, utm: Utm, siteHost: string): So
   if (uSource) {
     return { source: UTM_ALIASES[uSource] ?? uSource, medium: clip(utm.medium, 80).toLowerCase() || "campaña", campaign: clip(utm.campaign, 80).toLowerCase() };
   }
+  // Google Ads sin UTM: el clic trae gclid (auto-tagging).
+  if (clip(utm.gclid, 200)) return { source: "Google", medium: "cpc", campaign: "" };
   let host = "";
   try {
     host = new URL(referrer).hostname.replace(/^www\./, "").toLowerCase();
@@ -34,7 +36,8 @@ export function classifySource(referrer: string, utm: Utm, siteHost: string): So
     host = "";
   }
   const site = siteHost.replace(/^www\./, "").toLowerCase();
-  if (!host || host === site || host.endsWith(`.${site}`) || host.endsWith(".vercel.app") || host === "localhost") {
+  const ownPreview = /^ninja-soft-web(-[a-z0-9-]+)?\.vercel\.app$/.test(host);
+  if (!host || host === site || host.endsWith(`.${site}`) || ownPreview || host === "localhost") {
     return { source: "Directo", medium: "directo", campaign: "" };
   }
   for (const [re, name] of SEARCH) if (re.test(host)) return { source: name, medium: "orgánico", campaign: "" };
@@ -77,6 +80,6 @@ export function validateEvent(raw: unknown): TrackEvent | null {
     sid: clip(o.sid, 64),
     device: deviceType(Number(o.w)),
     referrer: clip(o.referrer, 300),
-    utm: { source: clip(utm.source, 80), medium: clip(utm.medium, 80), campaign: clip(utm.campaign, 80) },
+    utm: { source: clip(utm.source, 80), medium: clip(utm.medium, 80), campaign: clip(utm.campaign, 80), gclid: clip(utm.gclid, 200) },
   };
 }

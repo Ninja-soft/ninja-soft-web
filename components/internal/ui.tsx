@@ -1,6 +1,6 @@
 "use client";
 
-import type { Icon } from "@phosphor-icons/react";
+import { CircleDashed, type Icon } from "@phosphor-icons/react";
 
 // Piezas comunes del panel interno (misma estética que el interno de NinjaPOS).
 
@@ -41,16 +41,36 @@ export function Empty({ icon: I, title, desc }: { icon: Icon; title: string; des
   );
 }
 
-export function Kpi({ icon: I, label, value, sub, tone }: { icon: Icon; label: string; value: React.ReactNode; sub?: string; tone?: string }) {
+// Sin datos: nunca un guión, siempre un ícono.
+export function NoData({ size = 16, label = "Sin datos" }: { size?: number; label?: string }) {
+  return (
+    <span className="ix-muted inline-flex items-center gap-1.5 opacity-80">
+      <CircleDashed size={size} aria-hidden />
+      <span className="text-[13px] font-semibold">{label}</span>
+    </span>
+  );
+}
+
+export function Kpi({ icon: I, label, value, sub, tone }: { icon: Icon; label: string; value: React.ReactNode | null | undefined; sub?: string; tone?: string }) {
   return (
     <div className="ix-card p-4">
       <div className="ix-muted flex items-center gap-1.5">
         <I size={16} />
         <span className="text-[12px]">{label}</span>
       </div>
-      <p className="mt-1 text-[26px] font-black tracking-[-0.02em]" style={tone ? { color: tone } : undefined}>
-        {value}
-      </p>
+      {value === undefined ? (
+        <p className="mt-2.5">
+          <Spinner size={18} />
+        </p>
+      ) : value === null ? (
+        <p className="mt-2">
+          <NoData size={18} />
+        </p>
+      ) : (
+        <p className="mt-1 text-[26px] font-black tracking-[-0.02em]" style={tone ? { color: tone } : undefined}>
+          {value}
+        </p>
+      )}
       {sub && <p className="ix-muted mt-0.5 text-[12px]">{sub}</p>}
     </div>
   );
