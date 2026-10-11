@@ -12,6 +12,13 @@ export function Nav() {
   const sheetRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (!window.location.hash) {
+      if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+      window.scrollTo(0, 0);
+    }
+  }, []);
+
+  useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(null);
     const onClick = (e: MouseEvent) => {

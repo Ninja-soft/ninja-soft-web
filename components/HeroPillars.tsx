@@ -128,7 +128,7 @@ export function HeroPillars() {
                           alt=""
                           width={300}
                           height={207}
-                          className={`h-7 w-auto transition-[filter,opacity] duration-700 ${on ? "opacity-100 grayscale-0" : "opacity-55 grayscale"}`}
+                          className={`h-[19px] w-auto transition-[filter,opacity] duration-700 ${on ? "opacity-100 grayscale-0" : "opacity-55 grayscale"}`}
                         />
                       ) : (
                         p.Icon && (

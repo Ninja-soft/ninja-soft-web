@@ -50,6 +50,10 @@ const GROUPS: { label: string; logos: Logo[] }[] = [
 export const INTEGRAR_PHASE_MS = 3000;
 export const INTEGRAR_CYCLE_MS = INTEGRAR_PHASE_MS * GROUPS.length;
 
+// Las líneas van del borde del hub hasta antes del logo, así nunca lo cruzan.
+const LINE_FROM = 0.34;
+const LINE_TO = 0.66;
+
 export const INTEGRAR_IMAGES = GROUPS.flatMap((g) => g.logos.map((l) => l.src));
 
 // Elipse alrededor del hub (centro 50% / 50%), en % del contenedor.
@@ -61,25 +65,35 @@ const orbit = (i: number, n: number) => {
 export function SceneIntegrar() {
   const cycle = { animationDuration: `${INTEGRAR_CYCLE_MS}ms` };
   return (
-    // container-type: size habilita cqw/cqh para posicionar los logos con transform
-    <div className="relative h-[250px] w-full [container-type:size] sm:h-[290px]">
+    <div className="w-full">
+      {/* etiqueta de la etapa: en su propia línea, nunca encima de los logos */}
+      <div className="grid h-7 [&>*]:[grid-area:1/1]">
+        {GROUPS.map((g, gi) => (
+          <span
+            key={g.label}
+            className="integ-group inline-flex w-max items-center gap-1.5 rounded-full border border-white/10 bg-white/[.06] px-3 py-1 text-[12px] font-semibold"
+            style={{ ...cycle, ...T(gi * INTEGRAR_PHASE_MS) }}
+          >
+            <span className="font-mono text-[#FF7A2E]">{gi + 1}/3</span> {g.label}
+          </span>
+        ))}
+      </div>
+    {/* container-type: size habilita cqw/cqh para posicionar los logos con transform */}
+    <div className="relative mt-2 h-[240px] w-full [container-type:size] sm:h-[270px]">
       {GROUPS.map((g, gi) => {
         const start = gi * INTEGRAR_PHASE_MS;
         return (
           <div key={g.label} className="integ-group absolute inset-0" style={{ ...cycle, ...T(start) }}>
-            <span className="absolute left-0 top-0 z-10 inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[.06] px-3 py-1 text-[12px] font-semibold">
-              <span className="font-mono text-[#FF7A2E]">{gi + 1}/3</span> {g.label}
-            </span>
             <svg aria-hidden viewBox="-50 -50 100 100" preserveAspectRatio="none" className="absolute inset-0 h-full w-full">
               {g.logos.map((l, i) => {
                 const o = orbit(i, g.logos.length);
                 return (
                   <line
                     key={l.alt}
-                    x1="0"
-                    y1="0"
-                    x2={o.x}
-                    y2={o.y}
+                    x1={o.x * LINE_FROM}
+                    y1={o.y * LINE_FROM}
+                    x2={o.x * LINE_TO}
+                    y2={o.y * LINE_TO}
                     pathLength={100}
                     stroke="url(#ninja-flow)"
                     strokeWidth="1"
@@ -135,6 +149,7 @@ export function SceneIntegrar() {
           </linearGradient>
         </defs>
       </svg>
+    </div>
     </div>
   );
 }
