@@ -121,5 +121,18 @@ describe("handleChatSend", () => {
     expect(tg.calls.topics).toHaveLength(0);
     expect(store.sessions[0].telegram_thread_id).toBe(101);
   });
-});
 
+  test("el primer mensaje crea el contacto para remarketing (origen chat)", async () => {
+    await handleChatSend({ store, telegram: fakeTelegram().factory, media: fakeMedia().media }, { userId: "u1", ip: "ip", body: { ...lead, message: "hola" } });
+    expect(store.upserts).toEqual([{ email: "ana@mail.com", name: "Ana", source: "chat" }]);
+  });
+
+  test("si falla guardar el contacto, el chat sigue funcionando (no se pierde el lead)", async () => {
+    store.upsertContact = async () => {
+      throw new Error("contacts caído");
+    };
+    const r = await handleChatSend({ store, telegram: fakeTelegram().factory, media: fakeMedia().media }, { userId: "u1", ip: "ip", body: { ...lead, message: "hola" } });
+    expect(r.status).toBe(200);
+    expect(store.messages).toHaveLength(1);
+  });
+});

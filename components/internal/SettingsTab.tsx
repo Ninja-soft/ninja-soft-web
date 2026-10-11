@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { functionError } from "@/lib/supabase/functionError";
+import { PageHeader } from "./ui";
 
 const FIELDS: { key: string; label: string; hint?: string }[] = [
   { key: "notify_email", label: "Emails de aviso", hint: "Dónde te llegan los contactos. Podés poner varios separados por coma." },
@@ -66,66 +67,95 @@ export function SettingsTab({ sb }: { sb: SupabaseClient }) {
     });
 
   return (
-    <div className="grid gap-6">
+    <div>
+      <PageHeader eyebrow="Plataforma" title="Configuración" desc="Telegram, Resend, emails de aviso, tiempos del chat y logos de cada marca." />
+      <div className="grid gap-6">
       {note && (
-        <p role="status" className={`rounded-[14px] px-4 py-3 text-[14px] ${note.ok ? "bg-[#e8f8ee] text-[#1e7a3e]" : "bg-[#fdecec] text-[#b3261e]"}`}>
+        <p role="status" className={`rounded-[14px] px-4 py-3 text-[14px] ${note.ok ? "border border-emerald-400/20 bg-emerald-400/[.06] text-[#6ee7b7]" : "border border-red-400/20 bg-red-400/[.06] text-[#fca5a5]"}`}>
           {note.text}
         </p>
       )}
 
-      <section className="int-card grid gap-4 p-6">
-        <h2 className="text-[20px] font-bold">Claves</h2>
+      {/* conexiones: una tarjeta por servicio, con su logo */}
+      <div className="grid gap-4 lg:grid-cols-2">
         {(
           [
-            ["telegram_bot_token", "Token del bot de Telegram"],
-            ["resend_api_key", "API key de Resend"],
-          ] as const
-        ).map(([name, label]) => (
-          <div key={name} className="grid gap-2 sm:grid-cols-[1fr_auto] sm:items-end">
-            <label className="grid gap-1 text-[14px]">
-              <span>
-                {label} <span className="text-[#86868b]">· actual: {secrets[name] ?? "sin cargar"}</span>
+            {
+              name: "telegram_bot_token" as const,
+              logo: "/images/integrations/telegram.webp",
+              title: "Telegram",
+              desc: "Bot que recibe los chats de la web y te deja responder desde el grupo.",
+              label: "Token del bot",
+              actions: [
+                { text: "Registrar webhook", ok: "Webhook de Telegram registrado.", action: "register_webhook" },
+                { text: "Probar Telegram", ok: "Mensaje de prueba enviado a Telegram.", action: "test_telegram" },
+              ],
+            },
+            {
+              name: "resend_api_key" as const,
+              logo: "/images/integrations/resend.webp",
+              title: "Resend",
+              desc: "Envía los emails del sitio: avisos, respuestas automáticas y campañas.",
+              label: "API key",
+              actions: [{ text: "Probar email", ok: "Email de prueba enviado.", action: "test_resend" }],
+            },
+          ]
+        ).map((svc) => (
+          <section key={svc.name} className="ix-card grid content-start gap-4 p-6">
+            <div className="flex items-center gap-3">
+              <img src={svc.logo} alt="" width={160} height={160} className="h-11 w-11 rounded-[12px]" />
+              <div className="min-w-0">
+                <h2 className="text-[18px] font-bold">{svc.title}</h2>
+                <p className="ix-muted text-[13px] leading-snug">{svc.desc}</p>
+              </div>
+              <span className={`ix-pill ml-auto shrink-0 ${secrets[svc.name] ? "bg-emerald-400/10 text-[#6ee7b7]" : "bg-amber-300/10 text-[#fcd34d]"}`}>
+                {secrets[svc.name] ? "Conectado" : "Sin configurar"}
               </span>
-              <input
-                type="password"
-                autoComplete="off"
-                value={draft[name]}
-                onChange={(e) => setDraft((x) => ({ ...x, [name]: e.target.value }))}
-                placeholder="Pegá el nuevo valor"
-                className="int-input"
-              />
+            </div>
+            <label className="grid gap-1.5 text-[13px]">
+              <span className="ix-muted">
+                {svc.label}
+                {secrets[svc.name] && <span className="ml-1 font-mono">· actual {secrets[svc.name]}</span>}
+              </span>
+              <div className="flex gap-2">
+                <input
+                  type="password"
+                  autoComplete="off"
+                  value={draft[svc.name]}
+                  onChange={(e) => setDraft((x) => ({ ...x, [svc.name]: e.target.value }))}
+                  placeholder="Pegá el nuevo valor"
+                  className="ix-input"
+                />
+                <button type="button" disabled={!draft[svc.name].trim()} onClick={() => saveSecret(svc.name)} className="ix-btn ix-btn-primary shrink-0">
+                  Guardar
+                </button>
+              </div>
             </label>
-            <button type="button" disabled={!draft[name].trim()} onClick={() => saveSecret(name)} className="btn-flame justify-center disabled:opacity-50">
-              Guardar
-            </button>
-          </div>
+            <div className="flex flex-wrap gap-2">
+              {svc.actions.map((ac) => (
+                <button key={ac.action} type="button" onClick={() => run(ac.ok, () => call(ac.action))} className="ix-btn h-9 px-3 text-[13px]">
+                  {ac.text}
+                </button>
+              ))}
+            </div>
+          </section>
         ))}
-        <div className="flex flex-wrap gap-3">
-          <button type="button" onClick={() => run("Webhook de Telegram registrado.", () => call("register_webhook"))} className="int-btn">
-            Registrar webhook
-          </button>
-          <button type="button" onClick={() => run("Mensaje de prueba enviado a Telegram.", () => call("test_telegram"))} className="int-btn">
-            Probar Telegram
-          </button>
-          <button type="button" onClick={() => run("Email de prueba enviado.", () => call("test_resend"))} className="int-btn">
-            Probar email
-          </button>
-        </div>
-      </section>
+      </div>
 
-      <section className="int-card grid gap-4 p-6">
+      <section className="ix-card grid gap-4 p-6">
         <h2 className="text-[20px] font-bold">Ajustes</h2>
         {FIELDS.map((f) => (
           <label key={f.key} className="grid gap-1 text-[14px]">
             <span>{f.label}</span>
-            <input value={values[f.key] ?? ""} onChange={(e) => setValues((v) => ({ ...v, [f.key]: e.target.value }))} className="int-input" />
-            {f.hint && <span className="text-[12px] text-[#86868b]">{f.hint}</span>}
+            <input value={values[f.key] ?? ""} onChange={(e) => setValues((v) => ({ ...v, [f.key]: e.target.value }))} className="ix-input" />
+            {f.hint && <span className="text-[12px] ix-muted">{f.hint}</span>}
           </label>
         ))}
-        <button type="button" onClick={saveSettings} className="btn-flame justify-self-start">
+        <button type="button" onClick={saveSettings} className="ix-btn ix-btn-primary justify-self-start">
           Guardar ajustes
         </button>
       </section>
+      </div>
     </div>
   );
 }

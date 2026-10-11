@@ -30,7 +30,7 @@ export function ChatImage({ sb, path }: { sb: SupabaseClient; path: string }) {
 
   if (!url)
     return (
-      <span role="status" className="flex h-40 w-56 flex-col items-center justify-center gap-2 rounded-[14px] bg-black/[.05] text-[12.5px] text-[#86868b]">
+      <span role="status" className="flex h-40 w-56 flex-col items-center justify-center gap-2 rounded-[14px] bg-black/[.05] text-[12.5px] text-[#6e6e73]">
         <span className="chat-spinner" />
         Cargando foto…
       </span>

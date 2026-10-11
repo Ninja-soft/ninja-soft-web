@@ -2,6 +2,7 @@ import type { Mail, Mailer } from "../supabase/functions/_shared/resend.ts";
 import type { TelegramApi } from "../supabase/functions/_shared/telegram.ts";
 import type {
   ContactRecord,
+  ContactUpsert,
   Media,
   MessageInsert,
   SecretName,
@@ -83,6 +84,10 @@ export class FakeStore implements Store {
   }
   async setSetting(key: string, value: string) {
     this.cfg[key] = value;
+  }
+  upserts: ContactUpsert[] = [];
+  async upsertContact(c: ContactUpsert) {
+    this.upserts.push(c);
   }
   pins = new Map<string, { hash: string; expires_at: string; attempts: number }>();
   async openSessionByContact(email: string) {

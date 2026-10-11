@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Coffee, Pause, Play, Scissors, ShoppingBag, Storefront, TShirt, type Icon } from "@phosphor-icons/react";
 import { POS_APP_URL } from "@/lib/content";
 import { ScreenGastro, ScreenKiosco, ScreenPro, ScreenRetail, ScreenTextil } from "./rubros/RubroScreens";
@@ -70,18 +70,35 @@ export function PosSection() {
   const [paused, setPaused] = useState(false);
   const [reduce, setReduce] = useState(false);
   useEffect(() => setReduce(window.matchMedia("(prefers-reduced-motion: reduce)").matches), []);
-  // rota siempre sola; se pausa sólo con el mouse encima del panel
+  // Arranca recién cuando la sección entra en pantalla (y se pausa al salir).
+  const sectionRef = useRef<HTMLElement>(null);
+  const [inView, setInView] = useState(false);
+  const [started, setStarted] = useState(false);
   useEffect(() => {
-    if (hover || paused || reduce) return;
+    const el = sectionRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([e]) => {
+        setInView(e.isIntersecting);
+        if (e.isIntersecting) setStarted(true);
+      },
+      { threshold: 0.35 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  // rota sola mientras se ve; se pausa con el mouse encima del panel o con el botón
+  useEffect(() => {
+    if (!inView || hover || paused || reduce) return;
     const id = window.setTimeout(() => setI((v) => (v + 1) % RUBROS.length), ROTATE_MS);
     return () => window.clearTimeout(id);
-  }, [i, tick, hover, paused, reduce]);
+  }, [i, tick, hover, paused, reduce, inView]);
   const r = RUBROS[i];
 
   return (
-    <section id="rubros" className="rubros relative overflow-hidden bg-[#0b0720] px-4 pb-16 pt-16 text-center text-snow sm:rounded-tile sm:pb-20 sm:pt-20">
+    <section ref={sectionRef} id="rubros" className="rubros relative overflow-hidden bg-[#0b0720] px-4 pb-16 pt-16 text-center text-snow sm:rounded-tile sm:pb-20 sm:pt-20">
       <div aria-hidden className="rubros-bg" />
-      <img src="/images/brand/ninjapos-logo-dark.webp" alt="NinjaPOS" width={640} height={154} className="relative mx-auto h-9 w-auto sm:h-10" />
+      <img loading="lazy" decoding="async" src="/images/brand/ninjapos-logo-dark.webp" alt="NinjaPOS" width={640} height={154} className="relative mx-auto h-9 w-auto sm:h-10" />
       <h2 className="relative mt-4 text-[clamp(34px,5vw,60px)] font-bold leading-[1.04] tracking-[-0.03em]">Hecho para tu rubro.</h2>
 
       {/* selector de rubro */}
@@ -118,7 +135,8 @@ export function PosSection() {
         <span aria-hidden className="rubro-halo" />
         <div className="rubro-panel relative" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
           <div className="rubro-scale">
-            <div key={r.key} className="rb-fade h-full w-full">
+            {/* la escena se monta al llegar a la sección: sus animaciones empiezan desde cero ahí */}
+            <div key={`${r.key}-${started}`} className={`rb-fade h-full w-full ${started ? "" : "rb-hold"} ${inView ? "" : "rb-paused"}`}>
               <r.Screen />
             </div>
           </div>
@@ -137,7 +155,7 @@ export function PosSection() {
                 setI(k);
                 setTick((t) => t + 1);
               }}
-              className={`relative h-2 overflow-hidden rounded-full transition-[width,background-color] duration-500 ${
+              className={`relative h-2 rounded-full transition-[width,background-color] duration-500 before:absolute before:-inset-x-1.5 before:-inset-y-4 before:content-[''] ${
                 k === i ? "w-12 bg-white/25" : "w-2 bg-white/40 hover:bg-white/70"
               }`}
             >
@@ -147,7 +165,7 @@ export function PosSection() {
                   className="absolute inset-y-0 left-0 w-full origin-left rounded-full bg-white"
                   style={{
                     animation: reduce ? "none" : `pillar-progress ${ROTATE_MS}ms linear forwards`,
-                    animationPlayState: hover || paused ? "paused" : "running",
+                    animationPlayState: hover || paused || !inView ? "paused" : "running",
                   }}
                 />
               )}

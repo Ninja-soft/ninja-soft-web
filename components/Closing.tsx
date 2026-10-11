@@ -53,18 +53,18 @@ export function Experience() {
         <div className="grid gap-6 text-left">
           {PAST.map((g) => (
             <div key={g.group}>
-              <p className="mb-2 px-5 text-[13px] font-semibold uppercase tracking-[.12em] text-[#86868b]">{g.group}</p>
+              <p className="mb-2 px-5 text-[13px] font-semibold uppercase tracking-[.12em] text-[#6e6e73]">{g.group}</p>
               <ul className="overflow-hidden rounded-[22px] bg-white shadow-[0_1px_2px_rgba(0,0,0,.04),0_12px_30px_rgba(0,0,0,.05)]">
                 {g.rows.map(([name, kind]) => (
                   <li key={name} className="flex items-center justify-between gap-4 border-b border-black/[.06] px-5 py-3.5 last:border-0">
                     <span className="text-[17px] font-semibold tracking-[-0.01em]">{name}</span>
-                    <span className="text-[14px] text-[#86868b]">{kind}</span>
+                    <span className="text-[14px] text-[#6e6e73]">{kind}</span>
                   </li>
                 ))}
               </ul>
             </div>
           ))}
-          <p className="px-5 text-[12px] text-[#86868b]">
+          <p className="px-5 text-[12px] text-[#6e6e73]">
             Marcas de sus respectivos dueños. Describen experiencia de implementación, no alianzas.
           </p>
         </div>
@@ -83,7 +83,7 @@ export function Contact() {
         height={311}
         className="mx-auto mb-7 block h-auto w-[120px] drop-shadow-[0_20px_40px_rgba(255,106,26,.25)]"
       />
-      <img src="/images/brand/ninjasoft-logo-dark.webp" alt="Ninja Soft" width={640} height={145} className="mx-auto mb-6 h-10 w-auto" />
+      <img loading="lazy" decoding="async" src="/images/brand/ninjasoft-logo-dark.webp" alt="Ninja Soft" width={640} height={145} className="mx-auto mb-6 h-10 w-auto" />
       <h2 className="text-[clamp(40px,6vw,72px)] font-bold">Hablemos de tu negocio.</h2>
       <p className="tile-sub text-mist">Escribinos por el chat o dejanos tu consulta. Te respondemos en horario comercial.</p>
       <div className="mt-8 flex flex-wrap items-center justify-center gap-7">
@@ -137,8 +137,8 @@ export function Footer() {
         <div className="grid gap-12 lg:grid-cols-[1.3fr_2fr]">
           <div>
             <div className="flex items-center gap-3">
-              <img src="/images/brand/ninja-isotipo-flame.webp" alt="" width={240} height={311} className="h-11 w-auto" />
-              <img src="/images/brand/ninjasoft-logo-dark.webp" alt="Ninja Soft" width={640} height={145} className="h-8 w-auto" />
+              <img loading="lazy" decoding="async" src="/images/brand/ninja-isotipo-flame.webp" alt="" width={240} height={311} className="h-11 w-auto" />
+              <img loading="lazy" decoding="async" src="/images/brand/ninjasoft-logo-dark.webp" alt="Ninja Soft" width={640} height={145} className="h-8 w-auto" />
             </div>
             <p className="mt-5 max-w-[34ch] text-[15px] leading-snug text-mist">
               Software seguro para negocios inteligentes. Hecho en Rosario para toda Latinoamérica.

@@ -49,7 +49,7 @@ export function Process() {
                 </span>
               </span>
               <div className="min-w-0 pt-1 lg:pt-0">
-                <p className="text-[13px] font-semibold text-[#86868b]">Paso {i + 1}</p>
+                <p className="text-[13px] font-semibold text-[#6e6e73]">Paso {i + 1}</p>
                 <p className="mt-0.5 text-[24px] font-bold tracking-[-0.02em]">{step.title}</p>
                 <p className="mx-auto mt-2 max-w-[28ch] text-[15.5px] leading-snug text-ink-2 lg:mx-auto">{step.desc}</p>
                 <span className="mt-4 inline-flex items-center rounded-full bg-white px-3.5 py-1.5 text-[13px] font-semibold text-[#1d1d1f] shadow-[0_1px_2px_rgba(0,0,0,.06),0_6px_16px_rgba(0,0,0,.05)]">

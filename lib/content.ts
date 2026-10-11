@@ -1,13 +1,55 @@
 // Contenido del sitio en un solo lugar: textos de producto, medios de pago,
 // rubros y funciones. Las secciones sólo leen de acá.
 
-// TODO(lucas): reemplazar por el número real (formato internacional sin "+").
-
 export const POS_APP_URL = "https://pos.soft.ninja";
 export const FOOD_APP_URL = "https://food.soft.ninja";
 export const INSTAGRAM_URL = "https://www.instagram.com/ninjasoft.latam/";
 export const ADDRESS = { street: "Urquiza 3164", city: "Rosario, Santa Fe, Argentina" } as const;
 export const MAPS_URL = "https://www.google.com/maps/search/?api=1&query=Urquiza+3164+Rosario+Santa+Fe+Argentina";
+
+// Preguntas frecuentes: se muestran en la página y van como datos estructurados (FAQPage) para Google.
+export const FAQ: { q: string; a: string }[] = [
+  {
+    q: "¿Qué es NinjaPOS?",
+    a: "NinjaPOS es un sistema de punto de venta (POS) en la nube hecho en Argentina. Desde el celular, la tablet o la computadora vendés, cobrás con todos los medios de pago, facturás electrónicamente ante ARCA y controlás el stock de todas tus sucursales.",
+  },
+  {
+    q: "¿Sirve para kioscos, almacenes y minimercados?",
+    a: "Sí. Tiene lector de códigos de barras, PLU, productos por peso con balanza, botones rápidos y cobro en segundos, para que la fila no crezca.",
+  },
+  {
+    q: "¿Sirve para restaurantes, bares y cafeterías?",
+    a: "Sí. Gestionás mesas, mandás comandas a cocina sin papelitos y recibís en una sola pantalla los pedidos de Rappi, PedidosYa, Uber Eats y tu delivery propio.",
+  },
+  {
+    q: "¿Hace factura electrónica con ARCA (ex AFIP)?",
+    a: "Sí. Emitís Factura A, B y C electrónica ante ARCA en un clic, sin salir de la venta, y el comprobante le llega al cliente por email.",
+  },
+  {
+    q: "¿Qué medios de pago acepta?",
+    a: "Mercado Pago (QR y Point), MODO, Payway, Getnet, Nave, Fiserv, Mobbex y Pagos360, con Visa, Mastercard, American Express, Naranja X, Cabal, Apple Pay y Google Pay. También efectivo, transferencia, QR interoperable y links de pago.",
+  },
+  {
+    q: "¿Se integra con Mercado Libre y con mi tienda online?",
+    a: "Sí. Publicás, sincronizás el stock y gestionás las ventas de Mercado Libre y tu tienda online desde el mismo sistema, sin vender lo que no tenés.",
+  },
+  {
+    q: "¿Necesito instalar algo o comprar una computadora especial?",
+    a: "No. NinjaPOS funciona en el navegador de cualquier celular, tablet o computadora. Tus datos quedan seguros en la nube y podés usarlo desde donde estés.",
+  },
+  {
+    q: "¿Puedo probarlo gratis?",
+    a: "Sí. Creá tu cuenta en pos.soft.ninja y empezá a vender hoy. Si querés, te ayudamos a cargar tu catálogo desde Excel.",
+  },
+  {
+    q: "¿Qué es Ninja Food?",
+    a: "Ninja Food es el sistema de trazabilidad y gestión bromatológica para la industria alimenticia: lotes, vencimientos, cadena de frío y firmas, con respaldo técnico de ABR.",
+  },
+  {
+    q: "¿Hacen desarrollos e integraciones a medida?",
+    a: "Sí. Integramos tu ecommerce, ERP, WMS y cobros, y desarrollamos lo que tu negocio necesite. Venimos de implementar los sistemas que usan las grandes cadenas del país.",
+  },
+];
 
 export const NAV = [
   { href: "#pos", label: "NinjaPOS" },
@@ -71,7 +113,7 @@ export const NETWORKS = [
   { src: "/images/payments/networks/visa.webp?v=2", alt: "Visa" },
   { src: "/images/payments/networks/mastercard.webp?v=2", alt: "Mastercard" },
   { src: "/images/payments/networks/maestro.webp?v=2", alt: "Maestro" },
-  { src: "/images/payments/networks/amex.webp?v=2", alt: "Amex" },
+  { src: "/images/payments/networks/amex.webp?v=3", alt: "Amex" },
   { src: "/images/payments/networks/naranjax.webp?v=2", alt: "Naranja X" },
   { src: "/images/payments/networks/cabal.webp?v=2", alt: "Cabal" },
   { src: "/images/payments/networks/diners.webp?v=2", alt: "Diners Club" },

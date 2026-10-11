@@ -107,5 +107,19 @@ describe("handleContact", () => {
     expect(store.contacts).toHaveLength(1);
     expect(m.sent.map((x) => x.to)).toEqual(["lucas@x.com"]);
   });
-});
 
+  test("el formulario crea/actualiza el contacto (origen formulario)", async () => {
+    await handleContact({ store, mailer: fakeMailer().factory, telegram: fakeTelegram().factory }, { ip: "h", body: { ...body, company: "Don Pepe" } });
+    expect(store.upserts).toEqual([{ email: "ana@mail.com", name: "Ana", phone: "", company: "Don Pepe", business: "Kiosco", source: "form" }]);
+  });
+
+  test("si falla guardar el contacto, igual se avisa y se responde al cliente", async () => {
+    store.upsertContact = async () => {
+      throw new Error("contacts caído");
+    };
+    const m = fakeMailer();
+    const r = await handleContact({ store, mailer: m.factory, telegram: fakeTelegram().factory }, { ip: "h", body });
+    expect(r.status).toBe(200);
+    expect(m.sent.map((x) => x.to)).toEqual(["lucas@x.com", "ana@mail.com"]);
+  });
+});

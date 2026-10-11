@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { brandVars, formatDate, renderTemplate, TEMPLATE_VARS, type TemplateData } from "@/supabase/functions/_shared/template";
+import { PageHeader } from "./ui";
 
 type Tpl = { key: string; subject: string; html: string };
 const NAMES: Record<string, string> = {
@@ -50,8 +51,10 @@ export function TemplatesTab({ sb }: { sb: SupabaseClient }) {
   }
 
   return (
-    <div className="grid gap-4">
-      <div className="flex w-max max-w-full gap-1 overflow-x-auto rounded-full bg-black/[.05] p-1">
+    <div>
+      <PageHeader eyebrow="Comunicaciones" title="Plantillas" desc="Los emails automáticos que salen del sitio. Editá el HTML y mirá la vista previa en vivo." />
+      <div className="grid gap-4">
+      <div className="flex w-max max-w-full gap-1 overflow-x-auto rounded-full bg-white/[.04] p-1">
         {tpls.map((t) => (
           <button
             key={t.key}
@@ -60,7 +63,7 @@ export function TemplatesTab({ sb }: { sb: SupabaseClient }) {
               setSel(t.key);
               setNote(null);
             }}
-            className={`whitespace-nowrap rounded-full px-3.5 py-1.5 text-[14px] font-medium ${sel === t.key ? "bg-white shadow-sm" : "text-[#6e6e73]"}`}
+            className={`whitespace-nowrap rounded-full px-3.5 py-1.5 text-[14px] font-medium ${sel === t.key ? "bg-white/[.12] text-white" : "ix-muted"}`}
           >
             {NAMES[t.key] ?? t.key}
           </button>
@@ -68,37 +71,38 @@ export function TemplatesTab({ sb }: { sb: SupabaseClient }) {
       </div>
       {cur && (
         <div className="grid gap-4 lg:grid-cols-2">
-          <div className="int-card grid gap-3 p-5">
+          <div className="ix-card grid gap-3 p-5">
             <label className="grid gap-1 text-[14px]">
               Asunto
-              <input value={cur.subject} onChange={(e) => edit({ subject: e.target.value })} className="int-input" />
+              <input value={cur.subject} onChange={(e) => edit({ subject: e.target.value })} className="ix-input" />
             </label>
             <label className="grid gap-1 text-[14px]">
               HTML
-              <textarea value={cur.html} onChange={(e) => edit({ html: e.target.value })} rows={18} spellCheck={false} className="int-input font-mono text-[13px]" />
+              <textarea value={cur.html} onChange={(e) => edit({ html: e.target.value })} rows={18} spellCheck={false} className="ix-input font-mono text-[13px]" />
             </label>
             <div className="flex flex-wrap gap-1.5">
               {TEMPLATE_VARS.map((v) => (
-                <button key={v} type="button" onClick={() => navigator.clipboard?.writeText(`{{${v}}}`)} className="rounded-full bg-[#f2f2f7] px-2.5 py-1 font-mono text-[12px]" title="Copiar">
+                <button key={v} type="button" onClick={() => navigator.clipboard?.writeText(`{{${v}}}`)} className="rounded-full bg-white/[.06] px-2.5 py-1 font-mono text-[12px]" title="Copiar">
                   {`{{${v}}}`}
                 </button>
               ))}
             </div>
             <div className="flex items-center gap-3">
-              <button type="button" onClick={save} className="btn-flame">
+              <button type="button" onClick={save} className="ix-btn ix-btn-primary">
                 Guardar
               </button>
-              {note && <span className="text-[13px] text-[#6e6e73]">{note}</span>}
+              {note && <span className="text-[13px] ix-muted">{note}</span>}
             </div>
           </div>
-          <div className="int-card overflow-hidden">
-            <p className="border-b border-black/[.06] px-4 py-2 text-[13px] text-[#86868b]">
+          <div className="ix-card overflow-hidden">
+            <p className="border-b border-white/10 px-4 py-2 text-[13px] ix-muted">
               Vista previa · {renderTemplate(cur.subject, SAMPLE, { html: false })}
             </p>
             <iframe title="Vista previa" sandbox="" srcDoc={preview} className="h-[560px] w-full bg-white" />
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }

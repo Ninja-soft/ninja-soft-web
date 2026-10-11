@@ -30,6 +30,8 @@ export async function handleChatSend(
     const lead = validateLead(o);
     if (!lead.ok) return { status: 400, json: { error: lead.error } };
     session = await store.createSession(input.userId, lead.value.name, lead.value.contact);
+    // La base de contactos es un extra: si falla, el chat sigue (nunca se pierde el lead).
+    await store.upsertContact({ email: lead.value.contact, name: lead.value.name, source: "chat" }).catch((err) => console.error("chat-send: contacto", err));
   }
 
   const sKey = `chat:s:${session.id}`;

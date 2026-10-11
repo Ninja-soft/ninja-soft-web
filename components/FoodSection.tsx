@@ -1,39 +1,44 @@
+import {
+  Barcode,
+  CalendarCheck,
+  ChartBar,
+  ClipboardText,
+  CookingPot,
+  FileXls,
+  Package,
+  QrCode,
+  SealCheck,
+  ShieldCheck,
+  Snowflake,
+  Truck,
+} from "@phosphor-icons/react/dist/ssr";
+import type { Icon } from "@phosphor-icons/react";
+import { FoodFlow } from "@/components/food/FoodFlow";
 import { FOOD_APP_URL } from "@/lib/content";
 
-// QR decorativo determinístico (21x21 con los tres "finders"), calculado en el build.
-function qrCells(): boolean[] {
-  let seed = 7;
-  const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
-  const finder = (r: number, c: number, R: number, C: number) => {
-    const y = r - R;
-    const x = c - C;
-    if (y < 0 || x < 0 || y > 6 || x > 6) return null;
-    return y === 0 || y === 6 || x === 0 || x === 6 || (y > 1 && y < 5 && x > 1 && x < 5);
-  };
-  const cells: boolean[] = [];
-  for (let r = 0; r < 21; r++)
-    for (let c = 0; c < 21; c++) {
-      const f = finder(r, c, 0, 0) ?? finder(r, c, 0, 14) ?? finder(r, c, 14, 0);
-      cells.push(f === null ? rnd() > 0.52 : f);
-    }
-  return cells;
-}
-
-const FACTS = [
-  ["Elaborado", "08/10/2026"],
-  ["Vence", "08/11/2026"],
-  ["Cadena de frío", "−18,4 °C · en rango"],
-  ["Firmó", "Operario 07 · PIN"],
-] as const;
+// Ninja Food: el recorrido completo del lote (canvas tipo n8n) y todo lo que resuelve.
+const FEATURES: { Icon: Icon; title: string; desc: string }[] = [
+  { Icon: QrCode, title: "Trazabilidad lote a lote", desc: "De la materia prima al cliente, con QR público para el consumidor." },
+  { Icon: ClipboardText, title: "Planillas de producción", desc: "Individuales, masivas y semanales en PDF, con firma por PIN." },
+  { Icon: CookingPot, title: "Producción desde la receta", desc: "Lotes asignados por vencimiento (FEFO), rendimiento y costos." },
+  { Icon: Package, title: "Stock e insumos", desc: "Ingresos con lote, factura y proveedor. Alertas de stock bajo." },
+  { Icon: Snowflake, title: "Congelados y vencimientos", desc: "Vida útil, maduración y regla CAA de congelados calculadas solas." },
+  { Icon: Barcode, title: "Rótulos y códigos de barras", desc: "GS1-128 y QR en 4 tamaños, octógonos de la Ley 27.642 y RNPA." },
+  { Icon: ShieldCheck, title: "BPM, POES y habilitaciones", desc: "RNE, RNPA y transporte UTA con vencimientos y avisos." },
+  { Icon: Truck, title: "Despachos y recall", desc: "Remitos, clientes y retiro de mercado de un lote en un clic." },
+  { Icon: FileXls, title: "Excel de ida y vuelta", desc: "Importá despachos y exportá inventario, ingresos y producciones." },
+  { Icon: ChartBar, title: "Reportes y KPIs", desc: "Producción, mermas, vencimientos y cumplimiento en un tablero." },
+  { Icon: CalendarCheck, title: "Planillas programadas", desc: "Controles con frecuencia, responsables y recordatorios." },
+  { Icon: SealCheck, title: "Aval técnico de ABR", desc: "Respaldo de Asesoría Bromatológica Rosario en cada traza." },
+];
 
 export function FoodSection() {
-  const cells = qrCells();
   return (
-    <section id="food" className="tile rise bg-paper-2">
-      <img src="/images/brand/ninjafood-logo-light.webp" alt="Ninja Food" width={640} height={142} className="mx-auto mb-5 h-11 w-auto max-w-full" />
-      <h2 className="tile-title">Cada lote, trazado.</h2>
+    <section id="food" className="tile rise food-bg !pb-12 sm:!pb-16">
+      <img loading="lazy" decoding="async" src="/images/brand/ninjafood-logo-light.webp" alt="Ninja Food" width={640} height={142} className="mx-auto mb-5 h-11 w-auto max-w-full" />
+      <h2 className="tile-title">Cada lote, trazado de punta a punta.</h2>
       <p className="tile-sub text-ink-2">
-        Trazabilidad y gestión bromatológica para la industria alimenticia, con respaldo técnico de ABR.
+        Trazabilidad y gestión bromatológica para la industria alimenticia: desde que entra la materia prima hasta que el producto llega al cliente.
       </p>
       <div className="mt-5 flex flex-wrap items-center justify-center gap-8">
         <a href="#hablemos" className="inline-flex min-h-[44px] items-center text-[17px] text-food hover:underline">
@@ -44,28 +49,21 @@ export function FoodSection() {
         </a>
       </div>
 
-      <div
-        aria-hidden
-        className="mx-auto mt-11 grid max-w-[560px] grid-cols-1 gap-[22px] rounded-t-[26px] border border-b-0 border-line bg-paper px-[26px] pb-[30px] pt-[26px] text-left shadow-[0_-24px_60px_rgba(33,19,90,.08)] sm:grid-cols-[1fr_auto]"
-      >
-        <div>
-          <p className="font-mono text-[13px] text-ink-2">LOTE L-2610-014</p>
-          <h3 className="mt-2 text-2xl font-bold">Empanadas de carne · caja x12</h3>
-          <div className="mt-4 grid gap-2.5">
-            {FACTS.map(([k, v]) => (
-              <div key={k} className="flex justify-between gap-3 border-t border-line pt-2.5 text-sm text-ink-2">
-                <span>{k}</span>
-                <b className={`font-semibold tabular-nums ${k === "Cadena de frío" ? "text-food" : "text-ink"}`}>{v}</b>
-              </div>
-            ))}
-          </div>
-        </div>
-        <div className="-order-1 grid h-[116px] w-[116px] grid-cols-[repeat(21,1fr)] self-start rounded-[14px] border border-line bg-white p-2 sm:order-none">
-          {cells.map((on, i) => (
-            <i key={i} className={on ? "rounded-[1px] bg-ink" : ""} />
-          ))}
-        </div>
-      </div>
+      <FoodFlow />
+
+      <ul className="mx-auto mt-10 grid max-w-[1100px] gap-3 text-left sm:grid-cols-2 lg:grid-cols-3">
+        {FEATURES.map((f) => (
+          <li key={f.title} className="flex gap-3 rounded-[20px] bg-white p-4 shadow-[0_1px_2px_rgba(0,0,0,.04),0_8px_22px_rgba(0,0,0,.04)]">
+            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-[12px] bg-[linear-gradient(135deg,#16a34a,#4ade80)] text-white">
+              <f.Icon size={21} weight="fill" />
+            </span>
+            <span className="min-w-0">
+              <b className="block text-[15px] font-semibold leading-tight">{f.title}</b>
+              <span className="mt-1 block text-[13.5px] leading-snug text-ink-2">{f.desc}</span>
+            </span>
+          </li>
+        ))}
+      </ul>
     </section>
   );
 }
