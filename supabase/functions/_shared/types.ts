@@ -25,12 +25,20 @@ export type MessageInsert = {
   sender: Sender;
   body: string;
   telegram_message_id?: number | null;
+  media_path?: string | null;
 };
+
+// Fotos del chat (bucket privado "chat-media", carpeta = id de la sesión).
+export interface Media {
+  upload(path: string, bytes: Uint8Array, contentType: string): Promise<void>;
+  download(path: string): Promise<Uint8Array>;
+}
 
 export type ContactInput = {
   name: string;
   email: string;
   phone: string;
+  company: string; // empresa (opcional)
   business: string;
   message: string;
   meeting: boolean; // pidió reunión por Microsoft Teams

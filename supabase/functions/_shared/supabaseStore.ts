@@ -1,5 +1,5 @@
 import { createClient, type SupabaseClient } from "npm:@supabase/supabase-js@2.45.4";
-import type { Session, Store, Template } from "./types.ts";
+import type { Media, Session, Store, Template } from "./types.ts";
 
 export function adminClient(): SupabaseClient {
   return createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, {
@@ -77,6 +77,7 @@ export function supabaseStore(db: SupabaseClient): Store {
             name: c.name,
             email: c.email,
             phone: c.phone || null,
+            company: c.company || null,
             business: c.business || null,
             message: c.message,
             meeting: c.meeting,
@@ -89,6 +90,21 @@ export function supabaseStore(db: SupabaseClient): Store {
     },
     async setSetting(key, value) {
       must(await db.from("app_settings").upsert({ key, value, updated_at: new Date().toISOString() }));
+    },
+  };
+}
+
+// Fotos del chat en el bucket privado "chat-media".
+export function storageMedia(db: SupabaseClient): Media {
+  return {
+    async upload(path, bytes, contentType) {
+      const { error } = await db.storage.from("chat-media").upload(path, bytes, { contentType, upsert: true });
+      if (error) throw new Error(error.message);
+    },
+    async download(path) {
+      const { data, error } = await db.storage.from("chat-media").download(path);
+      if (error || !data) throw new Error(error?.message ?? "No se pudo leer la foto");
+      return new Uint8Array(await data.arrayBuffer());
     },
   };
 }

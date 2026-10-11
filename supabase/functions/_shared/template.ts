@@ -3,6 +3,7 @@ export const TEMPLATE_VARS = [
   "nombre",
   "email",
   "telefono",
+  "empresa",
   "rubro",
   "mensaje",
   "respuesta",

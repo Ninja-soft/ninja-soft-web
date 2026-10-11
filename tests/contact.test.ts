@@ -51,6 +51,16 @@ describe("handleContact", () => {
     expect(m.sent[0].html).toBe("<p>Sí, por Microsoft Teams · martes 15 h</p>");
   });
 
+  test("empresa: en Telegram, guardada y como {{empresa}}", async () => {
+    store.templates = { ...store.templates, contact_notify: { subject: "x", html: "<p>{{empresa}}</p>" } };
+    const m = fakeMailer();
+    const tg = fakeTelegram();
+    await handleContact({ store, mailer: m.factory, telegram: tg.factory }, { ip: "h", body: { ...body, company: "Don Pepe SRL" } });
+    expect(store.contacts[0]).toMatchObject({ company: "Don Pepe SRL" });
+    expect(tg.calls.sent[0].text).toContain("Empresa: Don Pepe SRL");
+    expect(m.sent[0].html).toBe("<p>Don Pepe SRL</p>");
+  });
+
   test("reutiliza el tema de Formularios", async () => {
     store.cfg.forms_thread_id = "77";
     const tg = fakeTelegram();

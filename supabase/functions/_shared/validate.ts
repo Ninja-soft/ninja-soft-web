@@ -46,6 +46,7 @@ export function validateContact(raw: unknown): Result<ContactInput> {
   const name = line(o.name, 80);
   const email = line(o.email, 120).toLowerCase();
   const phone = line(o.phone, 30);
+  const company = line(o.company, 80);
   const business = line(o.business, 60);
   const message = typeof o.message === "string" ? o.message.trim().slice(0, 4000) : "";
   if (name.length < 2) return { ok: false, error: "Ingresá tu nombre." };
@@ -54,7 +55,7 @@ export function validateContact(raw: unknown): Result<ContactInput> {
   if (message.length < 5) return { ok: false, error: "Contanos un poco más en el mensaje." };
   const meeting = o.meeting === true || o.meeting === "on" || o.meeting === "true";
   const meeting_pref = meeting ? line(o.meeting_pref, 120) : "";
-  return { ok: true, value: { name, email, phone, business, message, meeting, meeting_pref } };
+  return { ok: true, value: { name, email, phone, company, business, message, meeting, meeting_pref } };
 }
 
 // Campo oculto "website": sólo lo completan los bots.

@@ -713,7 +713,7 @@
   width: 100%; border-radius: 14px; background: #f2f2f7; padding: 10px 12px;
   font-size: 16px; /* 16px evita el zoom de iOS */ color: #1d1d1f; outline: none;
 }
-.chat-input:focus { box-shadow: 0 0 0 2px rgba(255, 75, 34, 0.45); }
+.chat-input:focus { background: #ebebf0; }
 /* formulario de contacto (sobre fondo oscuro) */
 .contact-input {
   width: 100%; border-radius: 14px; padding: 12px 14px; font-size: 16px;
@@ -721,7 +721,7 @@
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1); outline: none;
 }
 .contact-input::placeholder { color: rgba(184, 174, 220, 0.8); }
-.contact-input:focus { box-shadow: inset 0 0 0 1px rgba(255, 138, 31, 0.8); }
+.contact-input:focus { background: rgba(255, 255, 255, 0.11); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.28); }
 .contact-input option { color: #1d1d1f; }
 select.contact-input:has(option[value=""]:checked) { color: rgba(184, 174, 220, 0.8); }
 /* panel interno */
@@ -788,9 +788,75 @@ select.contact-input:has(option[value=""]:checked) { color: rgba(184, 174, 220, 
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.09), 0 30px 80px rgba(0, 0, 0, 0.25);
 }
 .contact-meeting { background: rgba(255, 255, 255, 0.05); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08); transition: box-shadow 0.2s ease, background-color 0.2s ease; }
-.contact-meeting.is-on { background: rgba(91, 95, 199, 0.16); box-shadow: inset 0 0 0 1px rgba(123, 128, 255, 0.55); }
-.contact-meeting:focus-within { box-shadow: inset 0 0 0 2px rgba(255, 138, 31, 0.8); }
+.contact-meeting.is-on { background: rgba(91, 95, 199, 0.22); box-shadow: none; }
+.contact-meeting:focus-within { box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.3); }
 .contact-switch { position: relative; width: 51px; height: 31px; flex-shrink: 0; border-radius: 9999px; background: rgba(255, 255, 255, 0.18); transition: background-color 0.25s ease; }
 .contact-switch::after { content: ""; position: absolute; top: 2px; left: 2px; width: 27px; height: 27px; border-radius: 9999px; background: #fff; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25); transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1); }
 .contact-meeting.is-on .contact-switch { background: #30d158; }
 .contact-meeting.is-on .contact-switch::after { transform: translateX(20px); }
+
+/* rubro como chips seleccionables */
+.contact-chip {
+  display: flex; align-items: center; gap: 8px; min-height: 48px; padding: 10px 12px; cursor: pointer;
+  border-radius: 14px; font-size: 14px; font-weight: 500; line-height: 1.2; color: #fff;
+  background: rgba(255, 255, 255, 0.06); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+}
+.contact-chip svg { flex-shrink: 0; color: #ff8a1f; }
+.contact-chip:hover { background: rgba(255, 255, 255, 0.1); }
+.contact-chip:active { transform: scale(0.98); }
+.contact-chip:has(input:checked) { background: linear-gradient(135deg, #ff4b22, #ff8a1f); box-shadow: none; font-weight: 600; }
+.contact-chip:has(input:checked) svg { color: #fff; }
+.contact-chip:has(input:focus-visible) { box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.4); }
+
+/* login del panel interno (estética del acceso interno de NinjaPOS) */
+.int-login {
+  border-radius: 14px; background: rgba(22, 16, 46, 0.82);
+  box-shadow: inset 0 0 0 1px rgba(255, 75, 34, 0.28), 0 30px 80px rgba(0, 0, 0, 0.45);
+  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+}
+.int-login-input {
+  width: 100%; height: 44px; border-radius: 10px; padding: 0 12px; font-size: 16px; color: #fff;
+  background: #0b0718; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08); outline: none;
+}
+.int-login-input:focus { box-shadow: inset 0 0 0 1.5px #ff8a1f; }
+.int-login-btn {
+  height: 44px; border-radius: 10px; font-size: 15px; font-weight: 700; color: #fff;
+  background: linear-gradient(180deg, #ff6a2a, #f0461c); transition: filter 0.2s ease;
+}
+.int-login-btn:hover { filter: brightness(1.06); }
+.int-login-btn:disabled { opacity: 0.6; }
+
+/* flechas ir arriba / ir abajo */
+.scroll-arrows { position: fixed; left: 20px; bottom: 20px; z-index: 40; display: grid; gap: 8px; }
+.scroll-arrow {
+  display: grid; place-items: center; width: 44px; height: 44px; border-radius: 9999px; color: #fff;
+  background: rgba(16, 12, 34, 0.72); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+  -webkit-backdrop-filter: blur(16px) saturate(160%); backdrop-filter: blur(16px) saturate(160%);
+  transition: opacity 0.3s ease, transform 0.3s ease, background-color 0.2s ease;
+}
+.scroll-arrow:hover { background: rgba(255, 75, 34, 0.9); }
+.scroll-arrow.is-hidden { opacity: 0; transform: scale(0.8); pointer-events: none; }
+@media (max-width: 640px) { .scroll-arrows { left: 16px; bottom: 16px; } .scroll-arrow { width: 40px; height: 40px; } }
+
+/* botón de chat del menú: claro, sin sombra */
+.nav-chat-btn { color: #ff5a1f; background: #fff1ea; transition: background-color 0.2s ease, transform 0.2s ease; }
+.nav-chat-btn:hover { background: #ffe2d3; transform: translateY(-1px); }
+
+/* visor de fotos del chat */
+.photo-viewer {
+  position: fixed; inset: 0; z-index: 70; display: grid; place-items: center; padding: 24px;
+  background: rgba(8, 5, 20, 0.88); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); cursor: zoom-out;
+}
+.photo-viewer-img { max-width: min(1100px, 100%); max-height: 88vh; border-radius: 16px; cursor: default; box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5); }
+.photo-viewer-btn {
+  display: grid; place-items: center; width: 44px; height: 44px; border-radius: 9999px; color: #fff;
+  background: rgba(255, 255, 255, 0.14); transition: background-color 0.2s ease;
+}
+.photo-viewer-btn:hover { background: rgba(255, 255, 255, 0.26); }
+@media (prefers-reduced-motion: no-preference) {
+  .photo-viewer { animation: chat-fade 0.2s ease both; }
+  .photo-viewer-img { animation: chat-in 0.3s cubic-bezier(0.22, 1, 0.36, 1) both; }
+  @keyframes chat-fade { from { opacity: 0; } }
+}
+.chat-spinner-light { border-color: rgba(255, 255, 255, 0.35); border-top-color: #fff; }

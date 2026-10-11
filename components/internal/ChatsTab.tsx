@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from "react";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { ChatImage } from "@/components/chat/ChatImage";
 
 type Row = { id: string; name: string; contact: string; created_at: string; last_seen_at: string };
-type Msg = { id: string; sender: string; body: string; created_at: string };
+type Msg = { id: string; sender: string; body: string; created_at: string; media_path: string | null };
 const fmt = (s: string) => new Date(s).toLocaleString("es-AR", { dateStyle: "short", timeStyle: "short" });
 
 export function ChatsTab({ sb }: { sb: SupabaseClient }) {
@@ -23,7 +24,7 @@ export function ChatsTab({ sb }: { sb: SupabaseClient }) {
   useEffect(() => {
     if (!sel) return;
     sb.from("chat_messages")
-      .select("id,sender,body,created_at")
+      .select("id,sender,body,created_at,media_path")
       .eq("session_id", sel)
       .order("created_at")
       .then(({ data }) => setMsgs((data ?? []) as Msg[]));
@@ -49,6 +50,7 @@ export function ChatsTab({ sb }: { sb: SupabaseClient }) {
         {msgs.map((m) => (
           <div key={m.id} className={`flex ${m.sender === "visitor" ? "justify-start" : "justify-end"}`}>
             <p className={`max-w-[80%] whitespace-pre-wrap rounded-[16px] px-3 py-2 text-[14px] ${m.sender === "visitor" ? "bg-[#f2f2f7]" : "bg-[#ff4b22] text-white"}`}>
+              {m.media_path && <ChatImage sb={sb} path={m.media_path} />}
               {m.body}
               <span className="mt-1 block text-[11px] opacity-60">{fmt(m.created_at)}</span>
             </p>

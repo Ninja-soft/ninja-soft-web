@@ -41,6 +41,21 @@ describe("parseAgentUpdate", () => {
   });
 });
 
+describe("parseAgentUpdate con fotos", () => {
+  const photo = [{ file_id: "chica", width: 90 }, { file_id: "grande", width: 1280 }];
+  test("foto con epígrafe → toma la versión más grande", () => {
+    expect(parseAgentUpdate(msg({ text: undefined, photo, caption: "Mirá esto" }), G)).toEqual({
+      threadId: 12,
+      text: "Mirá esto",
+      messageId: 50,
+      photoFileId: "grande",
+    });
+  });
+  test("foto sin epígrafe → texto vacío", () => {
+    expect(parseAgentUpdate(msg({ text: undefined, photo }), G)?.text).toBe("");
+  });
+});
+
 describe("telegramApi", () => {
   test("manda texto plano (sin parse_mode) al tema", async () => {
     const bodies: Record<string, unknown>[] = [];
@@ -53,6 +68,21 @@ describe("telegramApi", () => {
     expect(bodies[0]).toEqual({ chat_id: G, text: "<b>*hola*_</b> & 🔥", message_thread_id: 12 });
     expect("parse_mode" in bodies[0]).toBe(false);
   });
+  test("sendPhoto manda multipart al tema con epígrafe en texto plano", async () => {
+    let form: FormData | null = null;
+    const fakeFetch = (async (_url: string, init: RequestInit) => {
+      form = init.body as FormData;
+      return new Response(JSON.stringify({ ok: true, result: { message_id: 5 } }));
+    }) as unknown as typeof fetch;
+    await telegramApi("t", G, fakeFetch).sendPhoto(12, new Uint8Array([1, 2, 3]), "foto.jpg", "<hola>");
+    expect(form).toBeInstanceOf(FormData);
+    expect(form!.get("chat_id")).toBe(G);
+    expect(form!.get("message_thread_id")).toBe("12");
+    expect(form!.get("caption")).toBe("<hola>");
+    expect(form!.get("parse_mode")).toBeNull();
+    expect(form!.get("photo")).toBeInstanceOf(Blob);
+  });
+
   test("si Telegram responde ok:false, lanza error", async () => {
     const fakeFetch = (async () =>
       new Response(JSON.stringify({ ok: false, description: "Bad Request: message thread not found" }))) as unknown as typeof fetch;

@@ -8,6 +8,7 @@ import { PosShowcase } from "@/components/PosShowcase";
 import { Process } from "@/components/Process";
 import { PosSection } from "@/components/PosSection";
 import { ChatWidget } from "@/components/chat/ChatWidget";
+import { ScrollArrows } from "@/components/ScrollArrows";
 import { ScrollHint } from "@/components/ScrollHint";
 import { ServicesAbout } from "@/components/ServicesAbout";
 
@@ -33,6 +34,7 @@ export default function Home() {
         </div>
       </main>
       <Footer />
+      <ScrollArrows />
       <ChatWidget />
     </>
   );

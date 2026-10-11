@@ -2,6 +2,7 @@ import type { Mail, Mailer } from "../supabase/functions/_shared/resend.ts";
 import type { TelegramApi } from "../supabase/functions/_shared/telegram.ts";
 import type {
   ContactRecord,
+  Media,
   MessageInsert,
   SecretName,
   Session,
@@ -86,7 +87,11 @@ export class FakeStore implements Store {
 }
 
 export function fakeTelegram(opts: { failSendOnce?: boolean } = {}) {
-  const calls = { topics: [] as string[], sent: [] as { threadId: number | null; text: string }[] };
+  const calls = {
+    topics: [] as string[],
+    sent: [] as { threadId: number | null; text: string }[],
+    photos: [] as { threadId: number | null; filename: string; caption: string; size: number }[],
+  };
   let fail = !!opts.failSendOnce;
   let next = 100;
   const api: TelegramApi = {
@@ -102,6 +107,13 @@ export function fakeTelegram(opts: { failSendOnce?: boolean } = {}) {
       calls.sent.push({ threadId, text });
       return calls.sent.length;
     },
+    async sendPhoto(threadId, bytes, filename, caption) {
+      calls.photos.push({ threadId, filename, caption, size: bytes.length });
+      return 900 + calls.photos.length;
+    },
+    async downloadFile(fileId) {
+      return { bytes: new TextEncoder().encode(`img:${fileId}`), contentType: "image/jpeg" };
+    },
   };
   return { api, calls, factory: (_token: string, _group: string) => api };
 }
@@ -113,4 +125,19 @@ export function fakeMailer(opts: { failTo?: string } = {}) {
     sent.push(m);
   };
   return { sent, factory };
+}
+
+export function fakeMedia() {
+  const files = new Map<string, Uint8Array>();
+  const media: Media = {
+    async upload(path, bytes) {
+      files.set(path, bytes);
+    },
+    async download(path) {
+      const f = files.get(path);
+      if (!f) throw new Error("no existe " + path);
+      return f;
+    },
+  };
+  return { media, files };
 }

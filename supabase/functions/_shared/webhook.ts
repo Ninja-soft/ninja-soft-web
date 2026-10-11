@@ -1,10 +1,15 @@
 import type { Mailer } from "./resend.ts";
-import { parseAgentUpdate } from "./telegram.ts";
+import { parseAgentUpdate, type TelegramApi } from "./telegram.ts";
 import { brandVars, formatDate, renderTemplate } from "./template.ts";
-import type { Store } from "./types.ts";
+import type { Media, Store } from "./types.ts";
 import { emailList, isEmail } from "./validate.ts";
 
-export type WebhookDeps = { store: Store; mailer: (apiKey: string) => Mailer };
+export type WebhookDeps = {
+  store: Store;
+  mailer: (apiKey: string) => Mailer;
+  telegram: (token: string, groupId: string) => TelegramApi;
+  media: Media;
+};
 
 export async function handleTelegramUpdate(
   deps: WebhookDeps,
@@ -18,11 +23,22 @@ export async function handleTelegramUpdate(
   const session = await store.sessionByThread(reply.threadId);
   if (!session) return { handled: false, emailed: false };
 
+  // Foto desde Telegram: se copia al storage para que el visitante la vea.
+  let mediaPath: string | null = null;
+  if (reply.photoFileId) {
+    const token = await store.secret("telegram_bot_token");
+    if (!token) return { handled: false, emailed: false };
+    const file = await deps.telegram(token, s.telegram_group_id ?? "").downloadFile(reply.photoFileId);
+    mediaPath = `${session.id}/tg-${reply.messageId}.jpg`;
+    await deps.media.upload(mediaPath, file.bytes, file.contentType.startsWith("image/") ? file.contentType : "image/jpeg");
+  }
+
   const saved = await store.addMessage({
     session_id: session.id,
     sender: "agent",
     body: reply.text,
     telegram_message_id: reply.messageId,
+    media_path: mediaPath,
   });
 
   // Si el visitante no está en la página, la respuesta también le llega por email.
@@ -37,7 +53,7 @@ export async function handleTelegramUpdate(
       ...brandVars(s),
       nombre: session.name,
       email: session.contact,
-      respuesta: reply.text,
+      respuesta: reply.text || (mediaPath ? "📷 Te enviamos una foto. Abrí el chat para verla." : ""),
       fecha: formatDate(now),
       link_sitio: s.site_url,
     };

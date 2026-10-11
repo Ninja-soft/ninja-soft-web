@@ -52,7 +52,7 @@ export function InternalApp() {
   }, [sb, session]);
 
   if (!ready) return <Shell><p className="text-[#86868b]">Cargando…</p></Shell>;
-  if (!session) return <Shell><LoginForm /></Shell>;
+  if (!session) return <LoginForm />;
   if (admin === null) return <Shell><p className="text-[#86868b]">Verificando acceso…</p></Shell>;
   if (!admin) {
     return (

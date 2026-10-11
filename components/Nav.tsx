@@ -100,9 +100,15 @@ export function Nav() {
           >
             Probar gratis
           </a>
-          <button type="button" onClick={openChat} className="flex min-h-[40px] items-center gap-2 rounded-full bg-ink pl-3 pr-4 text-[14px] font-semibold text-paper transition-colors hover:bg-ink/85">
-            <ChatCircleDots size={18} weight="fill" className="nav-chat-icon text-[#ff8a1f]" />
-            Escribinos
+          <button
+            type="button"
+            onClick={openChat}
+            aria-label="Abrir el chat"
+            title="Chateá con nosotros"
+            className="nav-chat-btn relative grid h-10 w-10 place-items-center rounded-full"
+          >
+            <ChatCircleDots size={22} weight="fill" className="nav-chat-icon" />
+            <span aria-hidden className="absolute right-0.5 top-0.5 h-2.5 w-2.5 rounded-full bg-[#30d158] ring-2 ring-paper" />
           </button>
         </div>
 

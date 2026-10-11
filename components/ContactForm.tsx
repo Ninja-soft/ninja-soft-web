@@ -1,11 +1,29 @@
 "use client";
 
 import { useState } from "react";
-import { CheckCircle, MicrosoftTeamsLogo, PaperPlaneTilt } from "@phosphor-icons/react";
+import {
+  Basket,
+  CheckCircle,
+  DotsThree,
+  Flask,
+  ForkKnife,
+  MicrosoftTeamsLogo,
+  PaperPlaneTilt,
+  ShoppingBagOpen,
+  Stethoscope,
+  type Icon,
+} from "@phosphor-icons/react";
 import { visitorClient } from "@/lib/supabase/client";
 import { functionError } from "@/lib/supabase/functionError";
 
-const RUBROS = ["Gastronomía", "Retail / textil", "Kiosco / almacén", "Profesionales / servicios", "Industria alimenticia", "Otro"];
+const RUBROS: { label: string; Icon: Icon }[] = [
+  { label: "Gastronomía", Icon: ForkKnife },
+  { label: "Retail / textil", Icon: ShoppingBagOpen },
+  { label: "Kiosco / almacén", Icon: Basket },
+  { label: "Profesionales / servicios", Icon: Stethoscope },
+  { label: "Industria alimenticia", Icon: Flask },
+  { label: "Otro", Icon: DotsThree },
+];
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -63,19 +81,23 @@ export function ContactForm() {
         <Field label="Teléfono (opcional)">
           <input name="phone" type="tel" maxLength={30} autoComplete="tel" placeholder="+54 9 341 …" className="contact-input" />
         </Field>
-        <Field label="Rubro">
-          <select name="business" defaultValue="" className="contact-input">
-            <option value="" disabled>
-              Elegí tu rubro
-            </option>
-            {RUBROS.map((r) => (
-              <option key={r} value={r}>
-                {r}
-              </option>
-            ))}
-          </select>
+        <Field label="Empresa (opcional)">
+          <input name="company" maxLength={80} autoComplete="organization" placeholder="Tu negocio" className="contact-input" />
         </Field>
+
       </div>
+      <fieldset className="grid gap-2">
+        <legend className="mb-1.5 text-[13px] font-medium text-mist">Rubro</legend>
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+          {RUBROS.map(({ label, Icon }) => (
+            <label key={label} className="contact-chip">
+              <input type="radio" name="business" value={label} className="sr-only" />
+              <Icon size={20} weight="duotone" />
+              <span>{label}</span>
+            </label>
+          ))}
+        </div>
+      </fieldset>
       <Field label="¿En qué te ayudamos?">
         <textarea name="message" required minLength={5} maxLength={4000} rows={4} placeholder="Contanos qué necesitás para tu negocio" className="contact-input resize-y" />
       </Field>

@@ -53,6 +53,13 @@ describe("validateContact", () => {
     expect(n.ok && n.value.meeting_pref).toBe("");
   });
 
+  test("empresa opcional, recortada", () => {
+    const r = validateContact({ ...base, company: "  Kiosco   Don Pepe  " });
+    expect(r.ok && r.value.company).toBe("Kiosco Don Pepe");
+    const n = validateContact(base);
+    expect(n.ok && n.value.company).toBe("");
+  });
+
   test("email obligatorio y mensaje mínimo", () => {
     expect(validateContact({ ...base, email: "" }).ok).toBe(false);
     expect(validateContact({ ...base, message: "hey" }).ok).toBe(false);

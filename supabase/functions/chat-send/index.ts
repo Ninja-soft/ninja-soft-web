@@ -1,6 +1,6 @@
 import { handleChatSend } from "../_shared/chatSend.ts";
 import { bearer, clientIp, cors, json, sha256 } from "../_shared/http.ts";
-import { adminClient, supabaseStore } from "../_shared/supabaseStore.ts";
+import { adminClient, storageMedia, supabaseStore } from "../_shared/supabaseStore.ts";
 import { telegramApi } from "../_shared/telegram.ts";
 
 Deno.serve(async (req) => {
@@ -12,7 +12,7 @@ Deno.serve(async (req) => {
     if (error || !data.user) return json(401, { error: "Sesión inválida. Recargá la página." });
     const body = await req.json().catch(() => null);
     const r = await handleChatSend(
-      { store: supabaseStore(db), telegram: (t, g) => telegramApi(t, g) },
+      { store: supabaseStore(db), telegram: (t, g) => telegramApi(t, g), media: storageMedia(db) },
       { userId: data.user.id, ip: await sha256(clientIp(req)), body },
     );
     return json(r.status, r.json);

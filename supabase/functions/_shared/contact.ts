@@ -38,6 +38,7 @@ export async function handleContact(
     nombre: c.name,
     email: c.email,
     telefono: c.phone,
+    empresa: c.company,
     rubro: c.business,
     mensaje: c.message,
     fecha: formatDate(now),
@@ -80,6 +81,7 @@ export async function handleContact(
         await store.setSetting("forms_thread_id", String(thread));
       }
       const lines = ["📥 Nuevo contacto", `Nombre: ${c.name}`, `Email: ${c.email}`];
+      if (c.company) lines.push(`Empresa: ${c.company}`);
       if (c.phone) lines.push(`Teléfono: ${c.phone}`);
       if (c.business) lines.push(`Rubro: ${c.business}`);
       if (c.meeting) lines.push(`📅 Quiere una reunión por Teams${c.meeting_pref ? ` (${c.meeting_pref})` : ""}`);

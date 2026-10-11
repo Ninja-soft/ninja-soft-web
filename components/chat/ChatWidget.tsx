@@ -2,13 +2,14 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { RealtimeChannel } from "@supabase/supabase-js";
-import { ChatCircleDots, PaperPlaneRight, X } from "@phosphor-icons/react";
+import { ChatCircleDots, ImageSquare, NotePencil, PaperPlaneRight, X } from "@phosphor-icons/react";
+import { ChatImage, compressImage } from "@/components/chat/ChatImage";
 import { OPEN_CHAT } from "@/lib/chat-events";
 import { visitorClient } from "@/lib/supabase/client";
 import { functionError } from "@/lib/supabase/functionError";
 
 // Chat web: los mensajes van a un tema de Telegram y las respuestas llegan por Realtime.
-type Msg = { id: string; sender: "visitor" | "agent" | "system"; body: string; created_at: string };
+type Msg = { id: string; sender: "visitor" | "agent" | "system"; body: string; created_at: string; media_path?: string | null };
 type Sess = { id: string; name: string; contact: string };
 
 export function ChatWidget() {
@@ -21,12 +22,14 @@ export function ChatWidget() {
   const [website, setWebsite] = useState("");
   const [sending, setSending] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState<string | null>(null);
   const [unread, setUnread] = useState(0);
   const openRef = useRef(false);
   const [error, setError] = useState<string | null>(null);
   const [waitMinutes, setWaitMinutes] = useState(5);
   const [now, setNow] = useState(() => Date.now());
   const listRef = useRef<HTMLDivElement>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
   const channelRef = useRef<RealtimeChannel | null>(null);
 
   const addMessages = useCallback((rows: Msg[]) => {
@@ -41,7 +44,7 @@ export function ChatWidget() {
     async (s: Sess) => {
       const sb = visitorClient();
       setSession(s);
-      const { data } = await sb.from("chat_messages").select("id,sender,body,created_at").eq("session_id", s.id).order("created_at");
+      const { data } = await sb.from("chat_messages").select("id,sender,body,created_at,media_path").eq("session_id", s.id).order("created_at");
       if (data) addMessages(data as Msg[]);
       channelRef.current?.unsubscribe();
       channelRef.current = sb
@@ -144,6 +147,48 @@ export function ChatWidget() {
     }
   }
 
+  // Foto: se comprime, se sube a la carpeta de la sesión y se avisa a chat-send.
+  async function sendPhoto(file: File) {
+    if (!session || sending) return;
+    setError(null);
+    setSending(true);
+    const preview = URL.createObjectURL(file);
+    setUploading(preview);
+    try {
+      if (!file.type.startsWith("image/")) throw new Error("Sólo se pueden enviar fotos.");
+      const sb = visitorClient();
+      const blob = await compressImage(file);
+      const path = `${session.id}/${crypto.randomUUID()}.jpg`;
+      const up = await sb.storage.from("chat-media").upload(path, blob, { contentType: "image/jpeg" });
+      if (up.error) throw new Error("No se pudo subir la foto.");
+      const caption = text.trim();
+      const { data, error: ferr } = await sb.functions.invoke("chat-send", { body: { message: caption, media_path: path } });
+      if (ferr) throw new Error(await functionError(ferr, "No se pudo enviar la foto."));
+      addMessages([{ id: (data as { id: string }).id, sender: "visitor", body: caption, media_path: path, created_at: new Date().toISOString() }]);
+      setText("");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "No se pudo enviar la foto.");
+    } finally {
+      setSending(false);
+      setUploading(null);
+      URL.revokeObjectURL(preview);
+      if (fileRef.current) fileRef.current.value = "";
+    }
+  }
+
+  // Nuevo chat: cierra la conversación actual (queda en Telegram) y vuelve al primer paso.
+  async function newChat() {
+    if (sending) return;
+    if (messages.length && !window.confirm("¿Empezar un chat nuevo? Esta conversación se cierra.")) return;
+    await visitorClient().rpc("chat_close");
+    channelRef.current?.unsubscribe();
+    channelRef.current = null;
+    setSession(null);
+    setMessages([]);
+    setText("");
+    setError(null);
+  }
+
   const last = messages[messages.length - 1];
   const waiting = !!last && last.sender === "visitor" && now - Date.parse(last.created_at) > waitMinutes * 60_000;
   const byEmail = !!session && session.contact.includes("@");
@@ -173,6 +218,17 @@ export function ChatWidget() {
               <p className="text-[15px] font-semibold leading-tight">Ninja Soft</p>
               <p className="text-[12px] text-[#86868b]">En línea · respondemos en minutos</p>
             </div>
+            {session && (
+              <button
+                type="button"
+                onClick={newChat}
+                aria-label="Nuevo chat"
+                title="Nuevo chat"
+                className="grid h-9 w-9 place-items-center rounded-full bg-black/[.05] text-[#3a3a3c] transition hover:text-[#ff4b22]"
+              >
+                <NotePencil size={17} weight="bold" />
+              </button>
+            )}
             <button
               type="button"
               onClick={() => setOpen(false)}
@@ -194,8 +250,21 @@ export function ChatWidget() {
               </div>
             )}
             {messages.map((m) => (
-              <Bubble key={m.id} sender={m.sender} body={m.body} />
+              <Bubble key={m.id} sender={m.sender} body={m.body} media={m.media_path} />
             ))}
+            {uploading && (
+              <div className="chat-bubble-in flex justify-end">
+                <div className="relative overflow-hidden rounded-[14px]">
+                  <img src={uploading} alt="" className="max-h-64 w-auto max-w-[240px] object-cover opacity-50" />
+                  <div role="status" className="absolute inset-0 grid place-items-center bg-black/25">
+                    <span className="flex flex-col items-center gap-2 text-[12.5px] font-semibold text-white">
+                      <span className="chat-spinner chat-spinner-light" />
+                      Subiendo foto…
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
             {waiting && (
               <p className="mx-auto max-w-[90%] rounded-2xl bg-black/[.04] px-3 py-2 text-center text-[12.5px] text-[#6e6e73]">
                 Te respondemos a la brevedad.{" "}
@@ -247,6 +316,29 @@ export function ChatWidget() {
               </p>
             )}
             <div className="flex items-end gap-2">
+              {session && (
+                <>
+                  <input
+                    ref={fileRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => {
+                      const f = e.target.files?.[0];
+                      if (f) void sendPhoto(f);
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => fileRef.current?.click()}
+                    disabled={sending}
+                    aria-label="Enviar una foto"
+                    className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-[#f2f2f7] text-[#6e6e73] transition hover:text-[#ff4b22] disabled:opacity-40"
+                  >
+                    <ImageSquare size={22} weight="duotone" />
+                  </button>
+                </>
+              )}
               <textarea
                 value={text}
                 onChange={(e) => setText(e.target.value)}
@@ -271,6 +363,7 @@ export function ChatWidget() {
                 <PaperPlaneRight size={20} weight="fill" />
               </button>
             </div>
+            <p className="mt-2 text-center text-[11px] text-[#aeaeb2]">Los mensajes se borran automáticamente a los 15 días.</p>
           </form>
         </section>
       )}
@@ -278,9 +371,17 @@ export function ChatWidget() {
   );
 }
 
-function Bubble({ sender, body }: { sender: Msg["sender"]; body: string }) {
+function Bubble({ sender, body, media }: { sender: Msg["sender"]; body: string; media?: string | null }) {
   if (sender === "system") return <p className="text-center text-[12.5px] text-[#86868b]">{body}</p>;
   const mine = sender === "visitor";
+  if (media) {
+    return (
+      <div className={`chat-bubble-in flex flex-col gap-1 ${mine ? "items-end" : "items-start"}`}>
+        <ChatImage sb={visitorClient()} path={media} />
+        {body && <Bubble sender={sender} body={body} />}
+      </div>
+    );
+  }
   return (
     <div className={`chat-bubble-in flex ${mine ? "justify-end" : "justify-start"}`}>
       <p
