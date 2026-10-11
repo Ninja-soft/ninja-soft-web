@@ -430,3 +430,6 @@ verify_jwt = false
 [functions.chat-purge]
 verify_jwt = false
 
+[functions.chat-resume]
+verify_jwt = false
+

@@ -14,6 +14,7 @@ export function TeamTab({ sb }: { sb: SupabaseClient }) {
   const [email, setEmail] = useState("");
   const [busy, setBusy] = useState(false);
   const [note, setNote] = useState<{ ok: boolean; text: string } | null>(null);
+  const [confirmId, setConfirmId] = useState<string | null>(null);
 
   const call = useCallback(
     async (action: string, extra: Record<string, unknown> = {}) => {
@@ -50,7 +51,7 @@ export function TeamTab({ sb }: { sb: SupabaseClient }) {
   }
 
   async function remove(m: Member) {
-    if (!window.confirm(`¿Quitarle el acceso al panel a ${m.email}?`)) return;
+    setConfirmId(null);
     try {
       await call("remove_admin", { user_id: m.user_id });
       await load();
@@ -102,8 +103,19 @@ export function TeamTab({ sb }: { sb: SupabaseClient }) {
                       : "Invitación pendiente"}
                   </span>
                 </span>
-                {m.user_id !== me && (
-                  <button type="button" onClick={() => remove(m)} aria-label={`Quitar a ${m.email}`} className="grid h-9 w-9 place-items-center rounded-full text-[#86868b] hover:bg-[#fdecec] hover:text-[#b3261e]">
+                {m.user_id !== me && confirmId === m.user_id && (
+                  <span className="flex items-center gap-1.5">
+                    <span className="hidden text-[13px] text-[#6e6e73] sm:inline">¿Quitar acceso?</span>
+                    <button type="button" onClick={() => setConfirmId(null)} className="rounded-full px-3 py-1.5 text-[13px] font-semibold text-[#6e6e73] hover:bg-black/[.05]">
+                      Cancelar
+                    </button>
+                    <button type="button" onClick={() => remove(m)} className="rounded-full bg-[#b3261e] px-3 py-1.5 text-[13px] font-semibold text-white">
+                      Quitar
+                    </button>
+                  </span>
+                )}
+                {m.user_id !== me && confirmId !== m.user_id && (
+                  <button type="button" onClick={() => setConfirmId(m.user_id)} aria-label={`Quitar a ${m.email}`} className="grid h-9 w-9 place-items-center rounded-full text-[#86868b] hover:bg-[#fdecec] hover:text-[#b3261e]">
                     <UserMinus size={18} />
                   </button>
                 )}

@@ -63,4 +63,11 @@ export interface Store {
   template(key: TemplateKey): Promise<Template | null>;
   saveContact(c: ContactRecord): Promise<{ id: string }>;
   setSetting(key: string, value: string): Promise<void>;
+  // retomar el chat en otro navegador (PIN por email)
+  openSessionByContact(email: string): Promise<Session | null>;
+  savePin(sessionId: string, hash: string, expiresAt: string): Promise<void>;
+  getPin(sessionId: string): Promise<{ hash: string; expires_at: string; attempts: number } | null>;
+  bumpPinAttempts(sessionId: string): Promise<void>;
+  deletePin(sessionId: string): Promise<void>;
+  transferSession(sessionId: string, userId: string): Promise<void>;
 }

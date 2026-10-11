@@ -84,6 +84,27 @@ export class FakeStore implements Store {
   async setSetting(key: string, value: string) {
     this.cfg[key] = value;
   }
+  pins = new Map<string, { hash: string; expires_at: string; attempts: number }>();
+  async openSessionByContact(email: string) {
+    return [...this.sessions].reverse().find((s) => s.contact === email) ?? null;
+  }
+  async savePin(sessionId: string, hash: string, expires_at: string) {
+    this.pins.set(sessionId, { hash, expires_at, attempts: 0 });
+  }
+  async getPin(sessionId: string) {
+    return this.pins.get(sessionId) ?? null;
+  }
+  async bumpPinAttempts(sessionId: string) {
+    const p = this.pins.get(sessionId);
+    if (p) p.attempts++;
+  }
+  async deletePin(sessionId: string) {
+    this.pins.delete(sessionId);
+  }
+  async transferSession(sessionId: string, userId: string) {
+    const s = this.sessions.find((x) => x.id === sessionId);
+    if (s) s.user_id = userId;
+  }
 }
 
 export function fakeTelegram(opts: { failSendOnce?: boolean; failMessage?: string } = {}) {

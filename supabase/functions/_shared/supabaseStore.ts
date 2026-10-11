@@ -91,6 +91,43 @@ export function supabaseStore(db: SupabaseClient): Store {
     async setSetting(key, value) {
       must(await db.from("app_settings").upsert({ key, value, updated_at: new Date().toISOString() }));
     },
+    async openSessionByContact(email) {
+      return must(
+        await db
+          .from("chat_sessions")
+          .select(SESSION_COLS)
+          .eq("contact", email)
+          .is("closed_at", null)
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle(),
+      ) as Session | null;
+    },
+    async savePin(sessionId, hash, expiresAt) {
+      must(await db.from("chat_pins").upsert({ session_id: sessionId, pin_hash: hash, expires_at: expiresAt, attempts: 0 }));
+    },
+    async getPin(sessionId) {
+      const r = must(await db.from("chat_pins").select("pin_hash,expires_at,attempts").eq("session_id", sessionId).maybeSingle());
+      return r ? { hash: r.pin_hash, expires_at: r.expires_at, attempts: r.attempts } : null;
+    },
+    async bumpPinAttempts(sessionId) {
+      must(await db.rpc("bump_pin_attempts", { p_session: sessionId }));
+    },
+    async deletePin(sessionId) {
+      must(await db.from("chat_pins").delete().eq("session_id", sessionId));
+    },
+    async transferSession(sessionId, userId) {
+      // El navegador nuevo puede tener otra conversación abierta: se cierra (una abierta por usuario).
+      must(
+        await db
+          .from("chat_sessions")
+          .update({ closed_at: new Date().toISOString() })
+          .eq("user_id", userId)
+          .is("closed_at", null)
+          .neq("id", sessionId),
+      );
+      must(await db.from("chat_sessions").update({ user_id: userId }).eq("id", sessionId));
+    },
   };
 }
 

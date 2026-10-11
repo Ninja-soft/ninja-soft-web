@@ -23,6 +23,10 @@ export function ChatWidget() {
   const [sending, setSending] = useState(false);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState<string | null>(null);
+  const [confirmNew, setConfirmNew] = useState(false);
+  const [resume, setResume] = useState<{ step: "email" | "pin" } | null>(null);
+  const [resumeEmail, setResumeEmail] = useState("");
+  const [pin, setPin] = useState("");
   const [unread, setUnread] = useState(0);
   const openRef = useRef(false);
   const [error, setError] = useState<string | null>(null);
@@ -201,9 +205,43 @@ export function ChatWidget() {
   }
 
   // Nuevo chat: cierra la conversación actual (queda en Telegram) y vuelve al primer paso.
+  // Retomar en otro navegador: 1) pedir código al email, 2) validarlo y traer la conversación acá.
+  async function resumeSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (sending || !resume) return;
+    setError(null);
+    setSending(true);
+    try {
+      const sb = visitorClient();
+      if (resume.step === "email") {
+        const { error: ferr } = await sb.functions.invoke("chat-resume", { body: { action: "request", email: resumeEmail } });
+        if (ferr) throw new Error(await functionError(ferr, "No pudimos enviar el código."));
+        setResume({ step: "pin" });
+      } else {
+        const { data: cur } = await sb.auth.getSession();
+        if (!cur.session) {
+          const { error: aerr } = await sb.auth.signInAnonymously();
+          if (aerr) throw new Error("No pudimos iniciar el chat. Probá de nuevo.");
+        }
+        const { data, error: ferr } = await sb.functions.invoke("chat-resume", { body: { action: "verify", email: resumeEmail, pin } });
+        if (ferr) throw new Error(await functionError(ferr, "No pudimos validar el código."));
+        const { data: s } = await sb.from("chat_sessions").select("id,name,contact").eq("id", (data as { sessionId: string }).sessionId).maybeSingle();
+        if (!s) throw new Error("No encontramos la conversación.");
+        setMessages([]);
+        setResume(null);
+        setPin("");
+        await attach(s as Sess);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Algo salió mal.");
+    } finally {
+      setSending(false);
+    }
+  }
+
   async function newChat() {
     if (sending) return;
-    if (messages.length && !window.confirm("¿Empezar un chat nuevo? Esta conversación se cierra.")) return;
+    setConfirmNew(false);
     await visitorClient().rpc("chat_close");
     channelRef.current?.unsubscribe();
     channelRef.current = null;
@@ -245,7 +283,7 @@ export function ChatWidget() {
             {session && (
               <button
                 type="button"
-                onClick={newChat}
+                onClick={() => (messages.length ? setConfirmNew(true) : newChat())}
                 aria-label="Nuevo chat"
                 title="Nuevo chat"
                 className="grid h-9 w-9 place-items-center rounded-full bg-black/[.05] text-[#3a3a3c] transition hover:text-[#ff4b22]"
@@ -263,11 +301,33 @@ export function ChatWidget() {
             </button>
           </header>
 
+          {confirmNew && (
+            <div role="alertdialog" aria-label="Empezar un chat nuevo" className="chat-bubble-in grid gap-3 border-b border-black/[.06] bg-[#fff6f1] px-4 py-3.5">
+              <p className="text-[13.5px] leading-snug text-[#3a3a3c]">
+                <b className="block text-[#1d1d1f]">¿Empezar un chat nuevo?</b>
+                Esta conversación se cierra.
+              </p>
+              <div className="flex justify-end gap-2">
+                <button type="button" onClick={() => setConfirmNew(false)} className="rounded-full px-4 py-2 text-[13px] font-semibold text-[#6e6e73] hover:bg-black/[.05]">
+                  Cancelar
+                </button>
+                <button type="button" onClick={newChat} className="rounded-full bg-[#ff4b22] px-4 py-2 text-[13px] font-semibold text-white">
+                  Sí, empezar uno nuevo
+                </button>
+              </div>
+            </div>
+          )}
+
           <div ref={listRef} className="flex-1 space-y-2 overflow-y-auto px-4 py-4">
             <Bubble sender="agent" body="¡Hola! 👋 Somos el equipo de Ninja Soft. Contanos qué necesitás para tu negocio y te respondemos por acá." />
             <p className="px-1 text-[12px] leading-snug text-[#86868b]">
               Si no te respondemos enseguida, te escribimos a tu email.
             </p>
+            {!session && !loading && !resume && (
+              <button type="button" onClick={() => setResume({ step: "email" })} className="px-1 text-left text-[12.5px] font-semibold text-[#ff4b22] hover:underline">
+                ¿Ya chateaste desde otro dispositivo? Retomá tu conversación
+              </button>
+            )}
             {loading && (
               <div role="status" aria-label="Cargando conversación" className="flex justify-center py-6">
                 <span className="chat-spinner" />
@@ -297,6 +357,49 @@ export function ChatWidget() {
             )}
           </div>
 
+          {resume && !session ? (
+            <form onSubmit={resumeSubmit} className="grid gap-2 border-t border-black/[.06] p-3">
+              <p className="text-[13px] font-semibold text-[#1d1d1f]">
+                {resume.step === "email" ? "Te mandamos un código a tu email" : `Ingresá el código que enviamos a ${resumeEmail}`}
+              </p>
+              {resume.step === "email" ? (
+                <input type="email" required value={resumeEmail} onChange={(e) => setResumeEmail(e.target.value)} autoComplete="email" placeholder="Tu email" aria-label="Tu email" className="chat-input" />
+              ) : (
+                <input
+                  required
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  maxLength={6}
+                  value={pin}
+                  onChange={(e) => setPin(e.target.value.replace(/\D/g, ""))}
+                  placeholder="••••••"
+                  aria-label="Código de 6 dígitos"
+                  className="chat-input text-center text-[22px] font-bold tracking-[10px]"
+                />
+              )}
+              {error && (
+                <p role="alert" className="text-[12.5px] text-[#d70015]">
+                  {error}
+                </p>
+              )}
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setResume(null);
+                    setPin("");
+                    setError(null);
+                  }}
+                  className="rounded-full px-3 py-2.5 text-[13px] font-semibold text-[#6e6e73] hover:bg-black/[.05]"
+                >
+                  Cancelar
+                </button>
+                <button type="submit" disabled={sending} className="flex-1 rounded-full bg-[linear-gradient(135deg,#ff4b22,#ff8a1f)] py-2.5 text-[14px] font-semibold text-white disabled:opacity-50">
+                  {sending ? "Un momento…" : resume.step === "email" ? "Enviarme el código" : "Continuar conversación"}
+                </button>
+              </div>
+            </form>
+          ) : (
           <form onSubmit={send} className="border-t border-black/[.06] p-3">
             {!session && (
               <div className="mb-2 grid grid-cols-2 gap-2">
@@ -389,6 +492,7 @@ export function ChatWidget() {
             </div>
             <p className="mt-2 text-center text-[11px] text-[#aeaeb2]">Los mensajes se borran automáticamente a los 15 días.</p>
           </form>
+          )}
         </section>
       )}
     </>
