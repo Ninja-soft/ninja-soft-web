@@ -1,90 +1,184 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { Coffee, Pause, Play, Scissors, ShoppingBag, Storefront, TShirt, type Icon } from "@phosphor-icons/react";
 import { POS_APP_URL } from "@/lib/content";
+import { ScreenGastro, ScreenKiosco, ScreenPro, ScreenRetail, ScreenTextil } from "./rubros/RubroScreens";
 
-const CATALOG = [
-  ["Alfajor triple", "$ 1.450"],
-  ["Café con leche", "$ 2.900"],
-  ["Medialuna", "$ 850"],
-  ["Agua 500 ml", "$ 1.200"],
-  ["Tostado J&Q", "$ 5.600"],
-  ["Jugo naranja", "$ 3.100"],
-  ["Yerba 1 kg", "$ 6.900"],
-  ["Galletitas", "$ 1.980"],
-  ["Chocolate", "$ 2.300"],
-] as const;
+// NinjaPOS por rubro: un selector (control segmentado) y la pantalla del POS
+// recreada para cada negocio dentro de un equipo con el halo de marca.
+// Rota sola siempre (barra de progreso en la pestaña); se pausa con el mouse encima.
 
-// Subtotal 13.950 + 10 % de recargo del plan en 3 cuotas = 15.345.
-const TICKET = [
-  ["2 × Café con leche", "$ 5.800"],
-  ["1 × Tostado J&Q", "$ 5.600"],
-  ["3 × Medialuna", "$ 2.550"],
-  ["Plan 3 cuotas · Payway", "$ 1.395"],
-] as const;
+type Rubro = {
+  key: string;
+  label: string;
+  Icon: Icon;
+  title: string;
+  points: string[];
+  Screen: () => React.JSX.Element;
+};
+
+const RUBROS: Rubro[] = [
+  {
+    key: "gastro",
+    label: "Gastronomía",
+    Icon: Coffee,
+    title: "Mesas, cocina y delivery, en una pantalla.",
+    points: ["Gestión de mesas y salón", "Comandas a cocina", "Rappi, PedidosYa y Uber Eats", "Delivery propio"],
+    Screen: ScreenGastro,
+  },
+  {
+    key: "retail",
+    label: "Retail",
+    Icon: ShoppingBag,
+    title: "Vendé, cobrá y facturá en segundos.",
+    points: ["Catálogo con imágenes", "Cuotas y todos los medios de pago", "Stock por sucursal y depósito"],
+    Screen: ScreenRetail,
+  },
+  {
+    key: "textil",
+    label: "Textil",
+    Icon: TShirt,
+    title: "Talles, colores y etiquetas, sin caos.",
+    points: ["Variantes por talle y color", "Etiquetas con código de barras", "Cambios y devoluciones con vale"],
+    Screen: ScreenTextil,
+  },
+  {
+    key: "kiosco",
+    label: "Kioscos",
+    Icon: Storefront,
+    title: "La venta más rápida del barrio.",
+    points: ["Lector de códigos y PLU", "Botones rápidos de lo que más sale", "Cuenta corriente para clientes"],
+    Screen: ScreenKiosco,
+  },
+  {
+    key: "pro",
+    label: "Profesionales",
+    Icon: Scissors,
+    title: "Agenda llena, cero ausencias.",
+    points: ["Agenda por profesional", "Recordatorios automáticos", "Packs de sesiones prepagas"],
+    Screen: ScreenPro,
+  },
+];
+
+const ROTATE_MS = 11000;
 
 export function PosSection() {
+  const [i, setI] = useState(0);
+  const [tick, setTick] = useState(0); // reinicia el temporizador al elegir
+  const [hover, setHover] = useState(false);
+  const [paused, setPaused] = useState(false);
+  const [reduce, setReduce] = useState(false);
+  useEffect(() => setReduce(window.matchMedia("(prefers-reduced-motion: reduce)").matches), []);
+  // rota siempre sola; se pausa sólo con el mouse encima del panel
+  useEffect(() => {
+    if (hover || paused || reduce) return;
+    const id = window.setTimeout(() => setI((v) => (v + 1) % RUBROS.length), ROTATE_MS);
+    return () => window.clearTimeout(id);
+  }, [i, tick, hover, paused, reduce]);
+  const r = RUBROS[i];
+
   return (
-    <section id="pos" className="tile on-night rise bg-night text-snow">
-      <img src="/images/brand/ninjapos-logo-dark.webp" alt="NinjaPOS" width={640} height={154} className="mx-auto mb-5 h-11 w-auto max-w-full" />
-      <h2 className="tile-title">Vendé rápido. Controlá todo.</h2>
-      <p className="tile-sub text-mist">
-        Punto de venta omnicanal: local, tienda online, delivery y sucursales sobre el mismo stock, con todos los
-        medios de pago del país.
+    <section id="rubros" className="rubros relative overflow-hidden bg-[#0b0720] px-4 pb-16 pt-16 text-center text-snow sm:rounded-tile sm:pb-20 sm:pt-20">
+      <div aria-hidden className="rubros-bg" />
+      <img src="/images/brand/ninjapos-logo-dark.webp" alt="NinjaPOS" width={640} height={154} className="relative mx-auto h-9 w-auto sm:h-10" />
+      <h2 className="relative mt-4 text-[clamp(34px,5vw,60px)] font-bold leading-[1.04] tracking-[-0.03em]">Hecho para tu rubro.</h2>
+
+      {/* selector de rubro */}
+      <div
+        role="tablist"
+        aria-label="Rubros"
+        className="rubro-tabs relative -mx-4 mt-7 flex snap-x gap-1 overflow-x-auto px-4 py-1 sm:mx-auto sm:w-fit sm:rounded-full sm:p-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      >
+        {RUBROS.map((x, k) => (
+          <button
+            key={x.key}
+            role="tab"
+            aria-selected={k === i}
+            onClick={() => {
+              setI(k);
+              setTick((t) => t + 1);
+            }}
+            className={`relative flex shrink-0 snap-center items-center gap-2 rounded-full px-4 py-2.5 text-[14px] font-semibold transition-colors duration-300 ${
+              k === i ? "bg-white text-[#100a2e]" : "text-white/70 hover:text-white"
+            }`}
+          >
+            <x.Icon size={18} weight={k === i ? "fill" : "regular"} />
+            {x.label}
+          </button>
+        ))}
+      </div>
+
+      <p key={r.key + "t"} className="rb-fade relative mx-auto mt-5 text-balance text-[clamp(20px,2.4vw,30px)] font-bold leading-tight tracking-[-0.02em] text-white/90">
+        {r.title}
       </p>
-      <ul aria-label="Canales" className="mx-auto mt-6 flex max-w-2xl flex-wrap justify-center gap-2">
-        {["Mostrador", "Tienda online", "Delivery", "Salón y mesas", "Multisucursal"].map((c) => (
-          <li key={c} className="rounded-full border border-white/10 bg-white/5 px-3.5 py-1.5 text-[13px] text-snow">
-            {c}
+
+      {/* panel con la escena del rubro */}
+      <div className="relative mx-auto mt-10 max-w-[1040px]">
+        <span aria-hidden className="rubro-halo" />
+        <div className="rubro-panel relative" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
+          <div className="rubro-scale">
+            <div key={r.key} className="rb-fade h-full w-full">
+              <r.Screen />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* controles estilo apple.com: puntos (el activo se estira y se llena) + play/pausa */}
+      <div className="relative mt-6 flex items-center justify-center gap-3">
+        <div className="flex h-12 items-center gap-2.5 rounded-full bg-white/[.09] px-5 backdrop-blur">
+          {RUBROS.map((x, k) => (
+            <button
+              key={x.key}
+              type="button"
+              aria-label={`Ver ${x.label}`}
+              onClick={() => {
+                setI(k);
+                setTick((t) => t + 1);
+              }}
+              className={`relative h-2 overflow-hidden rounded-full transition-[width,background-color] duration-500 ${
+                k === i ? "w-12 bg-white/25" : "w-2 bg-white/40 hover:bg-white/70"
+              }`}
+            >
+              {k === i && (
+                <span
+                  key={`${i}-${tick}`}
+                  className="absolute inset-y-0 left-0 w-full origin-left rounded-full bg-white"
+                  style={{
+                    animation: reduce ? "none" : `pillar-progress ${ROTATE_MS}ms linear forwards`,
+                    animationPlayState: hover || paused ? "paused" : "running",
+                  }}
+                />
+              )}
+            </button>
+          ))}
+        </div>
+        <button
+          type="button"
+          onClick={() => setPaused((v) => !v)}
+          aria-label={paused ? "Reproducir" : "Pausar"}
+          className="grid h-12 w-12 place-items-center rounded-full bg-white/[.09] text-white backdrop-blur transition hover:bg-white/15"
+        >
+          {paused ? <Play size={18} weight="fill" /> : <Pause size={18} weight="fill" />}
+        </button>
+      </div>
+
+      <ul key={r.key + "p"} className="rb-fade relative mx-auto mt-9 flex max-w-3xl flex-wrap justify-center gap-2">
+        {r.points.map((p) => (
+          <li key={p} className="rounded-full border border-white/10 bg-white/[.05] px-4 py-2 text-[14px]">
+            {p}
           </li>
         ))}
       </ul>
-      <div className="mt-5 flex flex-wrap items-center justify-center gap-8">
+
+      <div className="relative mt-8 flex flex-wrap items-center justify-center gap-8">
         <a href={POS_APP_URL} className="link-more">
           Probar gratis
         </a>
         <a href="#funciones" className="link-more">
           Ver funciones
         </a>
-      </div>
-
-      <div aria-hidden className="relative mx-auto mt-11 max-w-[760px]">
-        <div className="rounded-t-[26px] border border-b-0 border-white/10 bg-night-device px-3.5 pt-3.5 shadow-[0_-20px_80px_rgba(255,106,26,.12)]">
-          <div className="grid min-h-[300px] grid-cols-1 overflow-hidden rounded-t-[14px] bg-night-2 text-left text-sm sm:grid-cols-[1.25fr_1fr]">
-            <div className="grid grid-cols-3 content-start gap-2 border-b border-white/10 p-4 sm:border-b-0 sm:border-r">
-              {CATALOG.map(([name, price], i) => (
-                <div
-                  key={name}
-                  className={`flex min-h-[66px] flex-col justify-between rounded-xl border p-2.5 ${
-                    i === 1 ? "border-flame-linkDark/55 bg-flame-linkDark/10" : "border-white/10 bg-white/5"
-                  }`}
-                >
-                  <small className="text-[11px] leading-tight text-mist">{name}</small>
-                  <span className="font-mono text-xs">{price}</span>
-                </div>
-              ))}
-            </div>
-            <div className="flex flex-col gap-2 p-4">
-              {TICKET.map(([label, amount]) => (
-                <div key={label} className="flex justify-between gap-3 text-[13px] text-mist">
-                  <span>{label}</span>
-                  <span className="font-mono tabular-nums text-snow">{amount}</span>
-                </div>
-              ))}
-              <div className="mt-auto flex items-baseline justify-between border-t border-white/10 pt-3">
-                <small className="text-xs uppercase tracking-[0.12em] text-mist">Total</small>
-                <strong className="font-display text-[30px] font-bold tabular-nums">$ 15.345</strong>
-              </div>
-              <div className="grid grid-cols-2 gap-1.5 pb-4">
-                {["Efectivo", "QR", "Débito"].map((m) => (
-                  <span key={m} className="rounded-[10px] border border-white/10 p-2 text-center text-xs">
-                    {m}
-                  </span>
-                ))}
-                <span className="rounded-[10px] bg-flame p-2 text-center text-xs font-semibold text-[#100A2E]">
-                  Crédito · 3 cuotas
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     </section>
   );

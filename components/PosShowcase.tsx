@@ -122,7 +122,7 @@ export function PosShowcase() {
   }, []);
 
   return (
-    <div ref={sectionRef} className="relative h-[340vh] bg-[#f5f5f7]">
+    <div ref={sectionRef} id="pos" className="relative h-[340vh] bg-[#f5f5f7]">
       <div className="sticky top-0 h-screen overflow-hidden">
         <div ref={stageRef} className="ks relative h-full w-full">
           {/* luz detrás del equipo */}

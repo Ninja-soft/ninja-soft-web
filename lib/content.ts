@@ -8,6 +8,9 @@ export const whatsappUrl = (text = "Hola Ninja Soft, quiero hacer una consulta."
 
 export const POS_APP_URL = "https://pos.soft.ninja";
 export const FOOD_APP_URL = "https://food.soft.ninja";
+export const INSTAGRAM_URL = "https://www.instagram.com/ninjasoft.latam/";
+export const ADDRESS = { street: "Urquiza 3164", city: "Rosario, Santa Fe, Argentina" } as const;
+export const MAPS_URL = "https://www.google.com/maps/search/?api=1&query=Urquiza+3164+Rosario+Santa+Fe+Argentina";
 
 export const NAV = [
   { href: "#pos", label: "NinjaPOS" },
@@ -21,7 +24,7 @@ export const NAV_LINKS = [
   { href: "#rubros", label: "Rubros" },
   { href: "#medios", label: "Medios de pago" },
   { href: "#servicios", label: "Servicios" },
-  { href: "#nosotros", label: "Nosotros" },
+  { href: "#experiencia", label: "Nosotros" },
 ] as const;
 
 export const PRODUCTS = [
@@ -70,52 +73,15 @@ export const PROCESSORS = [
 export const NETWORKS = [
   { src: "/images/payments/networks/visa.webp", alt: "Visa" },
   { src: "/images/payments/networks/mastercard.webp", alt: "Mastercard" },
-  { src: "/images/payments/networks/amex.webp", alt: "American Express" },
-  { src: "/images/payments/networks/cabal.webp", alt: "Cabal" },
-  { src: "/images/payments/networks/naranjax.webp", alt: "Naranja X" },
   { src: "/images/payments/networks/maestro.webp", alt: "Maestro" },
+  { src: "/images/payments/networks/amex.webp", alt: "Amex" },
+  { src: "/images/payments/networks/naranjax.webp", alt: "Naranja X" },
+  { src: "/images/payments/networks/cabal.webp", alt: "Cabal" },
   { src: "/images/payments/networks/diners.webp", alt: "Diners Club" },
+  { src: "/images/payments/networks/applepay.webp", alt: "Apple Pay" },
+  { src: "/images/payments/networks/googlepay.webp", alt: "Google Pay" },
   { src: "/images/payments/networks/pagofacil.webp", alt: "Pago Fácil" },
   { src: "/images/payments/networks/rapipago.webp", alt: "Rapipago" },
-] as const;
-
-export const SEGMENTS = [
-  {
-    title: "Kioscos y almacenes",
-    items: [
-      "Venta con lector de códigos y PLU",
-      "Stock que se descuenta en cada venta",
-      "Etiquetas de precios",
-      "Cuenta corriente para clientes de confianza",
-    ],
-  },
-  {
-    title: "Tiendas y catálogo",
-    items: [
-      "Variantes por talle y color",
-      "Tienda online con tu catálogo",
-      "Listas de precios mayorista y minorista",
-      "Importación desde Excel",
-    ],
-  },
-  {
-    title: "Gastronomía",
-    items: [
-      "Salón y mesas",
-      "Comandas a cocina con pantalla KDS",
-      "Delivery propio y reservas",
-      "Modificadores y adicionales",
-    ],
-  },
-  {
-    title: "Profesionales y servicios",
-    items: [
-      "Agenda y turnos por profesional",
-      "Packs de sesiones prepagas",
-      "Cobro del turno desde la agenda",
-      "Ficha e historial del cliente",
-    ],
-  },
 ] as const;
 
 // Decisión comercial (Lucas, 2026-10-10): las funciones del roadmap se
