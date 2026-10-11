@@ -1,0 +1,58 @@
+import { beforeEach, describe, expect, test } from "vitest";
+import { CONTACT_LIMIT, handleContact } from "../supabase/functions/_shared/contact.ts";
+import { FakeStore, fakeMailer, fakeTelegram } from "./fakes.ts";
+
+const CFG = { telegram_group_id: "-100", sender: "Ninja <a@b.co>", notify_email: "lucas@x.com", site_url: "https://s", forms_thread_id: "" };
+const body = { name: "Ana", email: "Ana@Mail.com", phone: "", business: "Kiosco", message: "Quiero una demo <ya>" };
+let store: FakeStore;
+
+beforeEach(() => {
+  store = new FakeStore({ ...CFG }, { resend_api_key: "re_1", telegram_bot_token: "1:a" });
+});
+
+describe("handleContact", () => {
+  test("válido: guarda, avisa a Lucas, responde al cliente y avisa en Telegram", async () => {
+    const m = fakeMailer();
+    const tg = fakeTelegram();
+    const r = await handleContact({ store, mailer: m.factory, telegram: tg.factory }, { ip: "h", body });
+    expect(r).toEqual({ status: 200, json: { ok: true } });
+    expect(store.contacts[0]).toMatchObject({ name: "Ana", email: "ana@mail.com", ip_hash: "h" });
+    expect(m.sent.map((x) => [x.to, x.replyTo])).toEqual([
+      ["lucas@x.com", "ana@mail.com"],
+      ["ana@mail.com", "lucas@x.com"],
+    ]);
+    expect(m.sent[0].html).toContain("&lt;ya&gt;");
+    expect(tg.calls.topics).toEqual(["📥 Formularios"]);
+    expect(store.cfg.forms_thread_id).toBe("101");
+    expect(tg.calls.sent[0].text).toContain("Quiero una demo <ya>");
+  });
+
+  test("reutiliza el tema de Formularios", async () => {
+    store.cfg.forms_thread_id = "77";
+    const tg = fakeTelegram();
+    await handleContact({ store, mailer: fakeMailer().factory, telegram: tg.factory }, { ip: "h", body });
+    expect(tg.calls.topics).toHaveLength(0);
+    expect(tg.calls.sent[0].threadId).toBe(77);
+  });
+
+  test("dominio sin verificar: falla el mail al cliente pero se guarda y Lucas recibe el suyo", async () => {
+    const m = fakeMailer({ failTo: "ana@mail.com" });
+    const r = await handleContact({ store, mailer: m.factory, telegram: fakeTelegram().factory }, { ip: "h", body });
+    expect(r.status).toBe(200);
+    expect(store.contacts).toHaveLength(1);
+    expect(m.sent.map((x) => x.to)).toEqual(["lucas@x.com"]);
+  });
+
+  test("inválido → 400; honeypot → 200 sin guardar", async () => {
+    const deps = { store, mailer: fakeMailer().factory, telegram: fakeTelegram().factory };
+    expect((await handleContact(deps, { ip: "h", body: { ...body, email: "x" } })).status).toBe(400);
+    expect((await handleContact(deps, { ip: "h", body: { ...body, website: "spam" } })).status).toBe(200);
+    expect(store.contacts).toHaveLength(0);
+  });
+
+  test("límite por IP → 429", async () => {
+    const deps = { store, mailer: fakeMailer().factory, telegram: fakeTelegram().factory };
+    for (let i = 0; i < CONTACT_LIMIT.perIp; i++) await handleContact(deps, { ip: "h", body });
+    expect((await handleContact(deps, { ip: "h", body })).status).toBe(429);
+  });
+});
