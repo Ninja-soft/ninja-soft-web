@@ -433,3 +433,12 @@ verify_jwt = false
 [functions.chat-resume]
 verify_jwt = false
 
+[functions.track]
+verify_jwt = false
+
+[functions.unsubscribe]
+verify_jwt = false
+
+[functions.campaign]
+verify_jwt = false
+
