@@ -1,4 +1,5 @@
 import { Contact, Experience, Footer } from "@/components/Closing";
+import { Faq } from "@/components/Faq";
 import { Features } from "@/components/Features";
 import { FoodSection } from "@/components/FoodSection";
 import { Hero } from "@/components/Hero";
@@ -12,10 +13,12 @@ import { ChatWidget } from "@/components/chat/ChatWidget";
 import { ScrollArrows } from "@/components/ScrollArrows";
 import { ScrollHint } from "@/components/ScrollHint";
 import { ServicesAbout } from "@/components/ServicesAbout";
+import { StructuredData } from "@/components/StructuredData";
 
 export default function Home() {
   return (
     <>
+      <StructuredData />
       <Nav />
       <ScrollHint />
       <main id="top">
@@ -30,6 +33,7 @@ export default function Home() {
         </div>
         <Experience />
         <Process />
+        <Faq />
         <div className="sm:px-3 sm:pb-3">
           <Contact />
         </div>

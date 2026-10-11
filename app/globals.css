@@ -971,3 +971,9 @@ textarea.ix-input { height: auto; padding: 10px 12px; }
 .ix-fade { animation: chat-fade 0.2s ease both; }
 }
 @keyframes chat-fade { from { opacity: 0; } }
+
+/* preguntas frecuentes */
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item[open] .faq-plus { transform: rotate(45deg); background: #ffece4; color: #ff4b22; }
+.faq-plus { transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.2s ease; }
+.faq-item summary:hover h3 { color: #ff4b22; }
