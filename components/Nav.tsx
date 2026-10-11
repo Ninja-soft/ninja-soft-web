@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { ChatCircleDots } from "@phosphor-icons/react";
 import { openChat } from "@/lib/chat-events";
 import { NAV_LINKS, POS_APP_URL, PRODUCTS, SERVICES } from "@/lib/content";
 
@@ -99,9 +100,9 @@ export function Nav() {
           >
             Probar gratis
           </a>
-          <button type="button" onClick={openChat} className="flex min-h-[40px] items-center gap-2 rounded-full bg-ink px-4 text-[14px] font-semibold text-paper transition hover:bg-ink/85">
-            <span aria-hidden className="h-2 w-2 rounded-full bg-[#25D366] shadow-[0_0_0_3px_rgba(37,211,102,.25)]" />
-            Hablemos
+          <button type="button" onClick={openChat} className="flex min-h-[40px] items-center gap-2 rounded-full bg-ink pl-3 pr-4 text-[14px] font-semibold text-paper transition-colors hover:bg-ink/85">
+            <ChatCircleDots size={18} weight="fill" className="nav-chat-icon text-[#ff8a1f]" />
+            Escribinos
           </button>
         </div>
 

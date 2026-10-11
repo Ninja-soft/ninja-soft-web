@@ -42,6 +42,7 @@ export async function handleContact(
     mensaje: c.message,
     fecha: formatDate(now),
     link_sitio: s.site_url,
+    reunion: c.meeting ? ["Sí, por Microsoft Teams", c.meeting_pref].filter(Boolean).join(" · ") : "No",
   };
 
   // Emails: cada uno por separado, para que una falla no frene al otro.
@@ -81,6 +82,7 @@ export async function handleContact(
       const lines = ["📥 Nuevo contacto", `Nombre: ${c.name}`, `Email: ${c.email}`];
       if (c.phone) lines.push(`Teléfono: ${c.phone}`);
       if (c.business) lines.push(`Rubro: ${c.business}`);
+      if (c.meeting) lines.push(`📅 Quiere una reunión por Teams${c.meeting_pref ? ` (${c.meeting_pref})` : ""}`);
       lines.push("", c.message);
       await tg.send(thread, lines.join("\n").slice(0, 4000));
     }

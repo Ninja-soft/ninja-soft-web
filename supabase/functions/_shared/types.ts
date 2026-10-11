@@ -27,7 +27,15 @@ export type MessageInsert = {
   telegram_message_id?: number | null;
 };
 
-export type ContactInput = { name: string; email: string; phone: string; business: string; message: string };
+export type ContactInput = {
+  name: string;
+  email: string;
+  phone: string;
+  business: string;
+  message: string;
+  meeting: boolean; // pidió reunión por Microsoft Teams
+  meeting_pref: string; // día/horario preferido (opcional)
+};
 export type ContactRecord = ContactInput & { ip_hash: string };
 
 export type HandlerResult = { status: number; json: Record<string, unknown> };

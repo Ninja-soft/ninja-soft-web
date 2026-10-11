@@ -20,6 +20,9 @@ export function ChatWidget() {
   const [text, setText] = useState("");
   const [website, setWebsite] = useState("");
   const [sending, setSending] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [unread, setUnread] = useState(0);
+  const openRef = useRef(false);
   const [error, setError] = useState<string | null>(null);
   const [waitMinutes, setWaitMinutes] = useState(5);
   const [now, setNow] = useState(() => Date.now());
@@ -46,7 +49,11 @@ export function ChatWidget() {
         .on(
           "postgres_changes",
           { event: "INSERT", schema: "public", table: "chat_messages", filter: `session_id=eq.${s.id}` },
-          (p) => addMessages([p.new as Msg]),
+          (p) => {
+            const m = p.new as Msg;
+            if (m.sender === "agent" && !openRef.current) setUnread((n) => n + 1);
+            addMessages([m]);
+          },
         )
         .subscribe();
     },
@@ -60,8 +67,10 @@ export function ChatWidget() {
     (async () => {
       const { data } = await sb.auth.getSession();
       if (!data.session || !alive) return;
+      setLoading(true);
       const { data: s } = await sb.from("chat_sessions").select("id,name,contact").is("closed_at", null).maybeSingle();
       if (s && alive) await attach(s as Sess);
+      if (alive) setLoading(false);
     })();
     sb.rpc("get_public_config").then(({ data }) => {
       const w = Number((data as { wait_minutes?: number } | null)?.wait_minutes);
@@ -72,6 +81,11 @@ export function ChatWidget() {
       channelRef.current?.unsubscribe();
     };
   }, [attach]);
+
+  useEffect(() => {
+    openRef.current = open;
+    if (open) setUnread(0);
+  }, [open]);
 
   useEffect(() => {
     const h = () => setOpen(true);
@@ -141,18 +155,23 @@ export function ChatWidget() {
         onClick={() => setOpen((v) => !v)}
         aria-label={open ? "Cerrar chat" : "Abrir chat"}
         aria-expanded={open}
-        className={`chat-fab ${open ? "max-sm:hidden" : ""}`}
+        className={`chat-fab ${open ? "is-open max-sm:hidden" : ""}`}
       >
-        {open ? <X size={24} weight="bold" /> : <ChatCircleDots size={28} weight="fill" />}
+        <span aria-hidden className="chat-fab-ring" />
+        <span className="chat-fab-icon">{open ? <X size={24} weight="bold" /> : <ChatCircleDots size={28} weight="fill" />}</span>
+        {unread > 0 && !open && <span className="chat-fab-badge">{unread}</span>}
       </button>
 
       {open && (
-        <section role="dialog" aria-label="Chat con Ninja Soft" className="chat-panel">
+        <section role="dialog" aria-label="Chat con Ninja Soft" className="chat-panel chat-panel-in">
           <header className="flex items-center gap-3 border-b border-black/[.06] px-4 py-3">
-            <img src="/images/brand/ninja-isotipo-flame.webp" alt="" width={240} height={311} className="h-8 w-auto" />
+            <span className="relative grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#0b0720]">
+              <img src="/images/brand/ninja-isotipo-flame.webp" alt="" width={240} height={311} className="h-6 w-auto" />
+              <i aria-hidden className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-[#30d158] ring-2 ring-white" />
+            </span>
             <div className="min-w-0 flex-1">
               <p className="text-[15px] font-semibold leading-tight">Ninja Soft</p>
-              <p className="text-[12px] text-[#86868b]">Te respondemos en minutos</p>
+              <p className="text-[12px] text-[#86868b]">En línea · respondemos en minutos</p>
             </div>
             <button
               type="button"
@@ -165,14 +184,22 @@ export function ChatWidget() {
           </header>
 
           <div ref={listRef} className="flex-1 space-y-2 overflow-y-auto px-4 py-4">
-            <Bubble sender="agent" body="¡Hola! Contanos en qué te podemos ayudar. Te respondemos acá mismo." />
+            <Bubble sender="agent" body="¡Hola! 👋 Somos el equipo de Ninja Soft. Contanos qué necesitás para tu negocio y te respondemos por acá." />
+            <p className="px-1 text-[12px] leading-snug text-[#86868b]">
+              Si no te respondemos enseguida, te escribimos a tu email.
+            </p>
+            {loading && (
+              <div role="status" aria-label="Cargando conversación" className="flex justify-center py-6">
+                <span className="chat-spinner" />
+              </div>
+            )}
             {messages.map((m) => (
               <Bubble key={m.id} sender={m.sender} body={m.body} />
             ))}
             {waiting && (
               <p className="mx-auto max-w-[90%] rounded-2xl bg-black/[.04] px-3 py-2 text-center text-[12.5px] text-[#6e6e73]">
                 Te respondemos a la brevedad.{" "}
-                {byEmail ? "Si cerrás la página, la respuesta te llega por email." : "Si cerrás la página, te contactamos."}
+                {byEmail ? `Si cerrás la página, te escribimos a ${session?.contact}.` : "Si cerrás la página, te contactamos."}
               </p>
             )}
           </div>
@@ -196,9 +223,10 @@ export function ChatWidget() {
                   onChange={(e) => setContact(e.target.value)}
                   required
                   maxLength={120}
+                  type="email"
                   autoComplete="email"
-                  placeholder="Email o teléfono"
-                  aria-label="Email o teléfono"
+                  placeholder="Tu email"
+                  aria-label="Tu email"
                   className="chat-input"
                 />
               </div>
@@ -254,7 +282,7 @@ function Bubble({ sender, body }: { sender: Msg["sender"]; body: string }) {
   if (sender === "system") return <p className="text-center text-[12.5px] text-[#86868b]">{body}</p>;
   const mine = sender === "visitor";
   return (
-    <div className={`flex ${mine ? "justify-end" : "justify-start"}`}>
+    <div className={`chat-bubble-in flex ${mine ? "justify-end" : "justify-start"}`}>
       <p
         className={`max-w-[80%] whitespace-pre-wrap break-words rounded-[18px] px-3.5 py-2 text-[15px] leading-snug ${
           mine ? "bg-[linear-gradient(135deg,#ff4b22,#ff8a1f)] text-white" : "bg-[#f2f2f7] text-[#1d1d1f]"

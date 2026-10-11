@@ -79,6 +79,8 @@ export function supabaseStore(db: SupabaseClient): Store {
             phone: c.phone || null,
             business: c.business || null,
             message: c.message,
+            meeting: c.meeting,
+            meeting_pref: c.meeting_pref || null,
             ip_hash: c.ip_hash,
           })
           .select("id")

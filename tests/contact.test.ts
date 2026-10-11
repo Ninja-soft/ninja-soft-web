@@ -38,6 +38,19 @@ describe("handleContact", () => {
     ]);
   });
 
+  test("pide reunión por Teams: queda guardado, en el aviso de Telegram y en la variable {{reunion}}", async () => {
+    store.templates = { ...store.templates, contact_notify: { subject: "x", html: "<p>{{reunion}}</p>" } };
+    const m = fakeMailer();
+    const tg = fakeTelegram();
+    await handleContact(
+      { store, mailer: m.factory, telegram: tg.factory },
+      { ip: "h", body: { ...body, meeting: "on", meeting_pref: "martes 15 h" } },
+    );
+    expect(store.contacts[0]).toMatchObject({ meeting: true, meeting_pref: "martes 15 h" });
+    expect(tg.calls.sent[0].text).toContain("📅 Quiere una reunión por Teams (martes 15 h)");
+    expect(m.sent[0].html).toBe("<p>Sí, por Microsoft Teams · martes 15 h</p>");
+  });
+
   test("reutiliza el tema de Formularios", async () => {
     store.cfg.forms_thread_id = "77";
     const tg = fakeTelegram();

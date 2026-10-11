@@ -28,8 +28,9 @@ export function validateLead(raw: unknown): Result<Lead> {
   const name = line(o.name, 80);
   const c = line(o.contact, 120);
   if (name.length < 2) return { ok: false, error: "Ingresá tu nombre." };
-  const contact = isEmail(c) ? c.toLowerCase() : c;
-  if (!isEmail(contact) && !isPhone(contact)) return { ok: false, error: "Ingresá un email o teléfono válido." };
+  // El chat pide email: es por donde llega la respuesta si el visitante se va.
+  const contact = c.toLowerCase();
+  if (!isEmail(contact)) return { ok: false, error: "Ingresá un email válido." };
   return { ok: true, value: { name, contact } };
 }
 
@@ -51,7 +52,9 @@ export function validateContact(raw: unknown): Result<ContactInput> {
   if (!isEmail(email)) return { ok: false, error: "Ingresá un email válido." };
   if (phone && !isPhone(phone)) return { ok: false, error: "El teléfono no parece válido." };
   if (message.length < 5) return { ok: false, error: "Contanos un poco más en el mensaje." };
-  return { ok: true, value: { name, email, phone, business, message } };
+  const meeting = o.meeting === true || o.meeting === "on" || o.meeting === "true";
+  const meeting_pref = meeting ? line(o.meeting_pref, 120) : "";
+  return { ok: true, value: { name, email, phone, business, message, meeting, meeting_pref } };
 }
 
 // Campo oculto "website": sólo lo completan los bots.

@@ -8,6 +8,7 @@ export const TEMPLATE_VARS = [
   "respuesta",
   "fecha",
   "link_sitio",
+  "reunion",
   "logo_soft",
   "logo_pos",
   "logo_food",

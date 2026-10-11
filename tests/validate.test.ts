@@ -15,8 +15,8 @@ describe("validateLead", () => {
       value: { name: "Ana Pérez", contact: "ana@mail.com" },
     });
   });
-  test("acepta teléfono argentino con espacios y guiones", () => {
-    expect(validateLead({ name: "Juan", contact: "+54 9 341 555-1234" }).ok).toBe(true);
+  test("el chat pide email: un teléfono no alcanza", () => {
+    expect(validateLead({ name: "Juan", contact: "+54 9 341 555-1234" })).toEqual({ ok: false, error: "Ingresá un email válido." });
   });
   test("rechaza contacto inválido y nombre corto", () => {
     expect(validateLead({ name: "Juan", contact: "abc" }).ok).toBe(false);
@@ -44,6 +44,15 @@ describe("validateContact", () => {
   test("teléfono presente pero inválido se rechaza", () => {
     expect(validateContact({ ...base, phone: "12" }).ok).toBe(false);
   });
+  test("reunión por Teams: tilde + horario preferido opcional", () => {
+    const r = validateContact({ ...base, meeting: "on", meeting_pref: "  martes   a la tarde " });
+    expect(r.ok && r.value.meeting).toBe(true);
+    expect(r.ok && r.value.meeting_pref).toBe("martes a la tarde");
+    const n = validateContact(base);
+    expect(n.ok && n.value.meeting).toBe(false);
+    expect(n.ok && n.value.meeting_pref).toBe("");
+  });
+
   test("email obligatorio y mensaje mínimo", () => {
     expect(validateContact({ ...base, email: "" }).ok).toBe(false);
     expect(validateContact({ ...base, message: "hey" }).ok).toBe(false);

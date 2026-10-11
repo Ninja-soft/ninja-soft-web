@@ -1,15 +1,25 @@
 "use client";
 
 import { useState } from "react";
-import { CheckCircle } from "@phosphor-icons/react";
+import { CheckCircle, MicrosoftTeamsLogo, PaperPlaneTilt } from "@phosphor-icons/react";
 import { visitorClient } from "@/lib/supabase/client";
 import { functionError } from "@/lib/supabase/functionError";
 
 const RUBROS = ["Gastronomía", "Retail / textil", "Kiosco / almacén", "Profesionales / servicios", "Industria alimenticia", "Otro"];
 
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <label className="grid gap-1.5 text-[13px] font-medium text-mist">
+      {label}
+      {children}
+    </label>
+  );
+}
+
 export function ContactForm() {
   const [state, setState] = useState<"idle" | "sending" | "sent">("idle");
   const [error, setError] = useState<string | null>(null);
+  const [meeting, setMeeting] = useState(false);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -27,40 +37,76 @@ export function ContactForm() {
 
   if (state === "sent") {
     return (
-      <div className="mx-auto mt-10 max-w-[560px] rounded-[24px] bg-white/[.06] p-8 text-center ring-1 ring-inset ring-white/10">
-        <CheckCircle size={40} weight="fill" className="mx-auto text-[#30d158]" />
-        <p className="mt-3 text-[20px] font-bold">¡Recibimos tu consulta!</p>
-        <p className="mt-1 text-mist">Te contactamos a la brevedad. Revisá tu email.</p>
+      <div className="contact-card mx-auto mt-12 max-w-[640px] p-10 text-center">
+        <CheckCircle size={48} weight="fill" className="mx-auto text-[#30d158]" />
+        <p className="mt-4 text-[22px] font-bold">¡Recibimos tu consulta!</p>
+        <p className="mt-1 text-mist">
+          {meeting ? "Te escribimos por email para coordinar la reunión por Teams." : "Te contactamos a la brevedad. Revisá tu email."}
+        </p>
       </div>
     );
   }
 
   return (
-    <form onSubmit={onSubmit} className="mx-auto mt-10 grid max-w-[560px] gap-3 text-left">
-      <div className="grid gap-3 sm:grid-cols-2">
-        <input name="name" required minLength={2} maxLength={80} autoComplete="name" placeholder="Nombre" aria-label="Nombre" className="contact-input" />
-        <input name="email" type="email" required maxLength={120} autoComplete="email" placeholder="Email" aria-label="Email" className="contact-input" />
-        <input name="phone" type="tel" maxLength={30} autoComplete="tel" placeholder="Teléfono (opcional)" aria-label="Teléfono" className="contact-input" />
-        <select name="business" defaultValue="" aria-label="Rubro" className="contact-input">
-          <option value="" disabled>
-            Rubro
-          </option>
-          {RUBROS.map((r) => (
-            <option key={r} value={r}>
-              {r}
-            </option>
-          ))}
-        </select>
+    <form onSubmit={onSubmit} className="contact-card mx-auto mt-12 grid max-w-[640px] gap-4 p-6 text-left sm:p-8">
+      <div>
+        <p className="text-[20px] font-bold tracking-[-0.01em]">Dejanos tu consulta</p>
+        <p className="mt-1 text-[14px] text-mist">Te respondemos por email en horario comercial.</p>
       </div>
-      <textarea name="message" required minLength={5} maxLength={4000} rows={4} placeholder="Contanos qué necesitás" aria-label="Mensaje" className="contact-input resize-y" />
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Field label="Nombre">
+          <input name="name" required minLength={2} maxLength={80} autoComplete="name" placeholder="Juan Pérez" className="contact-input" />
+        </Field>
+        <Field label="Email">
+          <input name="email" type="email" required maxLength={120} autoComplete="email" placeholder="juan@tunegocio.com" className="contact-input" />
+        </Field>
+        <Field label="Teléfono (opcional)">
+          <input name="phone" type="tel" maxLength={30} autoComplete="tel" placeholder="+54 9 341 …" className="contact-input" />
+        </Field>
+        <Field label="Rubro">
+          <select name="business" defaultValue="" className="contact-input">
+            <option value="" disabled>
+              Elegí tu rubro
+            </option>
+            {RUBROS.map((r) => (
+              <option key={r} value={r}>
+                {r}
+              </option>
+            ))}
+          </select>
+        </Field>
+      </div>
+      <Field label="¿En qué te ayudamos?">
+        <textarea name="message" required minLength={5} maxLength={4000} rows={4} placeholder="Contanos qué necesitás para tu negocio" className="contact-input resize-y" />
+      </Field>
+
+      {/* reunión por Microsoft Teams */}
+      <label className={`contact-meeting flex cursor-pointer items-center gap-3 rounded-[16px] p-4 ${meeting ? "is-on" : ""}`}>
+        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-[12px] bg-[#5b5fc7] text-white">
+          <MicrosoftTeamsLogo size={22} weight="fill" />
+        </span>
+        <span className="min-w-0 flex-1">
+          <b className="block text-[15px] font-semibold text-white">Quiero agendar una reunión por Teams</b>
+          <span className="block text-[13px] text-mist">Una videollamada de 30 minutos con el equipo.</span>
+        </span>
+        <input type="checkbox" name="meeting" checked={meeting} onChange={(e) => setMeeting(e.target.checked)} className="sr-only" />
+        <span aria-hidden className="contact-switch" />
+      </label>
+      {meeting && (
+        <Field label="¿Qué día y horario te queda bien? (opcional)">
+          <input name="meeting_pref" maxLength={120} placeholder="Ej.: martes o jueves a la tarde" className="contact-input" />
+        </Field>
+      )}
+
       <input type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden className="hidden" />
       {error && (
         <p role="alert" className="text-[14px] text-[#ff6961]">
           {error}
         </p>
       )}
-      <button type="submit" disabled={state === "sending"} className="btn-flame justify-center disabled:opacity-60">
-        {state === "sending" ? "Enviando…" : "Enviar consulta"}
+      <button type="submit" disabled={state === "sending"} className="btn-flame justify-center gap-2 disabled:opacity-60">
+        <PaperPlaneTilt size={18} weight="fill" />
+        {state === "sending" ? "Enviando…" : meeting ? "Enviar y pedir reunión" : "Enviar consulta"}
       </button>
     </form>
   );
