@@ -3,11 +3,14 @@
 Sitio de marca de Ninja Soft. Vende NinjaPOS, Ninja Food y Servicios a medida.
 Hermanos: `..\ninja-soft-pos` (fuente de verdad de features y medios de pago) y `..\ninja-soft-food`.
 
+> **Leer primero `docs/contexto.md`**: arquitectura, IDs, DNS, base de datos, funciones, cómo se trabaja,
+> reglas de diseño de Lucas y pendientes. Actualizarlo al cerrar cada tanda de cambios.
+
 ## Stack y deploy
-- Next.js 14 App Router, `output: "export"` (estático, sin backend) · TypeScript strict · Tailwind 3.4.
+- Next.js 14 App Router, `output: "export"` (estático; el backend vive en Supabase Edge Functions) · TypeScript strict · Tailwind 3.4.
 - Repo `Ninja-soft/ninja-soft-web` **público** (Vercel Hobby no deploya repos privados de org).
-- Vercel: push a `main` = producción (`ninja-soft-web.vercel.app`). Dominio final `soft.ninja` (pendiente, DNS en Namecheap).
-- Gate antes de commitear: `pnpm lint && pnpm typecheck && pnpm build`.
+- Vercel: push a `main` = producción en **https://soft.ninja** (www redirige; DNS en Namecheap).
+- Gate antes de commitear: `pnpm lint && pnpm typecheck && pnpm test` (y `pnpm build` en un worktree aparte).
 
 ## Decisiones tomadas (2026-10-10)
 - Dirección visual: **estructura Apple** (bloques full-bleed alternando claro `paper` / oscuro `night`,
@@ -29,14 +32,14 @@ Hermanos: `..\ninja-soft-pos` (fuente de verdad de features y medios de pago) y 
 - Hero preparado para video del isotipo: `public/videos/hero.mp4` (si no existe, imagen fija).
 
 ## Contenido
-Todo el texto/datos en `lib/content.ts`. WhatsApp: `WHATSAPP_NUMBER` (pendiente número real).
+Todo el texto/datos en `lib/content.ts` (incluye `FAQ`). Ya no hay WhatsApp: el contacto es el chat web (Telegram) y el formulario (Resend).
 
 ## Referencias
+- `docs/contexto.md` · contexto completo del proyecto.
 - `docs/referencias/napse.md` · análisis de napse.global y qué trasladar.
 
 ## Pendientes
-- Número de WhatsApp real · video Gemini · confirmar "Seller Manager"/"Simbel" · dominio soft.ninja.
-- Rediseño "más pro" en curso, de a una sección (ver referencias).
+- Ver `docs/contexto.md` § 11.
 
 ## Chat, contacto y /internal (2026-10-11)
 
