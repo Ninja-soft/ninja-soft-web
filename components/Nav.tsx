@@ -103,10 +103,11 @@ export function Nav() {
             type="button"
             onClick={openChat}
             aria-label="Abrir el chat"
-            className="flex min-h-[40px] items-center gap-2.5 rounded-full py-1 pl-1 pr-4 text-[14px] font-semibold text-ink transition hover:bg-ink/[.06]"
+            className="flex min-h-[44px] items-center gap-2.5 rounded-full py-0.5 pl-0.5 pr-4 text-[14px] font-semibold text-ink transition hover:bg-ink/[.06]"
           >
-            <span className="relative grid h-8 w-8 place-items-center rounded-full bg-[#0b0720]">
-              <img src="/images/brand/ninja-isotipo-flame.webp" alt="" width={240} height={311} className="h-5 w-auto" />
+            <span className="relative h-11 w-11 rounded-full bg-[#1d1931]">
+              {/* isotipo animado: los ojos se abren y se cierran */}
+              <img src="/images/brand/ninja-isotipo-blink.webp" alt="" width={96} height={96} className="h-11 w-11 rounded-full" />
               <i aria-hidden className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-[#30d158] ring-2 ring-paper" />
             </span>
             Hablemos
