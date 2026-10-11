@@ -68,3 +68,15 @@ export function maskSecret(v: string | null): string | null {
   if (!v) return null;
   return v.length < 8 ? "••••" : `••••${v.slice(-4)}`;
 }
+
+// Destino de los links de invitación / recuperación: siempre /internal de un origen permitido.
+export function safeRedirect(url: unknown, allowedOrigins: string[]): string {
+  const fallback = `${allowedOrigins[0]}/internal?setpw=1`;
+  if (typeof url !== "string") return fallback;
+  try {
+    const u = new URL(url);
+    return allowedOrigins.includes(u.origin) && u.pathname === "/internal" ? `${u.origin}/internal?setpw=1` : fallback;
+  } catch {
+    return fallback;
+  }
+}

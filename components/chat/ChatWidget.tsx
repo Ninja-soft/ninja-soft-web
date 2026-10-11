@@ -117,9 +117,33 @@ export function ChatWidget() {
     return () => window.clearInterval(id);
   }, []);
 
+  // Siempre anclado al último mensaje: al abrir salta abajo sin animación, y mientras el visitante
+  // esté abajo lo mantenemos ahí aunque después carguen fotos o lleguen respuestas.
+  const pinned = useRef(true);
   useEffect(() => {
-    listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: "smooth" });
-  }, [messages, open]);
+    const list = listRef.current;
+    if (!open || !list) return;
+    pinned.current = true;
+    list.scrollTop = list.scrollHeight;
+    const onScroll = () => {
+      pinned.current = list.scrollHeight - list.scrollTop - list.clientHeight < 80;
+    };
+    const ro = new ResizeObserver(() => {
+      if (pinned.current) list.scrollTop = list.scrollHeight;
+    });
+    for (const child of Array.from(list.children)) ro.observe(child);
+    ro.observe(list);
+    list.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      ro.disconnect();
+      list.removeEventListener("scroll", onScroll);
+    };
+  }, [open, messages.length, loading]);
+
+  useEffect(() => {
+    const list = listRef.current;
+    if (list && pinned.current) list.scrollTo({ top: list.scrollHeight, behavior: "smooth" });
+  }, [messages]);
 
   async function send(e: React.FormEvent) {
     e.preventDefault();

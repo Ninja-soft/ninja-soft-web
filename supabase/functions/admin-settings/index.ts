@@ -3,7 +3,7 @@ import { resendMailer } from "../_shared/resend.ts";
 import { adminClient, supabaseStore } from "../_shared/supabaseStore.ts";
 import { telegramApi } from "../_shared/telegram.ts";
 import { EDITABLE_SECRETS, SECRET_NAMES, type SecretName } from "../_shared/types.ts";
-import { emailList, isEmail, maskSecret, obj } from "../_shared/validate.ts";
+import { emailList, isEmail, maskSecret, obj, safeRedirect } from "../_shared/validate.ts";
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: cors });
@@ -68,6 +68,34 @@ Deno.serve(async (req) => {
         if (!key || !s.sender) return json(400, { error: "Falta la API key o el remitente." });
         if (!isEmail(to)) return json(400, { error: "Configurá un email de aviso válido." });
         await resendMailer(key)({ from: s.sender, to, subject: "Prueba de Resend · Ninja Soft", html: "<p>✅ Resend está conectado.</p>" });
+        return json(200, { ok: true });
+      }
+      case "team_list": {
+        const { data, error } = await db.rpc("internal_team");
+        if (error) throw new Error(error.message);
+        return json(200, { team: data, me: u.user.id });
+      }
+      case "invite": {
+        const email = String(body.email ?? "").trim().toLowerCase();
+        if (!isEmail(email)) return json(400, { error: "Ingresá un email válido." });
+        const origins = [new URL(s.site_url || "https://soft.ninja").origin, "https://soft.ninja", "http://localhost:3100", "http://192.168.100.77:3100"];
+        const redirectTo = safeRedirect(body.redirect, origins);
+        const { data: existing } = await db.rpc("user_id_by_email", { p_email: email });
+        let userId = (existing as string | null) ?? null;
+        if (!userId) {
+          const { data, error } = await db.auth.admin.inviteUserByEmail(email, { redirectTo });
+          if (error) throw new Error(error.message);
+          userId = data.user.id;
+        }
+        const { error } = await db.from("internal_admins").upsert({ user_id: userId });
+        if (error) throw new Error(error.message);
+        return json(200, { ok: true, existed: !!existing });
+      }
+      case "remove_admin": {
+        const id = String(body.user_id ?? "");
+        if (id === u.user.id) return json(400, { error: "No podés quitarte a vos mismo." });
+        const { error } = await db.from("internal_admins").delete().eq("user_id", id);
+        if (error) throw new Error(error.message);
         return json(200, { ok: true });
       }
       default:

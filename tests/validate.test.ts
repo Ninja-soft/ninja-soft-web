@@ -1,6 +1,7 @@
 import { describe, expect, test } from "vitest";
 import {
   emailList,
+  safeRedirect,
   isHoneypotFilled,
   maskSecret,
   validateContact,
@@ -81,4 +82,12 @@ test("maskSecret", () => {
 test("emailList: varios emails separados por coma, punto y coma o espacio", () => {
   expect(emailList(" a@x.com, B@Y.com ;c@z.com  nope ")).toEqual(["a@x.com", "b@y.com", "c@z.com"]);
   expect(emailList("")).toEqual([]);
+});
+
+test("safeRedirect: sólo vuelve a /internal de orígenes permitidos", () => {
+  const allowed = ["https://soft.ninja", "http://localhost:3100"];
+  expect(safeRedirect("http://localhost:3100/internal?setpw=1", allowed)).toBe("http://localhost:3100/internal?setpw=1");
+  expect(safeRedirect("https://evil.com/internal?setpw=1", allowed)).toBe("https://soft.ninja/internal?setpw=1");
+  expect(safeRedirect("https://soft.ninja.evil.com/internal", allowed)).toBe("https://soft.ninja/internal?setpw=1");
+  expect(safeRedirect(undefined, allowed)).toBe("https://soft.ninja/internal?setpw=1");
 });

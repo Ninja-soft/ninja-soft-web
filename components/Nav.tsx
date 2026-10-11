@@ -105,9 +105,10 @@ export function Nav() {
             onClick={openChat}
             aria-label="Abrir el chat"
             title="Chateá con nosotros"
-            className="nav-chat-btn relative grid h-10 w-10 place-items-center rounded-full"
+            className="nav-chat-btn group relative grid h-10 w-10 place-items-center rounded-full"
           >
-            <ChatCircleDots size={22} weight="fill" className="nav-chat-icon" />
+            <ChatCircleDots size={21} weight="fill" className="nav-chat-icon" />
+            <span aria-hidden className="nav-chat-tip">Chateá con nosotros</span>
             <span aria-hidden className="absolute right-0.5 top-0.5 h-2.5 w-2.5 rounded-full bg-[#30d158] ring-2 ring-paper" />
           </button>
         </div>

@@ -13,9 +13,12 @@ const FIELDS: { key: string; label: string; hint?: string }[] = [
   { key: "site_url", label: "URL del sitio" },
   { key: "pos_internal_url", label: "URL internal NinjaPOS" },
   { key: "food_internal_url", label: "URL internal Ninja Food" },
-  { key: "logo_soft_url", label: "Logo Ninja Soft (para emails)", hint: "Variable {{logo_soft}}." },
-  { key: "logo_pos_url", label: "Logo NinjaPOS (para emails)", hint: "Variable {{logo_pos}}." },
-  { key: "logo_food_url", label: "Logo Ninja Food (para emails)", hint: "Variable {{logo_food}}." },
+  { key: "logo_soft_url", label: "Logo Ninja Soft · fondo oscuro", hint: "Variable {{logo_soft}}." },
+  { key: "logo_pos_url", label: "Logo NinjaPOS · fondo oscuro", hint: "Variable {{logo_pos}}." },
+  { key: "logo_food_url", label: "Logo Ninja Food · fondo oscuro", hint: "Variable {{logo_food}}." },
+  { key: "logo_soft_claro_url", label: "Logo Ninja Soft · fondo claro", hint: "Variable {{logo_soft_claro}}." },
+  { key: "logo_pos_claro_url", label: "Logo NinjaPOS · fondo claro", hint: "Variable {{logo_pos_claro}}." },
+  { key: "logo_food_claro_url", label: "Logo Ninja Food · fondo claro", hint: "Variable {{logo_food_claro}}." },
 ];
 
 export function SettingsTab({ sb }: { sb: SupabaseClient }) {
