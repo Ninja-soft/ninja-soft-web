@@ -57,3 +57,13 @@ Todo el texto/datos en `lib/content.ts`. WhatsApp: `WHATSAPP_NUMBER` (pendiente 
 - Ninja Food: pendiente (ajuste `logo_food_url`).
 - Isotipo naranja PNG (emails): `https://tgaromemhaixgdsdlxiq.supabase.co/storage/v1/object/public/brand/ninja-isotipo-flame.png`
 - Los logos de Cloudinary son para fondo oscuro (texto blanco). En plantillas: `{{logo_soft}}`, `{{logo_pos}}`, `{{logo_food}}` (se editan en /internal → Ajustes).
+
+## /internal v2, medición, contactos, campañas y SEO (2026-10-11)
+
+- /internal: tema oscuro "void" igual al interno de NinjaPOS (`.ix*` en globals.css, piezas en `components/internal/ui.tsx`). Secciones por hash (`#estadisticas`, `#chats`, …). Nunca "—": usar `<NoData />` (ícono). Sin `window.confirm`: confirmaciones en pantalla.
+- Medición propia sin cookies: `lib/track.ts` + `components/Analytics.tsx` → Edge Function `track` → `page_events`. Visitante = hash diario (IP + navegador + `analytics_salt`). No mide en localhost/192.168.* salvo `?track=1`. Estadísticas: RPC `internal_stats(días)`.
+- Contactos para remarketing: se crean solos desde chat y formulario (`upsert_contact`, nunca reactiva una baja; un trigger impide re-suscribir desde el panel).
+- Campañas: Edge Function `campaign` (test / start / send_batch). Lotes de 100 reclamados con `campaign_claim` + Idempotency-Key; 429/5xx de Resend dejan pendientes y frenan. Borradores editables. Baja: el link lleva a `/baja?t=…` y se confirma con un botón (POST); también one-click de Gmail.
+- SEO: metadatos en `app/layout.tsx`, `robots.ts`, `sitemap.ts`, JSON-LD en `components/StructuredData.tsx`, FAQ en `lib/content.ts` (`FAQ`). URL canónica en `lib/site.ts`: cuando soft.ninja apunte a Vercel, definir `NEXT_PUBLIC_SITE_URL=https://soft.ninja` y actualizar `site_url` en /internal → Configuración.
+- Seguridad: `vercel.json` con CSP (sólo Supabase y Cloudinary), HSTS con preload, X-Frame-Options DENY, etc. Si se suma un servicio externo, agregarlo a la CSP.
+- Rendimiento: el chat (supabase-js) se carga recién al usarlo (`ChatLauncher`); imágenes de abajo con `loading="lazy"`; la animación del celular descarga sus cuadros al acercarse.
