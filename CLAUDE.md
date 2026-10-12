@@ -23,6 +23,7 @@ Hermanos: `..\ninja-soft-pos` (fuente de verdad de features y medios de pago) y 
   Logos oficiales en `Dropbox\Ninja Soft\Logos` (OJO: ahí "Dark" = letras negras → nuestro `-light`;
   "Light" = letras blancas → nuestro `-dark`).
 - Medios de pago con logos reales sobre fondo blanco (`public/images/payments/`), sacados del POS.
+  Procesadores (`PROCESSORS` en `lib/content.ts`): Mercado Pago, MODO, Payway, Getnet, Nave, Fiserv, Mobbex, Pagos360, Directo y GO Cuotas (variantes `-dark` para fondo oscuro).
 - Íconos de UI: **Phosphor** (`@phosphor-icons/react`, estilo `duotone`). Sin sombras en los íconos.
   Mercado Libre usa su logo real (`images/integrations/mercadolibre.webp`); inactivo = mismo logo en gris (transición suave, sin cambiar de dibujo).
 - Mercado Libre es **eje comercial clave** (Lucas quiere orientarse ahí): darle presencia propia.
