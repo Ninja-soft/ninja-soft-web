@@ -26,6 +26,8 @@ const WHAT: Record<string, string> = {
   Fiserv: "Posnet · Clover",
   Mobbex: "Link · Cuotas",
   Pagos360: "Link · DEBIN",
+  Directo: "Crédito · Cuotas",
+  "GO Cuotas": "Sin tarjeta · Débito",
 };
 
 export function Payments() {
@@ -49,7 +51,7 @@ export function Payments() {
       </p>
 
       {/* widgets de procesadores */}
-      <div className="relative mx-auto mt-12 grid max-w-[1040px] grid-cols-2 gap-3 text-left md:grid-cols-4 md:gap-4">
+      <div className="relative mx-auto mt-12 grid max-w-[1040px] grid-cols-2 gap-3 text-left md:grid-cols-4 md:gap-4 lg:grid-cols-5">
         {PROCESSORS.map((p, i) => (
           <div key={p.alt} className="ios-widget" style={{ "--d": `${i * 70}ms` } as React.CSSProperties}>
             <div className="flex h-12 items-center">

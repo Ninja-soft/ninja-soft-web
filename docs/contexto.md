@@ -1,6 +1,6 @@
 # Contexto del proyecto · ninja-soft-web (soft.ninja)
 
-> Documento vivo. Leerlo antes de tocar el sitio o el panel interno. Última actualización: **2026-10-11**.
+> Documento vivo. Leerlo antes de tocar el sitio o el panel interno. Última actualización: **2026-10-12**.
 > Las reglas cortas para Claude viven en `CLAUDE.md`; acá está el contexto completo: qué hay, dónde y por qué.
 
 ---
@@ -95,7 +95,8 @@ components/
   Nav, Hero, HeroPillars, PillarShowcase, showcase/   hero y pilares animados
   PosShowcase           keynote del celular (43 cuadros en public/images/showcase/pos-frames)
   PosSection + rubros/  "Hecho para tu rubro" (escenas por rubro, arrancan al llegar a la sección)
-  Payments              medios de pago (tira deslizable en celular)
+  Payments              medios de pago: procesadores (Mercado Pago, MODO, Payway, Getnet, Nave, Fiserv,
+                        Mobbex, Pagos360, Directo, GO Cuotas) y redes (tira deslizable en celular)
   Features              "Menos planillas. Más ventas." (fondo oscuro)
   FoodSection + food/FoodFlow   Ninja Food con canvas de trazabilidad tipo n8n
   ServicesAbout, Closing (Experiencia, Contacto, Footer), Process, Faq
