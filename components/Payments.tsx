@@ -26,8 +26,8 @@ const WHAT: Record<string, string> = {
   Fiserv: "Posnet · Clover",
   Mobbex: "Link · Cuotas",
   Pagos360: "Link · DEBIN",
-  Directo: "Crédito directo · Cuotas",
-  "GO Cuotas": "Cuotas sin tarjeta · Débito",
+  Directo: "Crédito · Cuotas",
+  "GO Cuotas": "Sin tarjeta · Débito",
 };
 
 export function Payments() {
