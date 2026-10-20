@@ -19,6 +19,8 @@ const GROUPS: { label: string; logos: Logo[] }[] = [
       { src: "/images/payments/processors/pagos360.webp", alt: "Pagos360", h: 18 },
       { src: "/images/payments/processors/directo-dark.webp", alt: "Directo", h: 16 },
       { src: "/images/payments/processors/gocuotas.webp", alt: "GO Cuotas", h: 22 },
+      { src: "/images/payments/processors/talo-dark.webp", alt: "Talo", h: 18 },
+      { src: "/images/payments/processors/viumi-dark.webp", alt: "Viumi", h: 18 },
     ],
   },
   {

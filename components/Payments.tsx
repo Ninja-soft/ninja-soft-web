@@ -28,6 +28,8 @@ const WHAT: Record<string, string> = {
   Pagos360: "Link · DEBIN",
   Directo: "Crédito · Cuotas",
   "GO Cuotas": "Sin tarjeta · Débito",
+  Talo: "Transferencias · CVU por venta",
+  Viumi: "Link · QR",
 };
 
 export function Payments() {

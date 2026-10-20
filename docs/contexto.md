@@ -96,7 +96,7 @@ components/
   PosShowcase           keynote del celular (43 cuadros en public/images/showcase/pos-frames)
   PosSection + rubros/  "Hecho para tu rubro" (escenas por rubro, arrancan al llegar a la sección)
   Payments              medios de pago: procesadores (Mercado Pago, MODO, Payway, Getnet, Nave, Fiserv,
-                        Mobbex, Pagos360, Directo, GO Cuotas) y redes (tira deslizable en celular)
+                        Mobbex, Pagos360, Directo, GO Cuotas, Talo, Viumi) y redes (tira deslizable en celular)
   Features              "Menos planillas. Más ventas." (fondo oscuro)
   FoodSection + food/FoodFlow   Ninja Food con canvas de trazabilidad tipo n8n
   ServicesAbout, Closing (Experiencia, Contacto, Footer), Process, Faq

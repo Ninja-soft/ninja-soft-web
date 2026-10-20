@@ -27,7 +27,7 @@ export const FAQ: { q: string; a: string }[] = [
   },
   {
     q: "¿Qué medios de pago acepta?",
-    a: "Mercado Pago (QR y Point), MODO, Payway, Getnet, Nave, Fiserv, Mobbex, Pagos360, Directo (crédito directo) y GO Cuotas (cuotas sin tarjeta), con Visa, Mastercard, American Express, Naranja X, Cabal, Apple Pay y Google Pay. También efectivo, transferencia, QR interoperable y links de pago.",
+    a: "Mercado Pago (QR y Point), MODO, Payway, Getnet, Nave, Fiserv, Mobbex, Pagos360, Directo (crédito directo), GO Cuotas (cuotas sin tarjeta), Talo (transferencias con CVU por venta) y Viumi (link de pago de Banco Macro), con Visa, Mastercard, American Express, Naranja X, Cabal, Apple Pay y Google Pay. También efectivo, transferencia, QR interoperable y links de pago.",
   },
   {
     q: "¿Se integra con Mercado Libre y con mi tienda online?",
@@ -109,6 +109,8 @@ export const PROCESSORS = [
   { src: "/images/payments/processors/pagos360.webp", alt: "Pagos360" },
   { src: "/images/payments/processors/directo.webp", alt: "Directo" },
   { src: "/images/payments/processors/gocuotas.webp", alt: "GO Cuotas" },
+  { src: "/images/payments/processors/talo.webp", alt: "Talo" },
+  { src: "/images/payments/processors/viumi.webp", alt: "Viumi" },
 ] as const;
 
 export const NETWORKS = [
